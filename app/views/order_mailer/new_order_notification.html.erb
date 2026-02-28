@@ -1,0 +1,29 @@
+<h1>New Order at <%= @restaurant.name %></h1>
+<p><strong>Order #<%= @order.id %></strong> — <%= @order.created_at.strftime("%B %d, %Y %H:%M") %></p>
+
+<h2>Customer</h2>
+<p>
+  <strong>Name:</strong> <%= @order.customer_name %><br>
+  <% if @order.customer_phone.present? %>
+    <strong>Phone:</strong> <%= @order.customer_phone %><br>
+  <% end %>
+  <% if @order.table_number.present? %>
+    <strong>Table:</strong> <%= @order.table_number %><br>
+  <% end %>
+</p>
+
+<h2>Items</h2>
+<table>
+  <% @order.order_items.each do |item| %>
+    <tr>
+      <td><%= item.quantity %>x</td>
+      <td><%= item.product_name %></td>
+      <td>$<%= item.subtotal.to_s %></td>
+    </tr>
+  <% end %>
+</table>
+
+<p><strong>Total: $<%= (@order.total_cents / 100.0).to_s %></strong></p>
+<% if @order.notes.present? %>
+  <p><strong>Notes:</strong> <%= @order.notes %></p>
+<% end %>

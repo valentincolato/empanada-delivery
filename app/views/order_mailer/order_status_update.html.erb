@@ -1,0 +1,15 @@
+<h1>Order Update from <%= @restaurant.name %></h1>
+<p>Hi <%= @order.customer_name %>,</p>
+<p>Your order status has been updated to: <strong><%= @order.status.capitalize %></strong></p>
+
+<% if @order.ready? %>
+  <p>Your order is ready! Please come pick it up.</p>
+<% elsif @order.preparing? %>
+  <p>We are preparing your order now.</p>
+<% elsif @order.confirmed? %>
+  <p>Your order has been confirmed. We'll start preparing it soon.</p>
+<% elsif @order.cancelled? %>
+  <p>Unfortunately your order has been cancelled. Please contact us if you have questions.</p>
+<% end %>
+
+<p><a href="/orders/<%= @order.token %>">View your order status</a></p>
