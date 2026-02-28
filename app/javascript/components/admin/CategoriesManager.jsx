@@ -15,16 +15,32 @@ export default function CategoriesManager() {
     setCategories(Array.isArray(data) ? data : [])
   }
 
-  function openNew() { setForm({ name: '', position: 0, active: true }); setModal('new'); setError(null) }
-  function openEdit(c) { setForm({ name: c.name, position: c.position, active: c.active }); setModal(c); setError(null) }
+  function openNew() {
+    setForm({ name: '', position: 0, active: true })
+    setModal('new')
+    setError(null)
+  }
+
+  function openEdit(c) {
+    setForm({ name: c.name, position: c.position, active: c.active })
+    setModal(c)
+    setError(null)
+  }
 
   async function save(e) {
-    e.preventDefault(); setSaving(true); setError(null)
+    e.preventDefault()
+    setSaving(true)
+    setError(null)
     try {
       if (modal === 'new') await api.post('/api/v1/admin/categories', { category: form })
       else await api.patch(`/api/v1/admin/categories/${modal.id}`, { category: form })
-      await loadCategories(); setModal(null)
-    } catch (err) { setError(err.message) } finally { setSaving(false) }
+      await loadCategories()
+      setModal(null)
+    } catch (err) {
+      setError(err.message)
+    } finally {
+      setSaving(false)
+    }
   }
 
   async function destroy(id) {
@@ -34,49 +50,62 @@ export default function CategoriesManager() {
   }
 
   return (
-    <div style={s.page}>
-      <div style={s.topbar}>
+    <div className="min-h-screen bg-slate-100 font-sans">
+      <div className="flex items-center justify-between border-b border-slate-200 bg-white px-6 py-4">
         <div>
-          <a href="/admin/orders" style={s.back}>← Orders</a>
-          <h1 style={s.title}>Categories</h1>
+          <a href="/admin/orders" className="text-sm text-slate-500">← Orders</a>
+          <h1 className="mt-1 text-xl font-bold text-slate-900">Categories</h1>
         </div>
-        <button onClick={openNew} style={s.primaryBtn}>+ New Category</button>
+        <button onClick={openNew} className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700">+ New Category</button>
       </div>
-      <div style={s.content}>
-        <table style={s.table}>
-          <thead><tr style={s.thead}>{['Name', 'Position', 'Active', 'Actions'].map(h => <th key={h} style={s.th}>{h}</th>)}</tr></thead>
+
+      <div className="overflow-x-auto p-6">
+        <table className="w-full overflow-hidden rounded-xl bg-white shadow">
+          <thead className="bg-slate-50">
+            <tr>{['Name', 'Position', 'Active', 'Actions'].map((h) => <th key={h} className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">{h}</th>)}</tr>
+          </thead>
           <tbody>
-            {categories.map(c => (
-              <tr key={c.id} style={s.tr}>
-                <td style={s.td}><strong>{c.name}</strong></td>
-                <td style={s.td}>{c.position}</td>
-                <td style={s.td}>{c.active ? '✅ Active' : '⏸ Inactive'}</td>
-                <td style={s.td}>
-                  <button onClick={() => openEdit(c)} style={s.editBtn}>Edit</button>
-                  <button onClick={() => destroy(c.id)} style={s.deleteBtn}>Delete</button>
+            {categories.map((c) => (
+              <tr key={c.id} className="border-t border-slate-200">
+                <td className="px-4 py-3 text-sm text-slate-700"><strong>{c.name}</strong></td>
+                <td className="px-4 py-3 text-sm text-slate-700">{c.position}</td>
+                <td className="px-4 py-3 text-sm text-slate-700">{c.active ? '✅ Active' : '⏸ Inactive'}</td>
+                <td className="px-4 py-3 text-sm text-slate-700">
+                  <button onClick={() => openEdit(c)} className="mr-2 rounded-md bg-slate-100 px-3 py-1 text-xs text-slate-700">Edit</button>
+                  <button onClick={() => destroy(c.id)} className="rounded-md bg-red-100 px-3 py-1 text-xs text-red-600">Delete</button>
                 </td>
               </tr>
             ))}
           </tbody>
         </table>
       </div>
+
       {modal && (
-        <div style={s.overlay}>
-          <div style={s.modal}>
-            <div style={s.modalHeader}>
-              <h2 style={{ margin: 0 }}>{modal === 'new' ? 'New Category' : 'Edit Category'}</h2>
-              <button onClick={() => setModal(null)} style={s.closeBtn}>✕</button>
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+          <div className="w-full max-w-md overflow-hidden rounded-2xl bg-white">
+            <div className="flex items-center justify-between border-b border-slate-200 px-6 py-5">
+              <h2 className="text-xl font-semibold text-slate-900">{modal === 'new' ? 'New Category' : 'Edit Category'}</h2>
+              <button onClick={() => setModal(null)} className="text-slate-500">✕</button>
             </div>
-            <form onSubmit={save} style={s.modalBody}>
-              <label style={s.label}>Name *<input required value={form.name} onChange={e => setForm(f => ({ ...f, name: e.target.value }))} style={s.input} /></label>
-              <label style={s.label}>Position<input type="number" value={form.position} onChange={e => setForm(f => ({ ...f, position: Number(e.target.value) }))} style={s.input} /></label>
-              <label style={{ ...s.label, flexDirection: 'row', alignItems: 'center', gap: '0.5rem' }}>
-                <input type="checkbox" checked={form.active} onChange={e => setForm(f => ({ ...f, active: e.target.checked }))} />Active
+            <form onSubmit={save} className="flex flex-col gap-3 p-6">
+              <label className="flex flex-col gap-1 text-sm font-medium text-slate-700">
+                Name *
+                <input required value={form.name} onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))} className="rounded-md border border-slate-300 px-3 py-2" />
               </label>
-              {error && <div style={s.errorMsg}>{error}</div>}
-              <div style={{ display: 'flex', gap: '0.75rem' }}>
-                <button type="submit" disabled={saving} style={s.primaryBtn}>{saving ? 'Saving…' : 'Save'}</button>
-                <button type="button" onClick={() => setModal(null)} style={s.secondaryBtn}>Cancel</button>
+              <label className="flex flex-col gap-1 text-sm font-medium text-slate-700">
+                Position
+                <input type="number" value={form.position} onChange={(e) => setForm((f) => ({ ...f, position: Number(e.target.value) }))} className="rounded-md border border-slate-300 px-3 py-2" />
+              </label>
+              <label className="flex items-center gap-2 text-sm font-medium text-slate-700">
+                <input type="checkbox" checked={form.active} onChange={(e) => setForm((f) => ({ ...f, active: e.target.checked }))} />
+                Active
+              </label>
+              {error && <div className="text-sm text-red-600">{error}</div>}
+              <div className="mt-1 flex gap-3">
+                <button type="submit" disabled={saving} className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700">
+                  {saving ? 'Saving…' : 'Save'}
+                </button>
+                <button type="button" onClick={() => setModal(null)} className="rounded-lg bg-slate-100 px-4 py-2 text-sm font-medium text-slate-700">Cancel</button>
               </div>
             </form>
           </div>
@@ -84,27 +113,4 @@ export default function CategoriesManager() {
       )}
     </div>
   )
-}
-
-const s = {
-  page: { fontFamily: 'Inter, sans-serif', minHeight: '100vh', background: '#f1f5f9' },
-  topbar: { background: '#fff', borderBottom: '1px solid #e5e7eb', padding: '1rem 1.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' },
-  back: { color: '#6b7280', textDecoration: 'none', fontSize: '0.85rem' },
-  title: { margin: '0.25rem 0 0', fontSize: '1.25rem', fontWeight: 700, color: '#111' },
-  content: { padding: '1.5rem', overflowX: 'auto' },
-  table: { width: '100%', borderCollapse: 'collapse', background: '#fff', borderRadius: '12px', overflow: 'hidden', boxShadow: '0 1px 3px rgba(0,0,0,0.07)' },
-  thead: { background: '#f9fafb' }, th: { padding: '0.75rem 1rem', textAlign: 'left', fontSize: '0.8rem', fontWeight: 600, color: '#6b7280', textTransform: 'uppercase', letterSpacing: '0.05em' },
-  tr: { borderTop: '1px solid #e5e7eb' }, td: { padding: '0.85rem 1rem', fontSize: '0.9rem', color: '#374151' },
-  primaryBtn: { background: '#2563eb', color: '#fff', border: 'none', borderRadius: '8px', padding: '0.6rem 1.1rem', fontWeight: 600, cursor: 'pointer', fontSize: '0.9rem' },
-  secondaryBtn: { background: '#f3f4f6', color: '#374151', border: 'none', borderRadius: '8px', padding: '0.6rem 1rem', fontWeight: 500, cursor: 'pointer', fontSize: '0.9rem' },
-  editBtn: { background: '#f3f4f6', color: '#374151', border: 'none', borderRadius: '6px', padding: '0.3rem 0.7rem', cursor: 'pointer', marginRight: '0.4rem', fontSize: '0.85rem' },
-  deleteBtn: { background: '#fee2e2', color: '#dc2626', border: 'none', borderRadius: '6px', padding: '0.3rem 0.7rem', cursor: 'pointer', fontSize: '0.85rem' },
-  overlay: { position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', zIndex: 100, display: 'flex', justifyContent: 'center', alignItems: 'center' },
-  modal: { background: '#fff', borderRadius: '16px', width: '100%', maxWidth: '420px', overflow: 'hidden' },
-  modalHeader: { padding: '1.25rem 1.5rem', borderBottom: '1px solid #e5e7eb', display: 'flex', justifyContent: 'space-between', alignItems: 'center' },
-  modalBody: { padding: '1.5rem', display: 'flex', flexDirection: 'column', gap: '0.85rem' },
-  label: { display: 'flex', flexDirection: 'column', gap: '0.3rem', fontSize: '0.9rem', fontWeight: 500, color: '#374151' },
-  input: { border: '1px solid #d1d5db', borderRadius: '6px', padding: '0.5rem 0.75rem', fontSize: '0.95rem', outline: 'none' },
-  closeBtn: { background: 'none', border: 'none', fontSize: '1.2rem', cursor: 'pointer', color: '#6b7280' },
-  errorMsg: { color: '#dc2626', fontSize: '0.85rem' },
 }

@@ -8,7 +8,7 @@ export default function QrCode() {
   useEffect(() => {
     api.get('/api/v1/admin/restaurant/qr_code')
       .then(setData)
-      .catch(err => setError(err.message))
+      .catch((err) => setError(err.message))
   }, [])
 
   function downloadSvg() {
@@ -22,36 +22,27 @@ export default function QrCode() {
   }
 
   return (
-    <div style={s.page}>
-      <div style={s.topbar}>
-        <a href="/admin/orders" style={s.back}>← Orders</a>
-        <h1 style={s.title}>QR Code</h1>
+    <div className="min-h-screen bg-slate-100 font-sans">
+      <div className="border-b border-slate-200 bg-white px-6 py-4">
+        <a href="/admin/orders" className="mb-1 block text-sm text-slate-500">← Orders</a>
+        <h1 className="text-xl font-bold text-slate-900">QR Code</h1>
       </div>
-      <div style={s.content}>
-        {error && <div style={s.error}>{error}</div>}
+      <div className="flex justify-center px-4 py-12">
+        {error && <div className="text-red-600">{error}</div>}
         {data && (
-          <div style={s.card}>
-            <p style={s.url}>{data.url}</p>
-            <div dangerouslySetInnerHTML={{ __html: data.svg }} style={s.svgWrap} />
-            <button onClick={downloadSvg} style={s.downloadBtn}>⬇ Download SVG</button>
-            <p style={s.hint}>Print and place at tables so customers can scan to order.</p>
+          <div className="w-full max-w-md rounded-2xl bg-white p-10 text-center shadow">
+            <p className="mb-6 break-all text-sm text-blue-600">{data.url}</p>
+            <div className="mx-auto mb-6 inline-block" dangerouslySetInnerHTML={{ __html: data.svg }} />
+            <button
+              onClick={downloadSvg}
+              className="rounded-lg bg-blue-600 px-6 py-3 text-sm font-semibold text-white transition hover:bg-blue-700"
+            >
+              ⬇ Download SVG
+            </button>
+            <p className="mt-4 text-sm text-slate-400">Print and place at tables so customers can scan to order.</p>
           </div>
         )}
       </div>
     </div>
   )
-}
-
-const s = {
-  page: { fontFamily: 'Inter, sans-serif', minHeight: '100vh', background: '#f1f5f9' },
-  topbar: { background: '#fff', borderBottom: '1px solid #e5e7eb', padding: '1rem 1.5rem' },
-  back: { color: '#6b7280', textDecoration: 'none', fontSize: '0.85rem', display: 'block', marginBottom: '0.25rem' },
-  title: { margin: 0, fontSize: '1.25rem', fontWeight: 700, color: '#111' },
-  content: { display: 'flex', justifyContent: 'center', padding: '3rem 1rem' },
-  card: { background: '#fff', borderRadius: '16px', padding: '2.5rem', textAlign: 'center', boxShadow: '0 4px 20px rgba(0,0,0,0.08)', maxWidth: '400px', width: '100%' },
-  url: { color: '#2563eb', fontSize: '0.9rem', wordBreak: 'break-all', marginBottom: '1.5rem' },
-  svgWrap: { display: 'inline-block', margin: '0 auto 1.5rem' },
-  downloadBtn: { background: '#2563eb', color: '#fff', border: 'none', borderRadius: '8px', padding: '0.75rem 1.5rem', fontWeight: 600, cursor: 'pointer', fontSize: '0.95rem' },
-  hint: { color: '#9ca3af', fontSize: '0.85rem', marginTop: '1rem' },
-  error: { color: '#dc2626' },
 }

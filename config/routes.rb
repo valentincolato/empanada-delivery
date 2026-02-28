@@ -1,10 +1,14 @@
 Rails.application.routes.draw do
   devise_for :users
+  devise_scope :user do
+    get "/panel/login", to: "devise/sessions#new", as: :panel_login
+  end
 
   get "up" => "rails/health#show", as: :rails_health_check
 
   # Public pages (React shell)
   get "/r/:slug", to: "menu#show", as: :menu
+  get "/menu/:slug", to: "menu#show", as: :public_menu
   get "/orders/:token", to: "order_status#show", as: :order_status
 
   # Admin pages (React shell)

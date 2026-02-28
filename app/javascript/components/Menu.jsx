@@ -1,8 +1,8 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { api } from '@utils/api'
 import { cart } from '@utils/cart'
 
-export default function Menu({ slug, restaurantName }) {
+export default function Menu({ slug }) {
   const [data, setData] = useState(null)
   const [cartItems, setCartItems] = useState([])
   const [showCart, setShowCart] = useState(false)
@@ -15,6 +15,9 @@ export default function Menu({ slug, restaurantName }) {
     api.get(`/api/v1/public/menu/${slug}`).then(setData).catch(console.error)
     setCartItems(cart.get(slug))
   }, [slug])
+
+  const categories = data?.categories || []
+  const hasProducts = useMemo(() => categories.some((cat) => (cat.products || []).length > 0), [categories])
 
   function addToCart(product) {
     const updated = cart.add(slug, product)
@@ -47,34 +50,62 @@ export default function Menu({ slug, restaurantName }) {
     }
   }
 
-  if (!data) return <div style={styles.loading}>Loading menu…</div>
+  if (!data) {
+    return <div className="flex h-screen items-center justify-center bg-slate-950 font-sans text-slate-400">Loading menu...</div>
+  }
 
   const restaurant = data.restaurant
-  const categories = data.categories || []
   const totalFormatted = `$${(totalCents() / 100).toFixed(2)}`
+  const itemCount = cartItems.reduce((s, i) => s + i.quantity, 0)
 
   return (
-    <div style={styles.page}>
-      <header style={styles.header}>
-        <div style={styles.headerInner}>
-          <h1 style={styles.restaurantName}>{restaurant.name}</h1>
-          {restaurant.description && <p style={styles.restaurantDesc}>{restaurant.description}</p>}
-          {!restaurant.accepting_orders && (
-            <div style={styles.closedBanner}>⏸ Not accepting orders right now</div>
-          )}
+    <div className="min-h-screen bg-slate-950 pb-28 font-sans text-slate-200">
+      <header className="border-b border-slate-700 bg-slate-900">
+        <div className="h-28 bg-gradient-to-br from-slate-700 to-slate-800" />
+        <div className="mx-auto -mt-8 flex max-w-6xl flex-wrap justify-between gap-5 px-4 pb-5">
+          <div className="flex min-w-0 flex-1 gap-4">
+            <div className="grid h-[72px] w-[72px] shrink-0 place-items-center rounded-full border-2 border-amber-500 bg-slate-900 font-bold">
+              {initials(restaurant.name)}
+            </div>
+            <div className="min-w-0">
+              <h1 className="mb-2 text-4xl font-bold text-slate-50">{restaurant.name}</h1>
+              <div className="flex flex-wrap items-center gap-2 text-sm text-slate-400">
+                <span>Horarios Hoy 11:30 a 15:00 y 19:15 a 23:00</span>
+                <span className={`rounded-full px-2.5 py-0.5 text-xs font-bold ${restaurant.accepting_orders ? 'bg-green-600 text-green-50' : 'bg-red-700 text-red-100'}`}>
+                  {restaurant.accepting_orders ? 'Abierto' : 'Cerrado'}
+                </span>
+              </div>
+              {!restaurant.accepting_orders && <div className="mt-1 text-sm text-amber-400">Not accepting orders right now</div>}
+              <div className="mt-3 flex flex-wrap gap-2">
+                {restaurant.phone && (
+                  <a href={`tel:${restaurant.phone}`} className="rounded-lg border border-green-700 bg-green-900 px-3 py-2 text-xs font-semibold text-green-300">
+                    Llamar
+                  </a>
+                )}
+                {restaurant.phone && (
+                  <a href={whatsappUrl(restaurant.phone)} target="_blank" rel="noreferrer" className="rounded-lg border border-green-700 bg-green-900 px-3 py-2 text-xs font-semibold text-green-300">
+                    WhatsApp
+                  </a>
+                )}
+                <a href="#menu-sections" className="rounded-lg bg-orange-500 px-3 py-2 text-xs font-bold text-white">Menu</a>
+              </div>
+            </div>
+          </div>
+
+          <div className="w-full overflow-hidden rounded-xl border border-slate-700 bg-slate-900 text-slate-300 sm:w-60">
+            <div className="border-b border-slate-700 px-3 py-2 text-xs">Donde estamos</div>
+            <div className="min-h-[74px] px-3 py-2 text-sm text-slate-400">{restaurant.address || 'Direccion no disponible'}</div>
+          </div>
         </div>
-        {cartItems.length > 0 && (
-          <button style={styles.cartBtn} onClick={() => setShowCart(true)}>
-            🛒 {cartItems.reduce((s, i) => s + i.quantity, 0)} — {totalFormatted}
-          </button>
-        )}
       </header>
 
-      <main style={styles.main}>
-        {categories.map((cat) => (
-          <section key={cat.id} style={styles.section}>
-            <h2 style={styles.catName}>{cat.name}</h2>
-            <div style={styles.productGrid}>
+      <main className="mx-auto max-w-6xl px-4 py-7" id="menu-sections">
+        {!hasProducts && <EmptyState />}
+
+        {hasProducts && categories.map((cat) => (
+          <section key={cat.id} className="mb-8">
+            <h2 className="mb-3 text-2xl font-bold text-slate-50">{cat.name}</h2>
+            <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
               {(cat.products || []).map((product) => (
                 <ProductCard key={product.id} product={product} onAdd={addToCart} />
               ))}
@@ -82,6 +113,32 @@ export default function Menu({ slug, restaurantName }) {
           </section>
         ))}
       </main>
+
+      <footer className="border-t border-slate-700 bg-slate-900 px-4 pb-20 pt-6 text-center">
+        <div className="mb-4 font-bold text-slate-50">{restaurant.name}</div>
+        <div className="flex flex-wrap justify-center gap-20">
+          <div>
+            <div className="mb-1 font-bold text-slate-100">Ubicacion</div>
+            <div className="text-sm text-slate-400">{restaurant.address || 'No definida'}</div>
+          </div>
+          <div>
+            <div className="mb-1 font-bold text-slate-100">Contacto</div>
+            <div className="text-sm text-slate-400">{restaurant.phone || 'No definido'}</div>
+          </div>
+        </div>
+      </footer>
+
+      {itemCount > 0 && hasProducts && (
+        <button
+          className="fixed bottom-5 left-1/2 z-20 flex -translate-x-1/2 items-center gap-4 rounded-full bg-orange-500 px-5 py-3 font-bold text-white shadow-2xl"
+          onClick={() => setShowCart(true)}
+        >
+          <span className="text-sm">{itemCount} productos - {totalFormatted}</span>
+          <span className="text-base">🛒 Ver pedido</span>
+        </button>
+      )}
+
+      <button className="fixed bottom-5 right-4 z-20 h-11 w-11 rounded-full bg-orange-500 text-sm text-white shadow-2xl" aria-label="Open chat">●</button>
 
       {showCart && !checkout && (
         <CartDrawer
@@ -96,7 +153,7 @@ export default function Menu({ slug, restaurantName }) {
       {checkout && (
         <CheckoutModal
           form={form}
-          onChange={(k, v) => setForm(f => ({ ...f, [k]: v }))}
+          onChange={(k, v) => setForm((f) => ({ ...f, [k]: v }))}
           onSubmit={placeOrder}
           onClose={() => setCheckout(false)}
           submitting={submitting}
@@ -110,42 +167,54 @@ export default function Menu({ slug, restaurantName }) {
 
 function ProductCard({ product, onAdd }) {
   return (
-    <div style={styles.card} data-testid="product-card">
-      {product.image_url && <img src={product.image_url} alt={product.name} style={styles.productImg} />}
-      <div style={styles.cardBody}>
-        <h3 style={styles.productName}>{product.name}</h3>
-        {product.description && <p style={styles.productDesc}>{product.description}</p>}
-        <div style={styles.cardFooter}>
-          <span style={styles.price}>${parseFloat(product.price).toFixed(2)}</span>
-          <button style={styles.addBtn} onClick={() => onAdd(product)}>+ Add</button>
+    <div className="overflow-hidden rounded border border-slate-700 bg-slate-900" data-testid="product-card">
+      {product.image_url && <img src={product.image_url} alt={product.name} className="h-36 w-full object-cover" />}
+      <div className="p-2.5">
+        <h3 className="text-sm font-semibold text-slate-100">{product.name}</h3>
+        {product.description && <p className="mb-2 mt-1 min-h-8 text-xs text-slate-400">{product.description}</p>}
+        <div className="flex items-center justify-between">
+          <span className="text-sm font-bold text-slate-100">${parseFloat(product.price).toFixed(2)}</span>
+          <button className="rounded-md bg-orange-500 px-2.5 py-1.5 text-xs font-bold text-white" onClick={() => onAdd(product)}>+ Add</button>
         </div>
       </div>
     </div>
   )
 }
 
+function EmptyState() {
+  return (
+    <section className="grid min-h-[380px] place-items-center px-4 text-center text-slate-400">
+      <div>
+        <div className="text-6xl opacity-70">🍽</div>
+        <h2 className="mb-1 mt-2 text-3xl font-bold text-slate-50">¡Este menu esta vacio!</h2>
+        <p className="mx-auto max-w-2xl">Si eres el dueno de este restaurante, agrega items y categorias desde el panel de administracion.</p>
+      </div>
+    </section>
+  )
+}
+
 function CartDrawer({ items, onRemove, onCheckout, onClose, total }) {
   return (
-    <div style={styles.overlay}>
-      <div style={styles.drawer}>
-        <div style={styles.drawerHeader}>
-          <h2 style={{ margin: 0 }}>Your Cart</h2>
-          <button onClick={onClose} style={styles.closeBtn}>✕</button>
+    <div className="fixed inset-0 z-[100] flex justify-end bg-black/60">
+      <div className="flex h-full w-full max-w-[420px] flex-col border-l border-slate-700 bg-slate-900 text-slate-100">
+        <div className="flex items-center justify-between border-b border-slate-700 px-6 py-5">
+          <h2 className="text-xl font-bold">Your Cart</h2>
+          <button onClick={onClose} className="text-slate-300">x</button>
         </div>
-        <div style={styles.drawerBody}>
+        <div className="flex-1 space-y-3 overflow-y-auto px-6 py-4">
           {items.map((item) => (
-            <div key={item.product_id} style={styles.cartItem}>
+            <div key={item.product_id} className="flex items-center justify-between text-sm">
               <span>{item.quantity}x {item.product_name}</span>
-              <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+              <div className="flex items-center gap-2">
                 <span>${((item.unit_price_cents * item.quantity) / 100).toFixed(2)}</span>
-                <button onClick={() => onRemove(item.product_id)} style={styles.removeBtn}>✕</button>
+                <button onClick={() => onRemove(item.product_id)} className="text-slate-400">x</button>
               </div>
             </div>
           ))}
         </div>
-        <div style={styles.drawerFooter}>
-          <div style={{ fontWeight: 700, fontSize: '1.1rem' }}>Total: {total}</div>
-          <button style={styles.checkoutBtn} onClick={onCheckout}>Checkout →</button>
+        <div className="flex items-center justify-between border-t border-slate-700 px-6 py-5">
+          <div className="text-lg font-bold">Total: {total}</div>
+          <button className="rounded-lg bg-orange-500 px-5 py-3 text-sm font-bold text-white" onClick={onCheckout}>Checkout →</button>
         </div>
       </div>
     </div>
@@ -160,30 +229,31 @@ function CheckoutModal({ form, onChange, onSubmit, onClose, submitting, error, t
     { key: 'table_number', label: 'Table number', type: 'text' },
     { key: 'notes', label: 'Notes', type: 'text' },
   ]
+
   return (
-    <div style={styles.overlay}>
-      <div style={styles.modal}>
-        <div style={styles.drawerHeader}>
-          <h2 style={{ margin: 0 }}>Checkout</h2>
-          <button onClick={onClose} style={styles.closeBtn}>✕</button>
+    <div className="fixed inset-0 z-[100] flex bg-black/60">
+      <div className="m-auto w-full max-w-xl overflow-hidden rounded-2xl border border-slate-700 bg-slate-900 text-slate-100">
+        <div className="flex items-center justify-between border-b border-slate-700 px-6 py-5">
+          <h2 className="text-xl font-bold">Checkout</h2>
+          <button onClick={onClose} className="text-slate-300">x</button>
         </div>
-        <form onSubmit={onSubmit} style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+        <form onSubmit={onSubmit} className="flex flex-col gap-3 p-6">
           {fields.map(({ key, label, type, required }) => (
-            <label key={key} style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem', fontSize: '0.9rem' }}>
+            <label key={key} className="flex flex-col gap-1 text-sm">
               {label}
               <input
                 type={type}
                 required={required}
                 value={form[key]}
                 onChange={(e) => onChange(key, e.target.value)}
-                style={styles.input}
+                className="rounded-md border border-slate-600 bg-slate-950 px-3 py-2 text-sm text-slate-100"
               />
             </label>
           ))}
-          {error && <div style={{ color: '#dc2626', fontSize: '0.9rem' }}>{error}</div>}
-          <div style={{ fontWeight: 700, marginTop: '0.5rem' }}>Total: {total}</div>
-          <button type="submit" disabled={submitting} style={styles.checkoutBtn}>
-            {submitting ? 'Placing order…' : 'Place Order'}
+          {error && <div className="text-sm text-red-300">{error}</div>}
+          <div className="mt-1 font-bold">Total: {total}</div>
+          <button type="submit" disabled={submitting} className="rounded-lg bg-orange-500 px-5 py-3 text-sm font-bold text-white">
+            {submitting ? 'Placing order...' : 'Place Order'}
           </button>
         </form>
       </div>
@@ -191,36 +261,13 @@ function CheckoutModal({ form, onChange, onSubmit, onClose, submitting, error, t
   )
 }
 
-const styles = {
-  page: { fontFamily: 'Inter, sans-serif', minHeight: '100vh', background: '#f9fafb' },
-  loading: { display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', color: '#666' },
-  header: { background: '#fff', borderBottom: '1px solid #e5e7eb', padding: '1.25rem 1.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', position: 'sticky', top: 0, zIndex: 10 },
-  headerInner: { flex: 1 },
-  restaurantName: { margin: 0, fontSize: '1.5rem', fontWeight: 700, color: '#111' },
-  restaurantDesc: { margin: '0.25rem 0 0', color: '#6b7280', fontSize: '0.9rem' },
-  closedBanner: { marginTop: '0.5rem', background: '#fef3c7', color: '#92400e', padding: '0.4rem 0.75rem', borderRadius: '6px', fontSize: '0.85rem', display: 'inline-block' },
-  cartBtn: { background: '#2563eb', color: '#fff', border: 'none', borderRadius: '8px', padding: '0.6rem 1rem', fontWeight: 600, cursor: 'pointer', fontSize: '0.9rem', whiteSpace: 'nowrap' },
-  main: { maxWidth: '900px', margin: '0 auto', padding: '2rem 1.5rem' },
-  section: { marginBottom: '2.5rem' },
-  catName: { fontSize: '1.25rem', fontWeight: 700, color: '#111', borderBottom: '2px solid #e5e7eb', paddingBottom: '0.5rem', marginBottom: '1rem' },
-  productGrid: { display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: '1rem' },
-  card: { background: '#fff', borderRadius: '12px', overflow: 'hidden', boxShadow: '0 1px 4px rgba(0,0,0,0.08)', border: '1px solid #e5e7eb' },
-  productImg: { width: '100%', height: '160px', objectFit: 'cover' },
-  cardBody: { padding: '1rem' },
-  productName: { margin: '0 0 0.25rem', fontWeight: 600, fontSize: '1rem', color: '#111' },
-  productDesc: { margin: '0 0 0.75rem', fontSize: '0.85rem', color: '#6b7280', lineHeight: 1.4 },
-  cardFooter: { display: 'flex', justifyContent: 'space-between', alignItems: 'center' },
-  price: { fontWeight: 700, color: '#111', fontSize: '1rem' },
-  addBtn: { background: '#2563eb', color: '#fff', border: 'none', borderRadius: '6px', padding: '0.4rem 0.9rem', fontWeight: 600, cursor: 'pointer', fontSize: '0.85rem' },
-  overlay: { position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', zIndex: 100, display: 'flex', justifyContent: 'flex-end' },
-  drawer: { background: '#fff', width: '100%', maxWidth: '420px', height: '100%', display: 'flex', flexDirection: 'column' },
-  modal: { background: '#fff', width: '100%', maxWidth: '480px', margin: 'auto', borderRadius: '16px', overflow: 'hidden' },
-  drawerHeader: { padding: '1.25rem 1.5rem', borderBottom: '1px solid #e5e7eb', display: 'flex', justifyContent: 'space-between', alignItems: 'center' },
-  drawerBody: { flex: 1, overflowY: 'auto', padding: '1rem 1.5rem', display: 'flex', flexDirection: 'column', gap: '0.75rem' },
-  drawerFooter: { padding: '1.25rem 1.5rem', borderTop: '1px solid #e5e7eb', display: 'flex', justifyContent: 'space-between', alignItems: 'center' },
-  cartItem: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.95rem' },
-  removeBtn: { background: 'none', border: 'none', color: '#6b7280', cursor: 'pointer', fontSize: '0.85rem' },
-  closeBtn: { background: 'none', border: 'none', fontSize: '1.2rem', cursor: 'pointer', color: '#6b7280' },
-  checkoutBtn: { background: '#2563eb', color: '#fff', border: 'none', borderRadius: '8px', padding: '0.75rem 1.25rem', fontWeight: 600, cursor: 'pointer', fontSize: '0.95rem' },
-  input: { border: '1px solid #d1d5db', borderRadius: '6px', padding: '0.5rem 0.75rem', fontSize: '0.95rem', outline: 'none' },
+function whatsappUrl(phone) {
+  const cleaned = (phone || '').replace(/[^\d+]/g, '')
+  const numeric = cleaned.startsWith('+') ? cleaned.slice(1) : cleaned
+  return `https://wa.me/${numeric}`
+}
+
+function initials(name) {
+  if (!name) return 'R'
+  return name.split(' ').map((part) => part[0]).join('').slice(0, 2).toUpperCase()
 }

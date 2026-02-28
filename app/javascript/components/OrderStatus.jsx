@@ -31,79 +31,72 @@ export default function OrderStatus({ token }) {
     }
   }
 
-  if (error) return <div style={s.center}><p style={{ color: '#dc2626' }}>{error}</p></div>
-  if (!order) return <div style={s.center}>Loading order…</div>
+  if (error) {
+    return (
+      <div className="flex h-screen items-center justify-center font-sans">
+        <p className="text-red-600">{error}</p>
+      </div>
+    )
+  }
+
+  if (!order) {
+    return <div className="flex h-screen items-center justify-center font-sans">Loading order...</div>
+  }
 
   const isCancelled = order.status === 'cancelled'
   const stepIndex = STATUS_STEPS.indexOf(order.status)
 
   return (
-    <div style={s.page}>
-      <div style={s.card}>
-        <div style={s.header}>
-          <h1 style={s.title}>{order.restaurant_name}</h1>
-          <p style={s.subtitle}>Order #{order.id}</p>
+    <div className="min-h-screen bg-slate-50 px-4 py-8 font-sans">
+      <div className="mx-auto w-full max-w-xl overflow-hidden rounded-2xl bg-white shadow-lg">
+        <div className="bg-blue-600 px-6 py-6 text-white">
+          <h1 className="text-2xl font-bold">{order.restaurant_name}</h1>
+          <p className="mt-1 text-sm text-blue-100">Order #{order.id}</p>
         </div>
 
-        <div style={s.statusBadge(isCancelled)}>
+        <div className={`mx-6 mt-6 rounded-xl px-4 py-3 text-center text-base font-bold ${isCancelled ? 'bg-red-100 text-red-800' : 'bg-green-100 text-green-800'}`}>
           {STATUS_ICONS[order.status]} {STATUS_LABELS[order.status]}
         </div>
 
         {!isCancelled && (
-          <div style={s.steps}>
-            {STATUS_STEPS.map((step, i) => (
-              <div key={step} style={s.step}>
-                <div style={s.stepDot(i <= stepIndex)} />
-                <span style={s.stepLabel(i <= stepIndex)}>{STATUS_LABELS[step]}</span>
-                {i < STATUS_STEPS.length - 1 && <div style={s.stepLine(i < stepIndex)} />}
-              </div>
-            ))}
+          <div className="grid grid-cols-5 gap-2 px-4 py-6 sm:px-6">
+            {STATUS_STEPS.map((step, i) => {
+              const active = i <= stepIndex
+              return (
+                <div key={step} className="text-center">
+                  <div className={`mx-auto mb-2 h-4 w-4 rounded-full ${active ? 'bg-blue-600' : 'bg-slate-200'}`} />
+                  <span className={`text-[10px] font-medium sm:text-xs ${active ? 'text-blue-600' : 'text-slate-400'}`}>
+                    {STATUS_LABELS[step]}
+                  </span>
+                </div>
+              )
+            })}
           </div>
         )}
 
-        <div style={s.section}>
-          <h3 style={s.sectionTitle}>Items</h3>
+        <div className="border-t border-slate-200 px-6 py-4">
+          <h3 className="mb-3 text-xs font-semibold uppercase tracking-wide text-slate-600">Items</h3>
           {order.order_items.map((item) => (
-            <div key={item.id} style={s.item}>
+            <div key={item.id} className="flex justify-between py-1 text-sm text-slate-700">
               <span>{item.quantity}x {item.product_name}</span>
-              <span style={{ fontWeight: 600 }}>${item.subtotal.toFixed(2)}</span>
+              <span className="font-semibold">${item.subtotal.toFixed(2)}</span>
             </div>
           ))}
-          <div style={s.total}>
+          <div className="mt-2 flex justify-between border-t border-slate-200 pt-3 font-bold text-slate-900">
             <span>Total</span>
             <span>${order.total.toFixed(2)}</span>
           </div>
         </div>
 
         {order.notes && (
-          <div style={s.section}>
-            <h3 style={s.sectionTitle}>Notes</h3>
-            <p style={{ margin: 0, color: '#6b7280' }}>{order.notes}</p>
+          <div className="border-t border-slate-200 px-6 py-4">
+            <h3 className="mb-2 text-xs font-semibold uppercase tracking-wide text-slate-600">Notes</h3>
+            <p className="text-sm text-slate-500">{order.notes}</p>
           </div>
         )}
 
-        <p style={s.refresh}>Updates automatically every 15 seconds</p>
+        <p className="px-6 py-4 text-center text-xs text-slate-400">Updates automatically every 15 seconds</p>
       </div>
     </div>
   )
-}
-
-const s = {
-  page: { fontFamily: 'Inter, sans-serif', minHeight: '100vh', background: '#f9fafb', display: 'flex', justifyContent: 'center', alignItems: 'flex-start', padding: '2rem 1rem' },
-  center: { display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', fontFamily: 'Inter, sans-serif' },
-  card: { background: '#fff', borderRadius: '16px', boxShadow: '0 4px 20px rgba(0,0,0,0.08)', width: '100%', maxWidth: '520px', overflow: 'hidden' },
-  header: { background: '#2563eb', padding: '1.5rem', color: '#fff' },
-  title: { margin: 0, fontSize: '1.4rem', fontWeight: 700 },
-  subtitle: { margin: '0.25rem 0 0', opacity: 0.8, fontSize: '0.9rem' },
-  statusBadge: (cancelled) => ({ margin: '1.5rem 1.5rem 0', padding: '0.75rem 1rem', borderRadius: '10px', background: cancelled ? '#fee2e2' : '#dcfce7', color: cancelled ? '#991b1b' : '#166534', fontWeight: 700, fontSize: '1rem', textAlign: 'center' }),
-  steps: { display: 'flex', justifyContent: 'space-between', padding: '1.5rem', alignItems: 'center' },
-  step: { display: 'flex', flexDirection: 'column', alignItems: 'center', flex: 1, position: 'relative' },
-  stepDot: (active) => ({ width: 16, height: 16, borderRadius: '50%', background: active ? '#2563eb' : '#e5e7eb', marginBottom: '0.4rem' }),
-  stepLabel: (active) => ({ fontSize: '0.65rem', color: active ? '#2563eb' : '#9ca3af', textAlign: 'center', fontWeight: active ? 600 : 400 }),
-  stepLine: (active) => ({ position: 'absolute', top: 7, left: '50%', width: '100%', height: 2, background: active ? '#2563eb' : '#e5e7eb', zIndex: 0 }),
-  section: { padding: '1rem 1.5rem', borderTop: '1px solid #e5e7eb' },
-  sectionTitle: { margin: '0 0 0.75rem', fontSize: '0.85rem', fontWeight: 600, color: '#374151', textTransform: 'uppercase', letterSpacing: '0.05em' },
-  item: { display: 'flex', justifyContent: 'space-between', padding: '0.35rem 0', fontSize: '0.95rem', color: '#374151' },
-  total: { display: 'flex', justifyContent: 'space-between', padding: '0.75rem 0 0', borderTop: '1px solid #e5e7eb', fontWeight: 700, marginTop: '0.5rem' },
-  refresh: { textAlign: 'center', padding: '1rem', fontSize: '0.75rem', color: '#9ca3af', margin: 0 },
 }

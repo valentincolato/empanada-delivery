@@ -17,16 +17,20 @@ export default function RestaurantsManager() {
 
   function openNew() {
     setForm({ name: '', slug: '', address: '', phone: '', description: '', currency: 'ARS', admin_email: '', admin_password: '', admin_name: '' })
-    setModal('new'); setError(null)
+    setModal('new')
+    setError(null)
   }
 
   function openEdit(r) {
     setForm({ name: r.name, slug: r.slug, address: r.address || '', phone: r.phone || '', description: r.description || '', currency: r.currency, active: r.active })
-    setModal(r); setError(null)
+    setModal(r)
+    setError(null)
   }
 
   async function save(e) {
-    e.preventDefault(); setSaving(true); setError(null)
+    e.preventDefault()
+    setSaving(true)
+    setError(null)
     try {
       if (modal === 'new') {
         await api.post('/api/v1/super_admin/restaurants', {
@@ -38,8 +42,13 @@ export default function RestaurantsManager() {
       } else {
         await api.patch(`/api/v1/super_admin/restaurants/${modal.id}`, { restaurant: form })
       }
-      await loadRestaurants(); setModal(null)
-    } catch (err) { setError(err.message) } finally { setSaving(false) }
+      await loadRestaurants()
+      setModal(null)
+    } catch (err) {
+      setError(err.message)
+    } finally {
+      setSaving(false)
+    }
   }
 
   async function destroy(id) {
@@ -49,25 +58,28 @@ export default function RestaurantsManager() {
   }
 
   return (
-    <div style={s.page}>
-      <div style={s.topbar}>
-        <h1 style={s.title}>Restaurants</h1>
-        <button onClick={openNew} style={s.primaryBtn}>+ New Restaurant</button>
+    <div className="min-h-screen bg-slate-100 font-sans">
+      <div className="flex items-center justify-between border-b border-slate-200 bg-white px-6 py-4">
+        <h1 className="text-xl font-bold text-slate-900">Restaurants</h1>
+        <button onClick={openNew} className="rounded-lg bg-violet-600 px-4 py-2 text-sm font-semibold text-white hover:bg-violet-700">+ New Restaurant</button>
       </div>
-      <div style={s.content}>
-        <table style={s.table}>
-          <thead><tr style={s.thead}>{['Name', 'Slug', 'Currency', 'Active', 'Actions'].map(h => <th key={h} style={s.th}>{h}</th>)}</tr></thead>
+
+      <div className="overflow-x-auto p-6">
+        <table className="w-full overflow-hidden rounded-xl bg-white shadow">
+          <thead className="bg-slate-50">
+            <tr>{['Name', 'Slug', 'Currency', 'Active', 'Actions'].map((h) => <th key={h} className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">{h}</th>)}</tr>
+          </thead>
           <tbody>
-            {restaurants.map(r => (
-              <tr key={r.id} style={s.tr}>
-                <td style={s.td}><strong>{r.name}</strong></td>
-                <td style={s.td}><code style={s.code}>{r.slug}</code></td>
-                <td style={s.td}>{r.currency}</td>
-                <td style={s.td}>{r.active ? '✅' : '⏸'}</td>
-                <td style={s.td}>
-                  <a href={`/r/${r.slug}`} target="_blank" style={s.viewLink}>View menu</a>
-                  <button onClick={() => openEdit(r)} style={s.editBtn}>Edit</button>
-                  <button onClick={() => destroy(r.id)} style={s.deleteBtn}>Delete</button>
+            {restaurants.map((r) => (
+              <tr key={r.id} className="border-t border-slate-200">
+                <td className="px-4 py-3 text-sm text-slate-700"><strong>{r.name}</strong></td>
+                <td className="px-4 py-3 text-sm text-slate-700"><code className="rounded bg-slate-100 px-1.5 py-0.5 text-xs">{r.slug}</code></td>
+                <td className="px-4 py-3 text-sm text-slate-700">{r.currency}</td>
+                <td className="px-4 py-3 text-sm text-slate-700">{r.active ? '✅' : '⏸'}</td>
+                <td className="px-4 py-3 text-sm text-slate-700">
+                  <a href={`/r/${r.slug}`} target="_blank" rel="noreferrer" className="mr-2 text-xs text-blue-600">View menu</a>
+                  <button onClick={() => openEdit(r)} className="mr-2 rounded-md bg-slate-100 px-3 py-1 text-xs text-slate-700">Edit</button>
+                  <button onClick={() => destroy(r.id)} className="rounded-md bg-red-100 px-3 py-1 text-xs text-red-600">Delete</button>
                 </td>
               </tr>
             ))}
@@ -76,38 +88,46 @@ export default function RestaurantsManager() {
       </div>
 
       {modal && (
-        <div style={s.overlay}>
-          <div style={s.modal}>
-            <div style={s.modalHeader}>
-              <h2 style={{ margin: 0 }}>{modal === 'new' ? 'New Restaurant' : `Edit: ${modal.name}`}</h2>
-              <button onClick={() => setModal(null)} style={s.closeBtn}>✕</button>
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+          <div className="max-h-[90vh] w-full max-w-xl overflow-y-auto rounded-2xl bg-white">
+            <div className="flex items-center justify-between border-b border-slate-200 px-6 py-5">
+              <h2 className="text-xl font-semibold text-slate-900">{modal === 'new' ? 'New Restaurant' : `Edit: ${modal.name}`}</h2>
+              <button onClick={() => setModal(null)} className="text-slate-500">✕</button>
             </div>
-            <form onSubmit={save} style={s.modalBody}>
-              {[['name','Name *',true],['slug','Slug'],['address','Address'],['phone','Phone'],['description','Description']].map(([key,label,req]) => (
-                <label key={key} style={s.label}>{label}
-                  <input required={req} value={form[key] || ''} onChange={e => setForm(f => ({ ...f, [key]: e.target.value }))} style={s.input} />
+            <form onSubmit={save} className="flex flex-col gap-3 p-6">
+              {[['name', 'Name *', true], ['slug', 'Slug'], ['address', 'Address'], ['phone', 'Phone'], ['description', 'Description']].map(([key, label, req]) => (
+                <label key={key} className="flex flex-col gap-1 text-sm font-medium text-slate-700">
+                  {label}
+                  <input required={req} value={form[key] || ''} onChange={(e) => setForm((f) => ({ ...f, [key]: e.target.value }))} className="rounded-md border border-slate-300 px-3 py-2" />
                 </label>
               ))}
-              <label style={s.label}>Currency
-                <select value={form.currency} onChange={e => setForm(f => ({ ...f, currency: e.target.value }))} style={s.input}>
-                  {['ARS','USD','EUR'].map(c => <option key={c} value={c}>{c}</option>)}
+
+              <label className="flex flex-col gap-1 text-sm font-medium text-slate-700">
+                Currency
+                <select value={form.currency} onChange={(e) => setForm((f) => ({ ...f, currency: e.target.value }))} className="rounded-md border border-slate-300 px-3 py-2">
+                  {['ARS', 'USD', 'EUR'].map((c) => <option key={c} value={c}>{c}</option>)}
                 </select>
               </label>
+
               {modal === 'new' && (
                 <>
-                  <hr />
-                  <p style={{ margin: 0, fontWeight: 600, color: '#374151' }}>Admin User</p>
-                  {[['admin_email','Admin Email *',true,'email'],['admin_password','Admin Password *',true,'password'],['admin_name','Admin Name']].map(([key,label,req,type='text']) => (
-                    <label key={key} style={s.label}>{label}
-                      <input required={req} type={type} value={form[key] || ''} onChange={e => setForm(f => ({ ...f, [key]: e.target.value }))} style={s.input} />
+                  <hr className="my-2 border-slate-200" />
+                  <p className="font-semibold text-slate-700">Admin User</p>
+                  {[['admin_email', 'Admin Email *', true, 'email'], ['admin_password', 'Admin Password *', true, 'password'], ['admin_name', 'Admin Name']].map(([key, label, req, type = 'text']) => (
+                    <label key={key} className="flex flex-col gap-1 text-sm font-medium text-slate-700">
+                      {label}
+                      <input required={req} type={type} value={form[key] || ''} onChange={(e) => setForm((f) => ({ ...f, [key]: e.target.value }))} className="rounded-md border border-slate-300 px-3 py-2" />
                     </label>
                   ))}
                 </>
               )}
-              {error && <div style={s.errorMsg}>{error}</div>}
-              <div style={{ display: 'flex', gap: '0.75rem' }}>
-                <button type="submit" disabled={saving} style={s.primaryBtn}>{saving ? 'Saving…' : 'Save'}</button>
-                <button type="button" onClick={() => setModal(null)} style={s.secondaryBtn}>Cancel</button>
+
+              {error && <div className="text-sm text-red-600">{error}</div>}
+              <div className="mt-1 flex gap-3">
+                <button type="submit" disabled={saving} className="rounded-lg bg-violet-600 px-4 py-2 text-sm font-semibold text-white hover:bg-violet-700">
+                  {saving ? 'Saving…' : 'Save'}
+                </button>
+                <button type="button" onClick={() => setModal(null)} className="rounded-lg bg-slate-100 px-4 py-2 text-sm font-medium text-slate-700">Cancel</button>
               </div>
             </form>
           </div>
@@ -115,28 +135,4 @@ export default function RestaurantsManager() {
       )}
     </div>
   )
-}
-
-const s = {
-  page: { fontFamily: 'Inter, sans-serif', minHeight: '100vh', background: '#f1f5f9' },
-  topbar: { background: '#fff', borderBottom: '1px solid #e5e7eb', padding: '1rem 1.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' },
-  title: { margin: 0, fontSize: '1.25rem', fontWeight: 700, color: '#111' },
-  content: { padding: '1.5rem', overflowX: 'auto' },
-  table: { width: '100%', borderCollapse: 'collapse', background: '#fff', borderRadius: '12px', overflow: 'hidden', boxShadow: '0 1px 3px rgba(0,0,0,0.07)' },
-  thead: { background: '#f9fafb' }, th: { padding: '0.75rem 1rem', textAlign: 'left', fontSize: '0.8rem', fontWeight: 600, color: '#6b7280', textTransform: 'uppercase', letterSpacing: '0.05em' },
-  tr: { borderTop: '1px solid #e5e7eb' }, td: { padding: '0.85rem 1rem', fontSize: '0.9rem', color: '#374151' },
-  code: { background: '#f3f4f6', padding: '0.15rem 0.4rem', borderRadius: '4px', fontSize: '0.85rem' },
-  viewLink: { color: '#2563eb', textDecoration: 'none', marginRight: '0.5rem', fontSize: '0.85rem' },
-  primaryBtn: { background: '#7c3aed', color: '#fff', border: 'none', borderRadius: '8px', padding: '0.6rem 1.1rem', fontWeight: 600, cursor: 'pointer', fontSize: '0.9rem' },
-  secondaryBtn: { background: '#f3f4f6', color: '#374151', border: 'none', borderRadius: '8px', padding: '0.6rem 1rem', fontWeight: 500, cursor: 'pointer', fontSize: '0.9rem' },
-  editBtn: { background: '#f3f4f6', color: '#374151', border: 'none', borderRadius: '6px', padding: '0.3rem 0.7rem', cursor: 'pointer', marginRight: '0.4rem', fontSize: '0.85rem' },
-  deleteBtn: { background: '#fee2e2', color: '#dc2626', border: 'none', borderRadius: '6px', padding: '0.3rem 0.7rem', cursor: 'pointer', fontSize: '0.85rem' },
-  overlay: { position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', zIndex: 100, display: 'flex', justifyContent: 'center', alignItems: 'center', padding: '1rem' },
-  modal: { background: '#fff', borderRadius: '16px', width: '100%', maxWidth: '520px', overflow: 'hidden', maxHeight: '90vh', overflowY: 'auto' },
-  modalHeader: { padding: '1.25rem 1.5rem', borderBottom: '1px solid #e5e7eb', display: 'flex', justifyContent: 'space-between', alignItems: 'center' },
-  modalBody: { padding: '1.5rem', display: 'flex', flexDirection: 'column', gap: '0.75rem' },
-  label: { display: 'flex', flexDirection: 'column', gap: '0.3rem', fontSize: '0.9rem', fontWeight: 500, color: '#374151' },
-  input: { border: '1px solid #d1d5db', borderRadius: '6px', padding: '0.5rem 0.75rem', fontSize: '0.95rem', outline: 'none' },
-  closeBtn: { background: 'none', border: 'none', fontSize: '1.2rem', cursor: 'pointer', color: '#6b7280' },
-  errorMsg: { color: '#dc2626', fontSize: '0.85rem' },
 }

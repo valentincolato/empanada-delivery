@@ -4,7 +4,7 @@ import { api } from '@utils/api'
 export default function ProductsManager() {
   const [products, setProducts] = useState([])
   const [categories, setCategories] = useState([])
-  const [modal, setModal] = useState(null) // null | 'new' | product
+  const [modal, setModal] = useState(null)
   const [form, setForm] = useState({})
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState(null)
@@ -37,11 +37,8 @@ export default function ProductsManager() {
     setSaving(true)
     setError(null)
     try {
-      if (modal === 'new') {
-        await api.post('/api/v1/admin/products', { product: form })
-      } else {
-        await api.patch(`/api/v1/admin/products/${modal.id}`, { product: form })
-      }
+      if (modal === 'new') await api.post('/api/v1/admin/products', { product: form })
+      else await api.patch(`/api/v1/admin/products/${modal.id}`, { product: form })
       await loadData()
       setModal(null)
     } catch (err) {
@@ -63,36 +60,37 @@ export default function ProductsManager() {
   }
 
   return (
-    <div style={s.page}>
-      <div style={s.topbar}>
+    <div className="min-h-screen bg-slate-100 font-sans">
+      <div className="flex items-center justify-between border-b border-slate-200 bg-white px-6 py-4">
         <div>
-          <a href="/admin/orders" style={s.back}>← Orders</a>
-          <h1 style={s.title}>Products</h1>
+          <a href="/admin/orders" className="text-sm text-slate-500">← Orders</a>
+          <h1 className="mt-1 text-xl font-bold text-slate-900">Products</h1>
         </div>
-        <button onClick={openNew} style={s.primaryBtn}>+ New Product</button>
+        <button onClick={openNew} className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700">+ New Product</button>
       </div>
 
-      <div style={s.content}>
-        <table style={s.table}>
-          <thead>
-            <tr style={s.thead}>
-              {['Name', 'Category', 'Price', 'Available', 'Actions'].map(h => <th key={h} style={s.th}>{h}</th>)}
-            </tr>
+      <div className="overflow-x-auto p-6">
+        <table className="w-full overflow-hidden rounded-xl bg-white shadow">
+          <thead className="bg-slate-50">
+            <tr>{['Name', 'Category', 'Price', 'Available', 'Actions'].map((h) => <th key={h} className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">{h}</th>)}</tr>
           </thead>
           <tbody>
-            {products.map(p => (
-              <tr key={p.id} style={s.tr}>
-                <td style={s.td}><span style={{ fontWeight: 600 }}>{p.name}</span></td>
-                <td style={s.td}>{categories.find(c => c.id === p.category_id)?.name || '—'}</td>
-                <td style={s.td}>${parseFloat(p.price).toFixed(2)}</td>
-                <td style={s.td}>
-                  <button onClick={() => toggleAvailability(p)} style={p.available ? s.greenBadge : s.grayBadge}>
+            {products.map((p) => (
+              <tr key={p.id} className="border-t border-slate-200">
+                <td className="px-4 py-3 text-sm text-slate-700"><span className="font-semibold">{p.name}</span></td>
+                <td className="px-4 py-3 text-sm text-slate-700">{categories.find((c) => c.id === p.category_id)?.name || '—'}</td>
+                <td className="px-4 py-3 text-sm text-slate-700">${parseFloat(p.price).toFixed(2)}</td>
+                <td className="px-4 py-3 text-sm text-slate-700">
+                  <button
+                    onClick={() => toggleAvailability(p)}
+                    className={`rounded-full px-3 py-1 text-xs font-semibold ${p.available ? 'bg-green-100 text-green-700' : 'bg-slate-200 text-slate-500'}`}
+                  >
                     {p.available ? 'Available' : 'Unavailable'}
                   </button>
                 </td>
-                <td style={s.td}>
-                  <button onClick={() => openEdit(p)} style={s.editBtn}>Edit</button>
-                  <button onClick={() => destroy(p.id)} style={s.deleteBtn}>Delete</button>
+                <td className="px-4 py-3 text-sm text-slate-700">
+                  <button onClick={() => openEdit(p)} className="mr-2 rounded-md bg-slate-100 px-3 py-1 text-xs text-slate-700">Edit</button>
+                  <button onClick={() => destroy(p.id)} className="rounded-md bg-red-100 px-3 py-1 text-xs text-red-600">Delete</button>
                 </td>
               </tr>
             ))}
@@ -101,38 +99,45 @@ export default function ProductsManager() {
       </div>
 
       {modal && (
-        <div style={s.overlay}>
-          <div style={s.modal}>
-            <div style={s.modalHeader}>
-              <h2 style={{ margin: 0 }}>{modal === 'new' ? 'New Product' : 'Edit Product'}</h2>
-              <button onClick={() => setModal(null)} style={s.closeBtn}>✕</button>
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+          <div className="w-full max-w-xl overflow-hidden rounded-2xl bg-white">
+            <div className="flex items-center justify-between border-b border-slate-200 px-6 py-5">
+              <h2 className="text-xl font-semibold text-slate-900">{modal === 'new' ? 'New Product' : 'Edit Product'}</h2>
+              <button onClick={() => setModal(null)} className="text-slate-500">✕</button>
             </div>
-            <form onSubmit={save} style={s.modalBody}>
-              <label style={s.label}>Name *
-                <input autoFocus required value={form.name} onChange={e => setForm(f => ({ ...f, name: e.target.value }))} style={s.input} />
+            <form onSubmit={save} className="flex flex-col gap-3 p-6">
+              <label className="flex flex-col gap-1 text-sm font-medium text-slate-700">
+                Name *
+                <input autoFocus required value={form.name} onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))} className="rounded-md border border-slate-300 px-3 py-2" />
               </label>
-              <label style={s.label}>Description
-                <textarea value={form.description} onChange={e => setForm(f => ({ ...f, description: e.target.value }))} style={{ ...s.input, height: '80px' }} />
+              <label className="flex flex-col gap-1 text-sm font-medium text-slate-700">
+                Description
+                <textarea value={form.description} onChange={(e) => setForm((f) => ({ ...f, description: e.target.value }))} className="h-20 resize-y rounded-md border border-slate-300 px-3 py-2" />
               </label>
-              <label style={s.label}>Price *
-                <input required type="number" step="0.01" value={form.price} onChange={e => setForm(f => ({ ...f, price: e.target.value }))} style={s.input} />
+              <label className="flex flex-col gap-1 text-sm font-medium text-slate-700">
+                Price *
+                <input required type="number" step="0.01" value={form.price} onChange={(e) => setForm((f) => ({ ...f, price: e.target.value }))} className="rounded-md border border-slate-300 px-3 py-2" />
               </label>
-              <label style={s.label}>Category *
-                <select value={form.category_id} onChange={e => setForm(f => ({ ...f, category_id: Number(e.target.value) }))} style={s.input}>
-                  {categories.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
+              <label className="flex flex-col gap-1 text-sm font-medium text-slate-700">
+                Category *
+                <select value={form.category_id} onChange={(e) => setForm((f) => ({ ...f, category_id: Number(e.target.value) }))} className="rounded-md border border-slate-300 px-3 py-2">
+                  {categories.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
                 </select>
               </label>
-              <label style={s.label}>Position
-                <input type="number" value={form.position} onChange={e => setForm(f => ({ ...f, position: Number(e.target.value) }))} style={s.input} />
+              <label className="flex flex-col gap-1 text-sm font-medium text-slate-700">
+                Position
+                <input type="number" value={form.position} onChange={(e) => setForm((f) => ({ ...f, position: Number(e.target.value) }))} className="rounded-md border border-slate-300 px-3 py-2" />
               </label>
-              <label style={{ ...s.label, flexDirection: 'row', alignItems: 'center', gap: '0.5rem' }}>
-                <input type="checkbox" checked={form.available} onChange={e => setForm(f => ({ ...f, available: e.target.checked }))} />
+              <label className="flex items-center gap-2 text-sm font-medium text-slate-700">
+                <input type="checkbox" checked={form.available} onChange={(e) => setForm((f) => ({ ...f, available: e.target.checked }))} />
                 Available
               </label>
-              {error && <div style={s.errorMsg}>{error}</div>}
-              <div style={{ display: 'flex', gap: '0.75rem', marginTop: '0.5rem' }}>
-                <button type="submit" disabled={saving} style={s.primaryBtn}>{saving ? 'Saving…' : 'Save'}</button>
-                <button type="button" onClick={() => setModal(null)} style={s.secondaryBtn}>Cancel</button>
+              {error && <div className="text-sm text-red-600">{error}</div>}
+              <div className="mt-1 flex gap-3">
+                <button type="submit" disabled={saving} className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700">
+                  {saving ? 'Saving…' : 'Save'}
+                </button>
+                <button type="button" onClick={() => setModal(null)} className="rounded-lg bg-slate-100 px-4 py-2 text-sm font-medium text-slate-700">Cancel</button>
               </div>
             </form>
           </div>
@@ -140,31 +145,4 @@ export default function ProductsManager() {
       )}
     </div>
   )
-}
-
-const s = {
-  page: { fontFamily: 'Inter, sans-serif', minHeight: '100vh', background: '#f1f5f9' },
-  topbar: { background: '#fff', borderBottom: '1px solid #e5e7eb', padding: '1rem 1.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' },
-  back: { color: '#6b7280', textDecoration: 'none', fontSize: '0.85rem' },
-  title: { margin: '0.25rem 0 0', fontSize: '1.25rem', fontWeight: 700, color: '#111' },
-  content: { padding: '1.5rem', overflowX: 'auto' },
-  table: { width: '100%', borderCollapse: 'collapse', background: '#fff', borderRadius: '12px', overflow: 'hidden', boxShadow: '0 1px 3px rgba(0,0,0,0.07)' },
-  thead: { background: '#f9fafb' },
-  th: { padding: '0.75rem 1rem', textAlign: 'left', fontSize: '0.8rem', fontWeight: 600, color: '#6b7280', textTransform: 'uppercase', letterSpacing: '0.05em' },
-  tr: { borderTop: '1px solid #e5e7eb' },
-  td: { padding: '0.85rem 1rem', fontSize: '0.9rem', color: '#374151' },
-  primaryBtn: { background: '#2563eb', color: '#fff', border: 'none', borderRadius: '8px', padding: '0.6rem 1.1rem', fontWeight: 600, cursor: 'pointer', fontSize: '0.9rem' },
-  secondaryBtn: { background: '#f3f4f6', color: '#374151', border: 'none', borderRadius: '8px', padding: '0.6rem 1rem', fontWeight: 500, cursor: 'pointer', fontSize: '0.9rem' },
-  editBtn: { background: '#f3f4f6', color: '#374151', border: 'none', borderRadius: '6px', padding: '0.3rem 0.7rem', cursor: 'pointer', marginRight: '0.4rem', fontSize: '0.85rem' },
-  deleteBtn: { background: '#fee2e2', color: '#dc2626', border: 'none', borderRadius: '6px', padding: '0.3rem 0.7rem', cursor: 'pointer', fontSize: '0.85rem' },
-  greenBadge: { background: '#dcfce7', color: '#166534', border: 'none', borderRadius: '9999px', padding: '0.2rem 0.7rem', fontSize: '0.8rem', cursor: 'pointer', fontWeight: 600 },
-  grayBadge: { background: '#f3f4f6', color: '#6b7280', border: 'none', borderRadius: '9999px', padding: '0.2rem 0.7rem', fontSize: '0.8rem', cursor: 'pointer' },
-  overlay: { position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', zIndex: 100, display: 'flex', justifyContent: 'center', alignItems: 'center' },
-  modal: { background: '#fff', borderRadius: '16px', width: '100%', maxWidth: '480px', overflow: 'hidden' },
-  modalHeader: { padding: '1.25rem 1.5rem', borderBottom: '1px solid #e5e7eb', display: 'flex', justifyContent: 'space-between', alignItems: 'center' },
-  modalBody: { padding: '1.5rem', display: 'flex', flexDirection: 'column', gap: '0.85rem' },
-  label: { display: 'flex', flexDirection: 'column', gap: '0.3rem', fontSize: '0.9rem', fontWeight: 500, color: '#374151' },
-  input: { border: '1px solid #d1d5db', borderRadius: '6px', padding: '0.5rem 0.75rem', fontSize: '0.95rem', outline: 'none', resize: 'vertical' },
-  closeBtn: { background: 'none', border: 'none', fontSize: '1.2rem', cursor: 'pointer', color: '#6b7280' },
-  errorMsg: { color: '#dc2626', fontSize: '0.85rem' },
 }
