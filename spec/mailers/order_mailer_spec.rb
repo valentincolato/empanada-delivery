@@ -6,7 +6,7 @@ RSpec.describe OrderMailer, type: :mailer do
     let(:order) { create(:order, restaurant: restaurant) }
 
     it "sends to restaurant admin emails when present" do
-      admin = create(:user, :restaurant_admin, restaurant: restaurant, email: "admin@restaurant.test")
+      admin = create(:user, :restaurant_admin, membership_restaurant: restaurant, email: "admin@restaurant.test")
 
       mail = described_class.new_order_notification(order)
 

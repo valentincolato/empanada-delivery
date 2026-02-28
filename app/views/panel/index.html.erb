@@ -11,8 +11,12 @@
   </header>
 
   <main class="mx-auto w-full max-w-6xl px-4 py-8 sm:px-6">
+    <% admin_restaurants = current_user.restaurants.to_a %>
+    <% current_panel_restaurant = admin_restaurants.find { |restaurant| restaurant.id == session[:admin_restaurant_id] } || admin_restaurants.first %>
+    <% current_panel_membership = current_user.membership_for(current_panel_restaurant) if current_panel_restaurant.present? %>
+
     <% if current_user.super_admin? %>
-      <section class="mb-8 rounded-2xl border border-[var(--line-soft)] bg-[linear-gradient(135deg,#f8f0e2,#f2e7d3)] p-6 text-[var(--ink-900)] shadow-[0_12px_28px_rgba(22,18,10,0.08)]">
+      <section class="mb-8 rounded-2xl border border-[var(--line-soft)] bg-[linear-gradient(135deg,#1b2029,#121720)] p-6 text-[var(--ink-900)] shadow-[0_18px_40px_rgba(0,0,0,0.35)]">
         <p class="text-xs font-semibold uppercase tracking-[0.16em] text-[var(--gold-700)]">Super Admin</p>
         <h2 class="mt-2 font-display text-4xl font-semibold"><%= t('panel.super_admin.title') %></h2>
         <p class="mt-2 max-w-2xl text-sm text-[var(--ink-700)]"><%= t('panel.super_admin.description') %></p>
@@ -23,10 +27,14 @@
     <% end %>
 
     <% if current_user.restaurant_admin? %>
+      <% if admin_restaurants.count > 1 %>
+        <%= component("admin/RestaurantSwitcher", restaurants: admin_restaurants.map { |restaurant| { id: restaurant.id, name: restaurant.name, slug: restaurant.slug } }) %>
+      <% end %>
+
       <section class="mb-8">
         <div class="mb-4">
           <p class="text-xs font-semibold uppercase tracking-[0.16em] text-[var(--gold-700)]"><%= t('panel.restaurant_admin.label') %></p>
-          <h2 class="font-display text-4xl font-semibold text-[var(--ink-900)]"><%= current_user.restaurant&.name || "Panel de gestión" %></h2>
+          <h2 class="font-display text-4xl font-semibold text-[var(--ink-900)]"><%= current_panel_restaurant&.name || "Panel de gestión" %></h2>
         </div>
 
         <div class="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
@@ -34,9 +42,11 @@
             [t('panel.restaurant_admin.sections.orders'), "/admin/orders", t('panel.restaurant_admin.sections.orders_desc')],
             [t('panel.restaurant_admin.sections.products'), "/admin/products", t('panel.restaurant_admin.sections.products_desc')],
             [t('panel.restaurant_admin.sections.categories'), "/admin/categories", t('panel.restaurant_admin.sections.categories_desc')],
-            [t('panel.restaurant_admin.sections.qr'), "/admin/qr", t('panel.restaurant_admin.sections.qr_desc')]
+            [t('panel.restaurant_admin.sections.qr'), "/admin/qr", t('panel.restaurant_admin.sections.qr_desc')],
+            [t('panel.restaurant_admin.sections.members'), "/admin/members", t('panel.restaurant_admin.sections.members_desc')]
           ].each do |title, href, description| %>
-            <a href="<%= href %>" class="group elegant-card bg-white/80 p-5 transition hover:-translate-y-0.5">
+            <% next if href == "/admin/members" && !current_panel_membership&.owner? %>
+            <a href="<%= href %>" class="group elegant-card bg-[var(--panel)] p-5 transition hover:-translate-y-0.5">
               <h3 class="font-display text-3xl font-semibold text-[var(--ink-900)]"><%= title %></h3>
               <p class="mt-1 text-sm text-[var(--ink-700)]"><%= description %></p>
               <p class="mt-4 text-xs font-semibold uppercase tracking-[0.14em] text-[var(--gold-700)]"><%= t('panel.restaurant_admin.enter') %></p>
@@ -44,20 +54,20 @@
           <% end %>
         </div>
 
-        <% if current_user.restaurant&.slug.present? %>
-          <div class="mt-5 elegant-card bg-white/80 p-5">
+        <% if current_panel_restaurant&.slug.present? %>
+          <div class="mt-5 elegant-card bg-[var(--panel)] p-5">
             <h3 class="text-base font-semibold text-[var(--ink-900)]"><%= t('panel.restaurant_admin.public_access') %></h3>
             <p class="mt-1 text-sm text-[var(--ink-700)]"><%= t('panel.restaurant_admin.public_access_desc') %></p>
-            <a href="/r/<%= current_user.restaurant.slug %>" target="_blank" rel="noreferrer" class="elegant-button-secondary mt-4 !rounded-lg !px-3 !py-2 !text-sm"><%= t('panel.restaurant_admin.open_public_menu') %></a>
+            <a href="/r/<%= current_panel_restaurant.slug %>" target="_blank" rel="noreferrer" class="elegant-button-secondary mt-4 !rounded-lg !px-3 !py-2 !text-sm"><%= t('panel.restaurant_admin.open_public_menu') %></a>
           </div>
         <% end %>
       </section>
     <% end %>
 
     <% if !current_user.super_admin? && !current_user.restaurant_admin? %>
-      <section class="rounded-xl border border-amber-300 bg-amber-50 p-5">
-        <h2 class="text-lg font-semibold text-amber-900"><%= t('panel.restaurant_admin.no_access_title') %></h2>
-        <p class="mt-2 text-sm text-amber-800"><%= t('panel.restaurant_admin.no_access_description') %></p>
+      <section class="rounded-xl border border-[var(--gold-700)]/40 bg-[var(--panel-strong)] p-5">
+        <h2 class="text-lg font-semibold text-[var(--ink-900)]"><%= t('panel.restaurant_admin.no_access_title') %></h2>
+        <p class="mt-2 text-sm text-[var(--ink-700)]"><%= t('panel.restaurant_admin.no_access_description') %></p>
       </section>
     <% end %>
   </main>

@@ -7,12 +7,20 @@ FactoryBot.define do
 
     trait :restaurant_admin do
       role { :restaurant_admin }
-      association :restaurant
+
+      transient do
+        membership_restaurant { nil }
+        membership_role { :owner }
+      end
+
+      after(:create) do |user, evaluator|
+        restaurant = evaluator.membership_restaurant || create(:restaurant)
+        create(:restaurant_membership, user: user, restaurant: restaurant, role: evaluator.membership_role)
+      end
     end
 
     trait :super_admin do
       role { :super_admin }
-      restaurant { nil }
     end
   end
 end

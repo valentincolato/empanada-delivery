@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_02_28_180000) do
+ActiveRecord::Schema[8.1].define(version: 2026_02_28_181020) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -100,6 +100,17 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_28_180000) do
     t.index ["category_id"], name: "index_products_on_category_id"
   end
 
+  create_table "restaurant_memberships", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.bigint "restaurant_id", null: false
+    t.integer "role", default: 0, null: false
+    t.datetime "updated_at", null: false
+    t.bigint "user_id", null: false
+    t.index ["restaurant_id"], name: "index_restaurant_memberships_on_restaurant_id"
+    t.index ["user_id", "restaurant_id"], name: "index_restaurant_memberships_on_user_id_and_restaurant_id", unique: true
+    t.index ["user_id"], name: "index_restaurant_memberships_on_user_id"
+  end
+
   create_table "restaurants", force: :cascade do |t|
     t.boolean "active", default: true, null: false
     t.string "address"
@@ -122,12 +133,10 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_28_180000) do
     t.datetime "remember_created_at"
     t.datetime "reset_password_sent_at"
     t.string "reset_password_token"
-    t.integer "restaurant_id"
     t.integer "role", default: 0, null: false
     t.datetime "updated_at", null: false
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
-    t.index ["restaurant_id"], name: "index_users_on_restaurant_id"
   end
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
@@ -138,4 +147,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_28_180000) do
   add_foreign_key "orders", "restaurants"
   add_foreign_key "orders", "users"
   add_foreign_key "products", "categories"
+  add_foreign_key "restaurant_memberships", "restaurants"
+  add_foreign_key "restaurant_memberships", "users"
 end

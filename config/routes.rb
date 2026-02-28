@@ -19,6 +19,7 @@ Rails.application.routes.draw do
   get "/admin/products", to: "admin/dashboard#products"
   get "/admin/categories", to: "admin/dashboard#categories"
   get "/admin/qr", to: "admin/dashboard#qr"
+  get "/admin/members", to: "admin/dashboard#members"
 
   # Super admin pages
   get "/super_admin", to: "super_admin/dashboard#index"
@@ -39,6 +40,9 @@ Rails.application.routes.draw do
         resources :orders, only: %i[index show update]
         resources :products
         resources :categories
+        resources :memberships, only: %i[index create update destroy]
+        post "switch_restaurant", to: "contexts#switch"
+        delete "clear_restaurant", to: "contexts#clear"
         resource :restaurant, only: %i[show update] do
           post :toggle_accepting_orders
           get :qr_code

@@ -22,6 +22,6 @@ class OrderMailer < ApplicationMailer
   private
 
   def notification_recipients(restaurant)
-    restaurant.users.restaurant_admin.pluck(:email).presence || [ "admin@example.com" ]
+    restaurant.members.restaurant_admin.distinct.pluck(:email).presence || [ "admin@example.com" ]
   end
 end

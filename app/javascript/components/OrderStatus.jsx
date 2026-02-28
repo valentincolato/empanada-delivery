@@ -36,7 +36,7 @@ export default function OrderStatus({ token }) {
   if (error) {
     return (
       <div className="grid min-h-screen place-items-center px-4">
-        <p className="rounded-full border border-red-200 bg-red-50 px-4 py-2 text-sm text-red-700">{error}</p>
+        <p className="rounded-full border border-red-900/50 bg-red-950/35 px-4 py-2 text-sm text-red-300">{error}</p>
       </div>
     )
   }
@@ -58,7 +58,7 @@ export default function OrderStatus({ token }) {
           <p className="mt-1 text-sm text-[var(--ink-500)]">{t('orderStatus.order', { id: order.id })}</p>
         </div>
 
-        <div className={`mx-6 mt-6 rounded-2xl border px-4 py-3 text-center text-sm font-semibold sm:mx-8 ${isCancelled ? 'border-red-200 bg-red-50 text-red-700' : 'border-emerald-200 bg-emerald-50 text-emerald-800'}`}>
+        <div className={`mx-6 mt-6 rounded-2xl border px-4 py-3 text-center text-sm font-semibold sm:mx-8 ${isCancelled ? 'border-red-900/50 bg-red-950/35 text-red-300' : 'border-emerald-800/40 bg-emerald-900/20 text-emerald-300'}`}>
           {STATUS_ICONS[order.status]} {t(`orderStatus.status.${order.status}`) || order.status}
         </div>
 
@@ -68,7 +68,7 @@ export default function OrderStatus({ token }) {
               const active = index <= stepIndex
               return (
                 <div key={step} className="text-center">
-                  <div className={`mx-auto mb-2 h-2.5 w-2.5 rounded-full ${active ? 'bg-[var(--gold-600)]' : 'bg-[#d7ccbb]'}`} />
+                  <div className={`mx-auto mb-2 h-2.5 w-2.5 rounded-full ${active ? 'bg-[var(--gold-600)]' : 'bg-[var(--line-soft)]'}`} />
                   <span className={`text-[10px] font-medium uppercase tracking-[0.14em] sm:text-xs ${active ? 'text-[var(--gold-700)]' : 'text-[var(--ink-500)]'}`}>
                     {t(`orderStatus.status.${step}`)}
                   </span>

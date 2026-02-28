@@ -99,6 +99,7 @@
         "products": "Products",
         "categories": "Categories",
         "qr": "QR Code",
+        "members": "Members",
         "backToRestaurants": "← Restaurants"
       },
       "columns": {
@@ -168,6 +169,26 @@
       "backToOrders": "← Orders",
       "download": "⬇ Download SVG",
       "instructions": "Print and place at tables so customers can scan to order."
+    },
+    "members": {
+      "title": "Team Members",
+      "backToOrders": "← Orders",
+      "invite": "+ Invite Member",
+      "roles": {
+        "staff": "Staff",
+        "manager": "Manager",
+        "owner": "Owner"
+      },
+      "form": {
+        "email": "Email *",
+        "role": "Role *"
+      },
+      "removeConfirm": "Remove access?",
+      "headers": {
+        "user": "User",
+        "role": "Role",
+        "actions": "Actions"
+      }
     }
   },
   "superAdmin": {
@@ -220,7 +241,7 @@
     }
   },
   "home": {
-    "badge": "QueResto Inspired",
+    "badge": "Ordering platform for restaurants",
     "title": "Digital ordering for modern restaurants.",
     "description": "We help restaurants publish menus, receive orders in real time, and manage delivery flow from one admin panel.",
     "viewDemo": "View Demo Restaurant",
@@ -233,9 +254,92 @@
       "4": "4. Customer tracks status updates live on the order page."
     },
     "features": {
-      "menu": { "title": "Menu + Checkout", "text": "Fast mobile-first flow with sticky cart and quantity controls." },
-      "orders": { "title": "Order Operations", "text": "Board view by status to manage kitchen and delivery workload." },
-      "products": { "title": "Product Control", "text": "Edit products, categories, pricing, and availability instantly." }
+      "menu": {
+        "title": "Menu + Checkout",
+        "text": "Fast mobile-first flow with sticky cart and quantity controls."
+      },
+      "orders": {
+        "title": "Order Operations",
+        "text": "Board view by status to manage kitchen and delivery workload."
+      },
+      "products": {
+        "title": "Product Control",
+        "text": "Edit products, categories, pricing, and availability instantly."
+      }
+    },
+    "pricingBadge": "Simple and transparent",
+    "pricingTitle": "A modern way to sell without hidden fees.",
+    "pricingText": "Your restaurant keeps full control: public menu, live orders, and day-to-day operations from one admin panel.",
+    "stats": {
+      "fees": "fees",
+      "availability": "availability",
+      "panel": "control panel",
+      "order": "average order"
+    },
+    "ctaTitle": "Ready to digitize your restaurant",
+    "ctaText": "Try the full flow for menu, checkout, and order operations with a cleaner visual experience focused on conversion.",
+    "more": {
+      "kicker": "And there is more",
+      "title": "Built to sell more and run smoother operations.",
+      "text": "Beyond a digital menu, you get clear workflows for kitchen, checkout, and delivery with less friction per order.",
+      "items": {
+        "sync": {
+          "title": "Live status",
+          "text": "Every status update is reflected instantly for your team and customers."
+        },
+        "qr": {
+          "title": "QR to menu",
+          "text": "Publish your menu with a short link and QR for tables, counter, or social media."
+        },
+        "status": {
+          "title": "Organized ops",
+          "text": "Track pending, confirmed, and delivered orders from a clean board."
+        },
+        "multi": {
+          "title": "Full control",
+          "text": "Edit products, pricing, and availability without relying on third parties."
+        }
+      }
+    },
+    "why": {
+      "kicker": "Why choose our platform?",
+      "title": "Designed for real restaurant teams.",
+      "items": {
+        "speed": {
+          "title": "Fast",
+          "text": "Customers place orders in just a few steps from any device."
+        },
+        "clarity": {
+          "title": "Clear",
+          "text": "A clean interface so your team works without confusion or visual overload."
+        },
+        "scale": {
+          "title": "Scalable",
+          "text": "Grow your operation without switching platforms every few months."
+        }
+      }
+    },
+    "faq": {
+      "kicker": "Frequently asked questions",
+      "title": "Common questions we get",
+      "items": {
+        "setup": {
+          "q": "How long does setup take?",
+          "a": "You can have menu and live orders running the same day by loading categories and products from the admin panel."
+        },
+        "domain": {
+          "q": "Do I need my own domain?",
+          "a": "Not required. You can start with a ready-to-share link and migrate later if needed."
+        },
+        "payments": {
+          "q": "How are payments handled?",
+          "a": "Checkout includes cash and bank transfer options. The flow adapts to each restaurant operation."
+        },
+        "support": {
+          "q": "Can I update the menu anytime?",
+          "a": "Yes. Change prices, availability, and products in real time from the admin panel."
+        }
+      }
     }
   }
 }

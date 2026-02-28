@@ -103,7 +103,7 @@ export default function Menu({ slug }) {
 
   return (
     <div className="min-h-screen pb-28 text-[var(--ink-900)]">
-      <header className="border-b border-[var(--line-soft)] bg-[linear-gradient(180deg,#f9f4eb,#f2e8d8)]">
+      <header className="border-b border-[var(--line-soft)] bg-[linear-gradient(180deg,#171b23,#10141b)]">
         <div className="mx-auto max-w-6xl px-4 pb-7 pt-8 sm:px-6">
           <div className="flex flex-wrap items-start justify-between gap-6">
             <div className="flex min-w-0 flex-1 gap-4">
@@ -115,11 +115,11 @@ export default function Menu({ slug }) {
                 <h1 className="font-display text-5xl font-semibold leading-none text-[var(--ink-900)] sm:text-6xl">{restaurant.name}</h1>
                 <div className="mt-3 flex flex-wrap items-center gap-2 text-xs font-medium text-[var(--ink-500)]">
                   <span>Today 11:30 - 15:00 and 19:15 - 23:00</span>
-                  <span className={`rounded-full px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.14em] ${restaurant.accepting_orders ? 'bg-emerald-100 text-emerald-800' : 'bg-red-100 text-red-700'}`}>
+                  <span className={`rounded-full px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.14em] ${restaurant.accepting_orders ? 'border border-emerald-800/40 bg-emerald-900/30 text-emerald-300' : 'border border-red-900/50 bg-red-950/35 text-red-300'}`}>
                     {restaurant.accepting_orders ? t('menu.open') : t('menu.closed')}
                   </span>
                 </div>
-                {!restaurant.accepting_orders && <div className="mt-1 text-sm text-red-700">{t('menu.notAccepting')}</div>}
+                {!restaurant.accepting_orders && <div className="mt-1 text-sm text-red-300">{t('menu.notAccepting')}</div>}
                 <div className="mt-4 flex flex-wrap items-center gap-2">
                   {restaurant.phone && (
                     <a href={`tel:${restaurant.phone}`} className="elegant-button-secondary !rounded-lg !px-4 !py-2 !text-xs">
@@ -231,7 +231,7 @@ export default function Menu({ slug }) {
 function ProductCard({ product, onAdd }) {
   const { t } = useTranslation()
   return (
-    <div className="elegant-card overflow-hidden bg-white/80" data-testid="product-card">
+    <div className="elegant-card overflow-hidden bg-[var(--panel)]" data-testid="product-card">
       {product.image_url && <img src={product.image_url} alt={product.name} className="h-40 w-full object-cover" />}
       <div className="p-3">
         <h3 className="font-display text-2xl font-semibold text-[var(--ink-900)]">{product.name}</h3>
@@ -348,7 +348,7 @@ function CartDrawer({ items, onUpdateQuantity, onCheckout, onClose, total }) {
         </div>
         <div className="flex-1 space-y-3 overflow-y-auto px-6 py-4">
           {items.map((item) => (
-            <div key={item.product_id} data-testid="cart-item" className="rounded-xl border border-[var(--line-soft)] bg-white/70 p-3 text-sm">
+            <div key={item.product_id} data-testid="cart-item" className="rounded-xl border border-[var(--line-soft)] bg-[var(--panel-strong)] p-3 text-sm">
               <div className="mb-2 flex items-center justify-between gap-2">
                 <span className="font-medium text-[var(--ink-900)]">{item.product_name}</span>
                 <span className="font-semibold text-[var(--ink-900)]">${((item.unit_price_cents * item.quantity) / 100).toFixed(2)}</span>
@@ -381,7 +381,7 @@ function CheckoutModal({ form, items, onChange, onUpdateQuantity, onSubmit, onCl
             <button onClick={onClose} className="rounded-full border border-[var(--line-soft)] px-2.5 py-1 text-[var(--ink-500)]">x</button>
           </div>
           <form onSubmit={onSubmit} className="flex flex-col gap-3">
-            <div className="rounded-2xl border border-[var(--line-soft)] bg-white/65 p-4">
+            <div className="rounded-2xl border border-[var(--line-soft)] bg-[var(--panel-strong)] p-4">
               <h3 className="mb-3 text-xs font-semibold uppercase tracking-[0.18em] text-[var(--ink-500)]">{t('menu.checkout.yourData')}</h3>
               <div className="grid gap-3">
                 <label className="flex flex-col gap-1 text-sm text-[var(--ink-700)]">
@@ -391,7 +391,7 @@ function CheckoutModal({ form, items, onChange, onUpdateQuantity, onSubmit, onCl
                     required
                     value={form.customer_name}
                     onChange={(e) => onChange('customer_name', e.target.value)}
-                    className="rounded-md border border-[var(--line-soft)] bg-white px-3 py-2 text-sm text-[var(--ink-900)] outline-none focus:border-[var(--gold-600)]"
+                    className="rounded-md border border-[var(--line-soft)] bg-[var(--panel-strong)] px-3 py-2 text-sm text-[var(--ink-900)] outline-none focus:border-[var(--gold-600)]"
                   />
                 </label>
                 <label className="flex flex-col gap-1 text-sm text-[var(--ink-700)]">
@@ -401,7 +401,7 @@ function CheckoutModal({ form, items, onChange, onUpdateQuantity, onSubmit, onCl
                     required
                     value={form.customer_email}
                     onChange={(e) => onChange('customer_email', e.target.value)}
-                    className="rounded-md border border-[var(--line-soft)] bg-white px-3 py-2 text-sm text-[var(--ink-900)] outline-none focus:border-[var(--gold-600)]"
+                    className="rounded-md border border-[var(--line-soft)] bg-[var(--panel-strong)] px-3 py-2 text-sm text-[var(--ink-900)] outline-none focus:border-[var(--gold-600)]"
                   />
                 </label>
                 <label className="flex flex-col gap-1 text-sm text-[var(--ink-700)]">
@@ -411,7 +411,7 @@ function CheckoutModal({ form, items, onChange, onUpdateQuantity, onSubmit, onCl
                     required
                     value={form.customer_phone}
                     onChange={(e) => onChange('customer_phone', e.target.value)}
-                    className="rounded-md border border-[var(--line-soft)] bg-white px-3 py-2 text-sm text-[var(--ink-900)] outline-none focus:border-[var(--gold-600)]"
+                    className="rounded-md border border-[var(--line-soft)] bg-[var(--panel-strong)] px-3 py-2 text-sm text-[var(--ink-900)] outline-none focus:border-[var(--gold-600)]"
                   />
                 </label>
                 <label className="flex flex-col gap-1 text-sm text-[var(--ink-700)]">
@@ -421,13 +421,13 @@ function CheckoutModal({ form, items, onChange, onUpdateQuantity, onSubmit, onCl
                     required
                     value={form.customer_address}
                     onChange={(e) => onChange('customer_address', e.target.value)}
-                    className="rounded-md border border-[var(--line-soft)] bg-white px-3 py-2 text-sm text-[var(--ink-900)] outline-none focus:border-[var(--gold-600)]"
+                    className="rounded-md border border-[var(--line-soft)] bg-[var(--panel-strong)] px-3 py-2 text-sm text-[var(--ink-900)] outline-none focus:border-[var(--gold-600)]"
                   />
                 </label>
               </div>
             </div>
 
-            <div className="rounded-2xl border border-[var(--line-soft)] bg-white/65 p-4">
+            <div className="rounded-2xl border border-[var(--line-soft)] bg-[var(--panel-strong)] p-4">
               <h3 className="mb-3 text-xs font-semibold uppercase tracking-[0.18em] text-[var(--ink-500)]">{t('menu.checkout.payment')}</h3>
               <div className="grid gap-2 text-sm text-[var(--ink-700)]">
                 <label className="flex items-center gap-2">
@@ -459,7 +459,7 @@ function CheckoutModal({ form, items, onChange, onUpdateQuantity, onSubmit, onCl
                       value={form.cash_change_for}
                       onChange={(e) => onChange('cash_change_for', e.target.value)}
                       placeholder={t('menu.checkout.changeForPlaceholder')}
-                      className="rounded-md border border-[var(--line-soft)] bg-white px-3 py-2 text-sm text-[var(--ink-900)] outline-none focus:border-[var(--gold-600)]"
+                      className="rounded-md border border-[var(--line-soft)] bg-[var(--panel-strong)] px-3 py-2 text-sm text-[var(--ink-900)] outline-none focus:border-[var(--gold-600)]"
                     />
                   </label>
                 )}
@@ -472,10 +472,10 @@ function CheckoutModal({ form, items, onChange, onUpdateQuantity, onSubmit, onCl
                 type="text"
                 value={form.notes}
                 onChange={(e) => onChange('notes', e.target.value)}
-                className="rounded-md border border-[var(--line-soft)] bg-white px-3 py-2 text-sm text-[var(--ink-900)] outline-none focus:border-[var(--gold-600)]"
+                className="rounded-md border border-[var(--line-soft)] bg-[var(--panel-strong)] px-3 py-2 text-sm text-[var(--ink-900)] outline-none focus:border-[var(--gold-600)]"
               />
             </label>
-            {error && <div className="text-sm text-red-700">{error}</div>}
+            {error && <div className="text-sm text-red-300">{error}</div>}
             <div className="mt-1 text-sm font-semibold text-[var(--ink-900)]">{t('menu.cart.total', { total })}</div>
             <button type="submit" disabled={submitting} className="elegant-button-primary !rounded-lg !px-5 !py-3 !text-sm">
               {submitting ? t('menu.checkout.placingOrder') : t('menu.checkout.placeOrder')}
@@ -487,7 +487,7 @@ function CheckoutModal({ form, items, onChange, onUpdateQuantity, onSubmit, onCl
           <h3 className="mb-4 font-display text-3xl font-semibold">{t('menu.checkout.orderSummary')}</h3>
           <div className="space-y-3">
             {items.map((item) => (
-              <div key={item.product_id} className="rounded-xl border border-[var(--line-soft)] bg-white/70 p-3 text-sm">
+              <div key={item.product_id} className="rounded-xl border border-[var(--line-soft)] bg-[var(--panel-strong)] p-3 text-sm">
                 <div className="mb-2 flex items-center justify-between gap-2">
                   <span className="font-medium text-[var(--ink-900)]">{item.product_name}</span>
                   <span className="font-semibold text-[var(--ink-900)]">${((item.unit_price_cents * item.quantity) / 100).toFixed(2)}</span>

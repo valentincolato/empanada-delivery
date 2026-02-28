@@ -18,7 +18,8 @@ RSpec.describe Restaurant, type: :model do
   describe "associations" do
     it { is_expected.to have_many(:categories).dependent(:destroy) }
     it { is_expected.to have_many(:orders).dependent(:destroy) }
-    it { is_expected.to have_many(:users).dependent(:nullify) }
+    it { is_expected.to have_many(:restaurant_memberships).dependent(:destroy) }
+    it { is_expected.to have_many(:members).through(:restaurant_memberships) }
   end
 
   describe "#accepting_orders?" do
@@ -82,10 +83,11 @@ RSpec.describe Restaurant, type: :model do
   describe "#provision_admin!" do
     let(:restaurant) { create(:restaurant) }
 
-    it "creates a restaurant_admin user" do
+    it "creates a restaurant_admin owner membership" do
       admin = restaurant.provision_admin!(email: "admin@test.com", password: "secret123")
       expect(admin.restaurant_admin?).to be true
-      expect(admin.restaurant).to eq(restaurant)
+      expect(admin.membership_for(restaurant)).to be_present
+      expect(admin.membership_for(restaurant).owner?).to be true
     end
   end
 end

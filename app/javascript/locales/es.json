@@ -99,6 +99,7 @@
         "products": "Productos",
         "categories": "Categorías",
         "qr": "Código QR",
+        "members": "Miembros",
         "backToRestaurants": "← Restaurantes"
       },
       "columns": {
@@ -168,6 +169,26 @@
       "backToOrders": "← Pedidos",
       "download": "⬇ Descargar SVG",
       "instructions": "Imprimí y colocá en las mesas para que los clientes puedan escanear y ordenar."
+    },
+    "members": {
+      "title": "Equipo",
+      "backToOrders": "← Pedidos",
+      "invite": "+ Invitar miembro",
+      "roles": {
+        "staff": "Staff",
+        "manager": "Manager",
+        "owner": "Dueño"
+      },
+      "form": {
+        "email": "Email *",
+        "role": "Rol *"
+      },
+      "removeConfirm": "¿Eliminar acceso?",
+      "headers": {
+        "user": "Usuario",
+        "role": "Rol",
+        "actions": "Acciones"
+      }
     }
   },
   "superAdmin": {
@@ -220,7 +241,7 @@
     }
   },
   "home": {
-    "badge": "Inspirado en QueResto",
+    "badge": "Plataforma de pedidos para restaurantes",
     "title": "Pedidos digitales para restaurantes modernos.",
     "description": "Ayudamos a restaurantes a publicar menús, recibir pedidos en tiempo real y gestionar el flujo de delivery desde un panel de administración.",
     "viewDemo": "Ver restaurante demo",
@@ -233,9 +254,92 @@
       "4": "4. El cliente sigue las actualizaciones en vivo en la página del pedido."
     },
     "features": {
-      "menu": { "title": "Menú + Checkout", "text": "Flujo móvil rápido con carrito flotante y controles de cantidad." },
-      "orders": { "title": "Gestión de pedidos", "text": "Vista en tablero por estado para manejar cocina y delivery." },
-      "products": { "title": "Control de productos", "text": "Editá productos, categorías, precios y disponibilidad al instante." }
+      "menu": {
+        "title": "Menú + Checkout",
+        "text": "Flujo móvil rápido con carrito flotante y controles de cantidad."
+      },
+      "orders": {
+        "title": "Gestión de pedidos",
+        "text": "Vista en tablero por estado para manejar cocina y delivery."
+      },
+      "products": {
+        "title": "Control de productos",
+        "text": "Editá productos, categorías, precios y disponibilidad al instante."
+      }
+    },
+    "pricingBadge": "Simple y transparente",
+    "pricingTitle": "Una forma moderna de vender sin comisiones ocultas.",
+    "pricingText": "Tu restaurante mantiene el control total: menú público, pedidos en vivo y operación diaria desde un único panel administrativo.",
+    "stats": {
+      "fees": "comisiones",
+      "availability": "disponibilidad",
+      "panel": "panel de control",
+      "order": "pedido promedio"
+    },
+    "ctaTitle": "Listo para digitalizar tu restaurante",
+    "ctaText": "Probá el flujo completo de menú, checkout y gestión de pedidos con una experiencia visual clara y pensada para conversión.",
+    "more": {
+      "kicker": "Eso no es todo",
+      "title": "Herramientas pensadas para vender más y operar mejor.",
+      "text": "Además del menú digital, sumás procesos claros para cocina, caja y reparto con menos fricción en cada pedido.",
+      "items": {
+        "sync": {
+          "title": "Estado en vivo",
+          "text": "Cada cambio de estado se refleja al instante para el equipo y para el cliente."
+        },
+        "qr": {
+          "title": "QR directo al menú",
+          "text": "Publicá el menú con un link corto y QR para salón, mostrador o redes."
+        },
+        "status": {
+          "title": "Operación ordenada",
+          "text": "Visualizá pendientes, confirmados y entregados en un tablero simple."
+        },
+        "multi": {
+          "title": "Control total",
+          "text": "Editá productos, precios y disponibilidad sin depender de terceros."
+        }
+      }
+    },
+    "why": {
+      "kicker": "¿Por qué elegir nuestra plataforma?",
+      "title": "Diseñado para restaurantes reales.",
+      "items": {
+        "speed": {
+          "title": "Rápido",
+          "text": "Clientes hacen pedidos en pocos pasos, desde cualquier dispositivo."
+        },
+        "clarity": {
+          "title": "Claro",
+          "text": "Interfaz limpia para que el equipo trabaje sin confusiones ni sobrecarga."
+        },
+        "scale": {
+          "title": "Escalable",
+          "text": "Crece con tu operación sin cambiar de plataforma cada pocos meses."
+        }
+      }
+    },
+    "faq": {
+      "kicker": "Preguntas frecuentes",
+      "title": "Lo que más nos consultan",
+      "items": {
+        "setup": {
+          "q": "¿Cuánto tarda la configuración inicial?",
+          "a": "Podés tener menú y pedidos activos el mismo día, cargando categorías y productos desde el panel."
+        },
+        "domain": {
+          "q": "¿Necesito un dominio propio?",
+          "a": "No es obligatorio. Podés empezar con un enlace listo para compartir y migrar luego si querés."
+        },
+        "payments": {
+          "q": "¿Cómo se gestionan los pagos?",
+          "a": "El checkout contempla efectivo y transferencia. La lógica se adapta a la operatoria de cada restaurante."
+        },
+        "support": {
+          "q": "¿Puedo actualizar el menú cuando quiera?",
+          "a": "Sí. Cambiás precios, disponibilidad y productos en tiempo real desde el panel administrativo."
+        }
+      }
     }
   }
 }

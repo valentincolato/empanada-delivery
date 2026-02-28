@@ -3,7 +3,9 @@ import { useTranslation } from 'react-i18next'
 import { api } from '@utils/api'
 import LanguageSwitcher from '../LanguageSwitcher'
 
-export default function OrdersDashboard({ isSuperAdmin }) {
+export default function OrdersDashboard({ isSuperAdmin, is_super_admin, membershipRole, membership_role }) {
+  const superAdmin = Boolean(isSuperAdmin ?? is_super_admin)
+  const role = membershipRole || membership_role
   const { t } = useTranslation()
   const [orders, setOrders] = useState([])
   const [restaurant, setRestaurant] = useState(null)
@@ -11,11 +13,11 @@ export default function OrdersDashboard({ isSuperAdmin }) {
   const [updating, setUpdating] = useState(null)
 
   const COLUMNS = [
-    { status: 'pending', labelKey: 'admin.orders.columns.pending', header: 'border-[#c39a5f] bg-[#f9efe0] text-[var(--gold-700)]', badge: 'bg-[var(--gold-600)]' },
-    { status: 'confirmed', labelKey: 'admin.orders.columns.confirmed', header: 'border-[#80b1a5] bg-[#e8f4ef] text-[#2f6959]', badge: 'bg-[#3e8b75]' },
-    { status: 'out_for_delivery', labelKey: 'admin.orders.columns.out_for_delivery', header: 'border-[#9f88b6] bg-[#f0ebf7] text-[#5f4a76]', badge: 'bg-[#7d6597]' },
-    { status: 'delivered', labelKey: 'admin.orders.columns.delivered', header: 'border-[#98ae7f] bg-[#eff5e8] text-[#4b6537]', badge: 'bg-[#6f8a52]' },
-    { status: 'cancelled', labelKey: 'admin.orders.columns.cancelled', header: 'border-red-400 bg-red-100 text-red-700', badge: 'bg-red-400' },
+    { status: 'pending', labelKey: 'admin.orders.columns.pending', header: 'border-[#c39a5f] bg-[var(--panel-strong)] text-[var(--gold-700)]', badge: 'bg-[var(--gold-600)]' },
+    { status: 'confirmed', labelKey: 'admin.orders.columns.confirmed', header: 'border-emerald-800/40 bg-emerald-900/20 text-emerald-300', badge: 'bg-emerald-700' },
+    { status: 'out_for_delivery', labelKey: 'admin.orders.columns.out_for_delivery', header: 'border-sky-800/40 bg-sky-900/20 text-sky-300', badge: 'bg-sky-700' },
+    { status: 'delivered', labelKey: 'admin.orders.columns.delivered', header: 'border-lime-800/40 bg-lime-900/20 text-lime-300', badge: 'bg-lime-700' },
+    { status: 'cancelled', labelKey: 'admin.orders.columns.cancelled', header: 'border-red-900/50 bg-red-950/35 text-red-300', badge: 'bg-red-700' },
   ]
 
   const TRANSITIONS = {
@@ -86,13 +88,14 @@ export default function OrdersDashboard({ isSuperAdmin }) {
 
   const accepting = restaurant?.settings?.accepting_orders !== false
   const legacyReady = orders.filter((order) => order.status === 'ready')
+  const canManageMembers = superAdmin || role === 'owner'
 
   return (
     <div className="min-h-screen">
       <div className="flex items-center justify-between border-b border-[var(--line-soft)] bg-[var(--panel)] px-6 py-4">
-        <h1 className="font-display text-4xl font-semibold text-[var(--ink-900)]">{t('admin.orders.title')}</h1>
+        <h1 data-testid="orders-dashboard-title" className="font-display text-4xl font-semibold text-[var(--ink-900)]">{t('admin.orders.title')}</h1>
         <div className="flex items-center gap-3">
-          {isSuperAdmin && (
+          {superAdmin && (
             <button
               onClick={clearContext}
               className="text-sm font-medium text-[var(--gold-700)]"
@@ -100,13 +103,16 @@ export default function OrdersDashboard({ isSuperAdmin }) {
               {t('admin.orders.nav.backToRestaurants')}
             </button>
           )}
-          <a href="/admin/products" className="text-sm font-medium text-[var(--gold-700)]">{t('admin.orders.nav.products')}</a>
-          <a href="/admin/categories" className="text-sm font-medium text-[var(--gold-700)]">{t('admin.orders.nav.categories')}</a>
-          <a href="/admin/qr" className="text-sm font-medium text-[var(--gold-700)]">{t('admin.orders.nav.qr')}</a>
+          <a data-testid="nav-products" href="/admin/products" className="text-sm font-medium text-[var(--gold-700)]">{t('admin.orders.nav.products')}</a>
+          <a data-testid="nav-categories" href="/admin/categories" className="text-sm font-medium text-[var(--gold-700)]">{t('admin.orders.nav.categories')}</a>
+          <a data-testid="nav-qr" href="/admin/qr" className="text-sm font-medium text-[var(--gold-700)]">{t('admin.orders.nav.qr')}</a>
+          {canManageMembers && (
+            <a data-testid="nav-members" href="/admin/members" className="text-sm font-medium text-[var(--gold-700)]">{t('admin.orders.nav.members')}</a>
+          )}
           {restaurant && (
             <button
               onClick={toggleAccepting}
-              className={`rounded-full px-3 py-1 text-xs font-semibold ${accepting ? 'bg-emerald-100 text-emerald-700 border border-emerald-300' : 'bg-red-100 text-red-700 border border-red-300'}`}
+              className={`rounded-full px-3 py-1 text-xs font-semibold ${accepting ? 'border border-emerald-800/40 bg-emerald-900/30 text-emerald-300' : 'border border-red-900/50 bg-red-950/35 text-red-300'}`}
             >
               {accepting ? t('admin.orders.accepting') : t('admin.orders.notAccepting')}
               {' · '}
@@ -121,7 +127,7 @@ export default function OrdersDashboard({ isSuperAdmin }) {
         {COLUMNS.map(({ status, labelKey, header, badge }) => {
           const columnOrders = orders.filter((order) => order.status === status)
           return (
-            <div key={status} className="elegant-card overflow-hidden bg-white/75" data-testid={`column-${status}`}>
+            <div key={status} className="elegant-card overflow-hidden bg-[var(--panel)]" data-testid={`column-${status}`}>
               <div className={`flex items-center justify-between border-t-4 px-4 py-3 ${header}`}>
                 <span className="text-sm font-semibold uppercase tracking-[0.12em]">{t(labelKey)}</span>
                 <span className={`rounded-full px-2 py-0.5 text-xs font-bold text-white ${badge}`}>{columnOrders.length}</span>
@@ -168,7 +174,7 @@ function OrderCard({ order, transitions, onUpdate, isUpdating }) {
   const minutesAgo = Math.round((Date.now() - new Date(order.created_at)) / 60000)
 
   return (
-    <div className="rounded-xl border border-[var(--line-soft)] bg-white/80 p-4" data-testid="order-card">
+    <div className="rounded-xl border border-[var(--line-soft)] bg-[var(--panel)] p-4" data-testid="order-card">
       <div className="mb-1 flex justify-between">
         <span className="text-sm font-bold text-[var(--ink-900)]">#{order.id}</span>
         <span className="text-xs text-[var(--ink-500)]">{t('admin.orders.minutesAgo', { count: minutesAgo })}</span>
@@ -194,10 +200,11 @@ function OrderCard({ order, transitions, onUpdate, isUpdating }) {
         {transitions.map((next) => (
           <button
             key={next}
+            data-testid={`order-action-${next}`}
             disabled={isUpdating}
             onClick={() => onUpdate(order.id, next)}
             className={next === 'cancelled'
-              ? 'rounded-md border border-red-200 bg-white px-2.5 py-1 text-xs font-medium text-red-600'
+              ? 'rounded-md border border-red-900/50 bg-red-950/35 px-2.5 py-1 text-xs font-medium text-red-300'
               : 'rounded-md bg-[var(--gold-600)] px-2.5 py-1 text-xs font-semibold text-white'}
           >
             {t(`admin.orders.actions.${next}`) || next}

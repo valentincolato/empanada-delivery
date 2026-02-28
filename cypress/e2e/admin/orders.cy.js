@@ -32,16 +32,16 @@ describe('Admin — Orders Dashboard', () => {
   })
 
   it('shows the kanban board with columns', () => {
-    cy.contains('Pending').should('be.visible')
-    cy.contains('Confirmed').should('be.visible')
-    cy.contains('Out for delivery').should('be.visible')
-    cy.contains('Delivered').should('be.visible')
+    cy.get('[data-testid="column-pending"]').should('be.visible')
+    cy.get('[data-testid="column-confirmed"]').should('be.visible')
+    cy.get('[data-testid="column-out_for_delivery"]').should('be.visible')
+    cy.get('[data-testid="column-delivered"]').should('be.visible')
   })
 
   it('shows nav links to other admin sections', () => {
-    cy.contains('Products').should('be.visible')
-    cy.contains('Categories').should('be.visible')
-    cy.contains('QR Code').should('be.visible')
+    cy.get('[data-testid="nav-products"]').should('be.visible')
+    cy.get('[data-testid="nav-categories"]').should('be.visible')
+    cy.get('[data-testid="nav-qr"]').should('be.visible')
   })
 
   it('displays a new order in the Pending column', () => {
@@ -58,7 +58,7 @@ describe('Admin — Orders Dashboard', () => {
       cy.reload()
       cy.get('[data-testid="column-pending"]').within(() => {
         cy.contains('[data-testid="order-card"]', 'Cypress User').within(() => {
-          cy.contains('Confirm').click()
+          cy.get('[data-testid="order-action-confirmed"]').click()
         })
       })
       // Card should move to Confirmed column
@@ -74,17 +74,17 @@ describe('Admin — Orders Dashboard', () => {
 
       cy.get('[data-testid="column-pending"]').within(() => {
         cy.contains('[data-testid="order-card"]', 'Cypress User').within(() => {
-          cy.contains('Confirm').click()
+          cy.get('[data-testid="order-action-confirmed"]').click()
         })
       })
       cy.get('[data-testid="column-confirmed"]').within(() => {
         cy.contains('[data-testid="order-card"]', 'Cypress User').within(() => {
-          cy.contains('Set Out for delivery').click()
+          cy.get('[data-testid="order-action-out_for_delivery"]').click()
         })
       })
       cy.get('[data-testid="column-out_for_delivery"]').within(() => {
         cy.contains('[data-testid="order-card"]', 'Cypress User').within(() => {
-          cy.contains('Mark Delivered').click()
+          cy.get('[data-testid="order-action-delivered"]').click()
         })
       })
       cy.get('[data-testid="column-delivered"]').within(() => {
@@ -101,7 +101,7 @@ describe('Admin — Orders Dashboard', () => {
 
       cy.get('[data-testid="column-pending"]').within(() => {
         cy.contains('[data-testid="order-card"]', customerName).within(() => {
-          cy.contains('button', 'Cancel').should('be.visible')
+          cy.get('[data-testid="order-action-cancelled"]').should('be.visible')
         })
       })
     })

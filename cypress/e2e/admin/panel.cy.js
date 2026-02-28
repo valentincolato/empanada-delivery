@@ -12,11 +12,10 @@ describe('Admin panel landing', () => {
     cy.get('input[type="submit"]').click()
 
     cy.url().should('include', '/panel')
-    cy.contains('Admin Panel').should('be.visible')
-    cy.contains('Pedidos').should('be.visible')
-    cy.contains('Productos').should('be.visible')
-    cy.contains('Categorías').should('be.visible')
-    cy.contains('QR').should('be.visible')
+    cy.get('a[href="/admin/orders"]').should('be.visible')
+    cy.get('a[href="/admin/products"]').should('be.visible')
+    cy.get('a[href="/admin/categories"]').should('be.visible')
+    cy.get('a[href="/admin/qr"]').should('be.visible')
   })
 
   it('shows super admin access card on /panel', () => {
@@ -26,17 +25,16 @@ describe('Admin panel landing', () => {
     cy.get('input[type="submit"]').click()
 
     cy.url().should('include', '/panel')
-    cy.contains('Super Admin').should('be.visible')
-    cy.contains('Ver restaurantes').should('be.visible')
+    cy.get('a[href="/super_admin/restaurants"]').should('be.visible')
   })
 
   it('lets super admin enter restaurant operations from the grid', () => {
     cy.login(SUPER_ADMIN_EMAIL, SUPER_ADMIN_PASSWORD)
     cy.visit('/super_admin/restaurants')
 
-    cy.contains('Manage operations').first().click()
+    cy.get('[data-testid^="manage-operations-"]').first().click()
 
     cy.url().should('include', '/admin/orders')
-    cy.contains('Orders Dashboard').should('be.visible')
+    cy.get('[data-testid="orders-dashboard-title"]').should('be.visible')
   })
 })

@@ -62,8 +62,8 @@ export default function CategoriesManager() {
       </div>
 
       <div className="overflow-x-auto p-6">
-        <table className="w-full overflow-hidden rounded-2xl border border-[var(--line-soft)] bg-white/80 shadow-[0_12px_30px_rgba(22,18,10,0.08)]">
-          <thead className="bg-[#faf4e9]">
+        <table className="w-full overflow-hidden rounded-2xl border border-[var(--line-soft)] bg-[var(--panel)] shadow-[0_12px_30px_rgba(22,18,10,0.08)]">
+          <thead className="bg-[var(--panel-strong)]">
             <tr>
               {[t('admin.categories.headers.name'), t('admin.categories.headers.position'), t('admin.categories.headers.active'), t('admin.categories.headers.actions')].map((h) => (
                 <th key={h} className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-[0.12em] text-[var(--ink-500)]">{h}</th>
@@ -77,8 +77,8 @@ export default function CategoriesManager() {
                 <td className="px-4 py-3 text-sm text-[var(--ink-700)]">{c.position}</td>
                 <td className="px-4 py-3 text-sm text-[var(--ink-700)]">{c.active ? t('admin.categories.activeStatus') : t('admin.categories.inactiveStatus')}</td>
                 <td className="px-4 py-3 text-sm text-[var(--ink-700)]">
-                  <button onClick={() => openEdit(c)} className="mr-2 rounded-md bg-[#f1e8db] px-3 py-1 text-xs text-[var(--ink-700)]">{t('common.edit')}</button>
-                  <button onClick={() => destroy(c.id)} className="rounded-md bg-red-100 px-3 py-1 text-xs text-red-600">{t('common.delete')}</button>
+                  <button onClick={() => openEdit(c)} className="mr-2 rounded-md bg-[var(--panel-strong)] px-3 py-1 text-xs text-[var(--ink-700)]">{t('common.edit')}</button>
+                  <button onClick={() => destroy(c.id)} className="rounded-md border border-red-900/50 bg-red-950/35 px-3 py-1 text-xs text-red-300">{t('common.delete')}</button>
                 </td>
               </tr>
             ))}
@@ -96,17 +96,17 @@ export default function CategoriesManager() {
             <form onSubmit={save} className="flex flex-col gap-3 p-6">
               <label className="flex flex-col gap-1 text-sm font-medium text-[var(--ink-700)]">
                 {t('admin.categories.form.name')}
-                <input required value={form.name} onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))} className="rounded-md border border-[var(--line-soft)] bg-white px-3 py-2" />
+                <input required value={form.name} onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))} className="rounded-md border border-[var(--line-soft)] bg-[var(--panel-strong)] px-3 py-2" />
               </label>
               <label className="flex flex-col gap-1 text-sm font-medium text-[var(--ink-700)]">
                 {t('admin.categories.form.position')}
-                <input type="number" value={form.position} onChange={(e) => setForm((f) => ({ ...f, position: Number(e.target.value) }))} className="rounded-md border border-[var(--line-soft)] bg-white px-3 py-2" />
+                <input type="number" value={form.position} onChange={(e) => setForm((f) => ({ ...f, position: Number(e.target.value) }))} className="rounded-md border border-[var(--line-soft)] bg-[var(--panel-strong)] px-3 py-2" />
               </label>
               <label className="flex items-center gap-2 text-sm font-medium text-[var(--ink-700)]">
                 <input type="checkbox" checked={form.active} onChange={(e) => setForm((f) => ({ ...f, active: e.target.checked }))} />
                 {t('admin.categories.form.active')}
               </label>
-              {error && <div className="text-sm text-red-700">{error}</div>}
+              {error && <div className="text-sm text-red-300">{error}</div>}
               <div className="mt-1 flex gap-3">
                 <button type="submit" disabled={saving} className="elegant-button-primary !rounded-lg !px-4 !py-2 !text-sm">
                   {saving ? t('common.saving') : t('common.save')}

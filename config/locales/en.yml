@@ -20,6 +20,8 @@ en:
         categories_desc: "Menu order and structure"
         qr: "QR"
         qr_desc: "Quick access to the public menu"
+        members: "Members"
+        members_desc: "Invite and manage team access"
       public_access: "Public access"
       public_access_desc: "The menu view your customers see."
       open_public_menu: "Open public menu"

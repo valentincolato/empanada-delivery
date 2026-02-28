@@ -31,6 +31,8 @@ es:
         categories_desc: "Orden y estructura del menú"
         qr: "QR"
         qr_desc: "Acceso rápido al menú público"
+        members: "Miembros"
+        members_desc: "Invitar y gestionar accesos del equipo"
       public_access: "Acceso público"
       public_access_desc: "Vista del menú que ven tus clientes."
       open_public_menu: "Abrir menú público"

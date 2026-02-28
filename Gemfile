@@ -8,6 +8,7 @@ gem "vite_rails"
 
 # Authentication
 gem "devise"
+gem "pundit"
 
 # Background jobs
 gem "sidekiq"

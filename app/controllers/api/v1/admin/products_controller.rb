@@ -1,15 +1,18 @@
 class Api::V1::Admin::ProductsController < Api::V1::Admin::BaseController
   def index
+    authorize Product, :index?
     products = current_restaurant.products.ordered.includes(:category, image_attachment: :blob)
     render json: ProductBlueprint.render_as_hash(products, view: :with_image_url, base_url: request.base_url)
   end
 
   def show
     product = current_restaurant.products.find(params[:id])
+    authorize product
     render json: ProductBlueprint.render_as_hash(product, view: :with_image_url, base_url: request.base_url)
   end
 
   def create
+    authorize Product, :create?
     category = current_restaurant.categories.find(product_params[:category_id])
     product = category.products.build(product_params.except(:category_id))
     product.category = category
@@ -24,6 +27,7 @@ class Api::V1::Admin::ProductsController < Api::V1::Admin::BaseController
 
   def update
     product = current_restaurant.products.find(params[:id])
+    authorize product
 
     if product.update(product_params.except(:category_id))
       attach_image(product) if params[:product][:image].present?
@@ -35,6 +39,7 @@ class Api::V1::Admin::ProductsController < Api::V1::Admin::BaseController
 
   def destroy
     product = current_restaurant.products.find(params[:id])
+    authorize product
     product.destroy!
     head :no_content
   end

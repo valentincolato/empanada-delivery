@@ -2,7 +2,8 @@ class Restaurant < ApplicationRecord
   has_many :categories, dependent: :destroy
   has_many :products, through: :categories
   has_many :orders, dependent: :destroy
-  has_many :users, dependent: :nullify
+  has_many :restaurant_memberships, dependent: :destroy
+  has_many :members, through: :restaurant_memberships, source: :user
 
   validates :name, presence: true
   validates :slug, presence: true, uniqueness: true,
@@ -57,12 +58,19 @@ class Restaurant < ApplicationRecord
   end
 
   def provision_admin!(email:, password:, name: nil)
-    users.create!(
-      email: email,
-      password: password,
-      name: name,
-      role: :restaurant_admin
-    )
+    ActiveRecord::Base.transaction do
+      user = User.find_or_initialize_by(email: email)
+      if user.new_record?
+        user.assign_attributes(password: password, name: name, role: :restaurant_admin)
+        user.save!
+      elsif user.customer?
+        user.update!(role: :restaurant_admin)
+      end
+
+      membership = restaurant_memberships.find_or_initialize_by(user: user)
+      membership.update!(role: :owner)
+      user
+    end
   end
 
   private

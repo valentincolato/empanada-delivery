@@ -1,5 +1,6 @@
 class Api::V1::Admin::OrdersController < Api::V1::Admin::BaseController
   def index
+    authorize Order, :index?
     orders = current_restaurant.orders
                                .includes(:order_items, :user)
                                .order(created_at: :desc)
@@ -8,11 +9,13 @@ class Api::V1::Admin::OrdersController < Api::V1::Admin::BaseController
 
   def show
     order = current_restaurant.orders.find(params[:id])
+    authorize order
     render json: OrderBlueprint.render_as_hash(order, view: :with_items)
   end
 
   def update
     order = current_restaurant.orders.find(params[:id])
+    authorize order
     new_status = params.require(:order).require(:status)
 
     UpdateOrderStatus.new(order: order, new_status: new_status).call

@@ -6,7 +6,7 @@ RSpec.describe "Authentication pages", type: :request do
       get "/panel/login"
 
       expect(response).to have_http_status(:ok)
-      expect(response.body).to include("QueResto")
+      expect(response.body).to include("PedidoFácil")
       expect(response.body).to include("Bienvenido")
       expect(response.body).to include("E-mail")
       expect(response.body).to include("Password")

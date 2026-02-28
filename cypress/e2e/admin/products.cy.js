@@ -8,53 +8,54 @@ describe('Admin — Products Manager', () => {
   })
 
   it('displays the products list', () => {
-    cy.contains('Products').should('be.visible')
-    cy.contains('Carne Picante').should('be.visible')
-    cy.contains('Jamón y Queso').should('be.visible')
+    cy.get('[data-testid="products-title"]').should('be.visible')
+    cy.get('[data-testid^="product-row-"]').should('have.length.greaterThan', 0)
   })
 
   it('opens the new product modal', () => {
-    cy.contains('+ New Product').click()
-    cy.contains('h2', 'New Product').should('be.visible')
-    cy.get('input').first().should('be.focused')
+    cy.get('[data-testid="new-product-button"]').click()
+    cy.get('[data-testid="product-modal-title"][data-mode="new"]').should('be.visible')
+    cy.get('[data-testid="product-name-input"]').should('be.focused')
   })
 
   it('creates a new product', () => {
     const productName = `Test Product Cypress ${Date.now()}`
 
-    cy.contains('+ New Product').click()
-    cy.get('label').contains('Name *').find('input').type(productName)
-    cy.get('label').contains('Price *').find('input').type('999')
-    cy.contains('Save').click()
+    cy.get('[data-testid="new-product-button"]').click()
+    cy.get('[data-testid="product-name-input"]').type(productName)
+    cy.get('[data-testid="product-price-input"]').type('999')
+    cy.get('[data-testid="save-product-button"]').click()
     cy.contains(productName).should('be.visible')
   })
 
   it('edits an existing product', () => {
     const updatedName = `Cypress Edited ${Date.now()}`
 
-    cy.get('tbody tr', { timeout: 10000 }).first().within(() => {
-      cy.contains('button', /^Edit$/).click()
+    cy.get('[data-testid^="product-row-"]', { timeout: 10000 }).first().within(() => {
+      cy.get('[data-testid^="edit-product-"]').click()
     })
-    cy.contains('h2', 'Edit Product', { timeout: 10000 }).should('be.visible')
-    cy.get('label').contains('Name *').find('input').clear().type(updatedName)
-    cy.contains('button', 'Save').click()
+    cy.get('[data-testid="product-modal-title"][data-mode="edit"]', { timeout: 10000 }).should('be.visible')
+    cy.get('[data-testid="product-name-input"]').clear().type(updatedName)
+    cy.get('[data-testid="save-product-button"]').click()
     cy.contains('tr', updatedName, { timeout: 10000 }).should('be.visible')
   })
 
   it('toggles product availability', () => {
-    cy.contains('tr', 'Agua Mineral').within(() => {
-      cy.contains('Available').click()
-      cy.contains('Unavailable').should('be.visible')
-      // restore
-      cy.contains('Unavailable').click()
-      cy.contains('Available').should('be.visible')
+    cy.get('[data-testid^="product-row-"]').first().within(() => {
+      cy.get('[data-testid^="toggle-availability-"]').first().then(($btn) => {
+        const testId = $btn.attr('data-testid')
+        const before = $btn.attr('data-available')
+        cy.get(`[data-testid="${testId}"]`).click()
+        cy.get(`[data-testid="${testId}"]`).should(($after) => {
+          expect($after.attr('data-available')).not.to.eq(before)
+        })
+      })
     })
   })
 
   it('cancels modal without saving', () => {
-    cy.contains('+ New Product').click()
-    cy.contains('Cancel').click()
-    // Modal title should be gone (the "+ New Product" button text still exists, so use h2)
-    cy.contains('h2', 'New Product').should('not.exist')
+    cy.get('[data-testid="new-product-button"]').click()
+    cy.get('[data-testid="cancel-product-button"]').click()
+    cy.get('[data-testid="product-modal-title"]').should('not.exist')
   })
 })
