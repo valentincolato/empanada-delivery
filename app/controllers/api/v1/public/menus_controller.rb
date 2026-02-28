@@ -5,7 +5,11 @@ class Api::V1::Public::MenusController < ActionController::API
 
     render json: {
       restaurant: RestaurantBlueprint.render_as_hash(restaurant),
-      categories: CategoryBlueprint.render_as_hash(categories, view: :with_products)
+      categories: CategoryBlueprint.render_as_hash(
+        categories,
+        view: :with_products,
+        base_url: request.base_url
+      )
     }
   rescue ActiveRecord::RecordNotFound
     render json: { error: "Menu not found" }, status: :not_found

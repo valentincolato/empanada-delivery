@@ -1,6 +1,7 @@
-class Api::V1::Admin::BaseController < ActionController::API
+class Api::V1::Admin::BaseController < ApplicationController
   before_action :authenticate_user!
   before_action :require_restaurant_admin!
+  before_action :require_current_restaurant!
 
   rescue_from ActiveRecord::RecordNotFound, with: :not_found
 
@@ -11,8 +12,14 @@ class Api::V1::Admin::BaseController < ActionController::API
   end
 
   def require_restaurant_admin!
-    unless current_user.restaurant_admin? || current_user.super_admin?
+    unless current_user.restaurant_admin?
       render json: { error: "Forbidden" }, status: :forbidden
+    end
+  end
+
+  def require_current_restaurant!
+    if current_restaurant.blank?
+      render json: { error: "Restaurant context not found" }, status: :forbidden
     end
   end
 

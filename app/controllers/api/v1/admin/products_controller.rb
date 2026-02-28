@@ -1,12 +1,12 @@
 class Api::V1::Admin::ProductsController < Api::V1::Admin::BaseController
   def index
     products = current_restaurant.products.ordered.includes(:category, image_attachment: :blob)
-    render json: ProductBlueprint.render_as_hash(products, view: :with_image_url)
+    render json: ProductBlueprint.render_as_hash(products, view: :with_image_url, base_url: request.base_url)
   end
 
   def show
     product = current_restaurant.products.find(params[:id])
-    render json: ProductBlueprint.render_as_hash(product, view: :with_image_url)
+    render json: ProductBlueprint.render_as_hash(product, view: :with_image_url, base_url: request.base_url)
   end
 
   def create
@@ -16,7 +16,7 @@ class Api::V1::Admin::ProductsController < Api::V1::Admin::BaseController
 
     if product.save
       attach_image(product)
-      render json: ProductBlueprint.render_as_hash(product, view: :with_image_url), status: :created
+      render json: ProductBlueprint.render_as_hash(product, view: :with_image_url, base_url: request.base_url), status: :created
     else
       render json: { errors: product.errors.full_messages }, status: :unprocessable_entity
     end
@@ -27,7 +27,7 @@ class Api::V1::Admin::ProductsController < Api::V1::Admin::BaseController
 
     if product.update(product_params.except(:category_id))
       attach_image(product) if params[:product][:image].present?
-      render json: ProductBlueprint.render_as_hash(product, view: :with_image_url)
+      render json: ProductBlueprint.render_as_hash(product, view: :with_image_url, base_url: request.base_url)
     else
       render json: { errors: product.errors.full_messages }, status: :unprocessable_entity
     end

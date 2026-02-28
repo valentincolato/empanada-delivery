@@ -14,7 +14,7 @@ class Admin::DashboardController < ApplicationController
   private
 
   def require_restaurant_admin!
-    unless current_user.restaurant_admin? || current_user.super_admin?
+    unless current_user.restaurant_admin?
       redirect_to root_path, alert: "Access denied"
     end
   end

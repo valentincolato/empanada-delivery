@@ -2,7 +2,7 @@
 
 Multi-tenant food ordering platform — scan a QR, browse the menu, place an order. Restaurants manage everything from a real-time dashboard.
 
-Built with **Ruby on Rails 8 + React (Vite) + PostgreSQL + Sidekiq**.
+Built with **Ruby on Rails 8 + React (Vite) + PostgreSQL + Active Job queues**.
 
 ---
 
@@ -15,7 +15,7 @@ Built with **Ruby on Rails 8 + React (Vite) + PostgreSQL + Sidekiq**.
 - **Product management** — CRUD products and categories, toggle availability instantly
 - **QR code generator** — SVG download for printing
 - **Multi-tenancy** — one platform, multiple restaurants, each scoped by slug
-- **Background jobs** — email notifications via Sidekiq when orders are placed or status changes
+- **Background jobs** — email notifications via Active Job (`Sidekiq` in development, `Solid Queue` in production)
 - **Super admin** — create and manage restaurants + provision admin users
 
 ---
@@ -26,7 +26,7 @@ Built with **Ruby on Rails 8 + React (Vite) + PostgreSQL + Sidekiq**.
 |---|---|
 | Backend | Ruby 3.2 · Rails 8.1 |
 | Database | PostgreSQL 16 |
-| Background jobs | Sidekiq + Redis |
+| Background jobs | Active Job (`Sidekiq` in development, `Solid Queue` in production) |
 | Frontend | React 18 + Vite (auto-mounted via `component()` helper) |
 | Auth | Devise (roles: `customer`, `restaurant_admin`, `super_admin`) |
 | Serialization | Blueprinter |
