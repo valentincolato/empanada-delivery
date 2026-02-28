@@ -1,0 +1,111 @@
+# Docker Compose — development environment
+# Usage:
+#   docker compose up          # start everything
+#   docker compose up web      # start only Rails + deps
+#   docker compose run --rm web rails db:migrate
+#   docker compose run --rm web rails db:seed
+
+services:
+
+  # ── PostgreSQL ──────────────────────────────────────────────────────────────
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: empanada
+      POSTGRES_PASSWORD: empanada
+      POSTGRES_DB: empanada_delivery_development
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U empanada"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  # ── Redis ────────────────────────────────────────────────────────────────────
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    volumes:
+      - redis_data:/data
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  # ── Rails web server ─────────────────────────────────────────────────────────
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    command: bash -c "bundle exec rails db:prepare && bundle exec rails server -b 0.0.0.0 -p 3000"
+    volumes:
+      - .:/rails
+      - bundle_cache:/usr/local/bundle
+      - node_modules:/rails/node_modules
+    ports:
+      - "3000:3000"
+    environment:
+      RAILS_ENV: development
+      DATABASE_URL: postgres://empanada:empanada@postgres:5432/empanada_delivery_development
+      REDIS_URL: redis://redis:6379/0
+      VITE_RUBY_HOST: vite
+      VITE_RUBY_PORT: "3036"
+    env_file:
+      - .env.local
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    stdin_open: true
+    tty: true
+
+  # ── Vite dev server (HMR) ────────────────────────────────────────────────────
+  vite:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    command: npm run dev -- --host 0.0.0.0 --port 3036
+    volumes:
+      - .:/rails
+      - node_modules:/rails/node_modules
+    ports:
+      - "3036:3036"
+    environment:
+      RAILS_ENV: development
+    depends_on:
+      - web
+
+  # ── Sidekiq worker ───────────────────────────────────────────────────────────
+  sidekiq:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    command: bundle exec sidekiq -q high -q default -q low
+    volumes:
+      - .:/rails
+      - bundle_cache:/usr/local/bundle
+    environment:
+      RAILS_ENV: development
+      DATABASE_URL: postgres://empanada:empanada@postgres:5432/empanada_delivery_development
+      REDIS_URL: redis://redis:6379/0
+    env_file:
+      - .env.local
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+volumes:
+  postgres_data:
+  redis_data:
+  bundle_cache:
+  node_modules:

@@ -1,0 +1,37 @@
+# syntax=docker/dockerfile:1
+# Development Dockerfile — hot reload, no asset precompilation
+ARG RUBY_VERSION=3.2.0
+FROM docker.io/library/ruby:$RUBY_VERSION-slim
+
+WORKDIR /rails
+
+# System dependencies
+RUN apt-get update -qq && \
+    apt-get install --no-install-recommends -y \
+      build-essential \
+      curl \
+      git \
+      libpq-dev \
+      libyaml-dev \
+      libvips \
+      pkg-config \
+      postgresql-client && \
+    rm -rf /var/lib/apt/lists /var/cache/apt/archives
+
+# Node.js 22.x
+RUN curl -fsSL https://deb.nodesource.com/setup_22.x | bash - && \
+    apt-get install --no-install-recommends -y nodejs && \
+    rm -rf /var/lib/apt/lists /var/cache/apt/archives
+
+# Gems (installed into the image; source code is mounted at runtime)
+COPY Gemfile Gemfile.lock ./
+RUN bundle install
+
+# JS packages
+COPY package.json package-lock.json ./
+RUN npm ci
+
+# Copy source (overridden by the bind mount in compose.yml at runtime)
+COPY . .
+
+EXPOSE 3000
