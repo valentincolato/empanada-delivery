@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { api } from '@utils/api'
+import { confirmAction } from '@utils/confirmAction'
 
 export default function CategoriesManager() {
   const { t } = useTranslation()
@@ -46,7 +47,8 @@ export default function CategoriesManager() {
   }
 
   async function destroy(id) {
-    if (!confirm(t('admin.categories.deleteConfirm'))) return
+    const approved = await confirmAction(t('admin.categories.deleteConfirm'))
+    if (!approved) return
     await api.delete(`/api/v1/admin/categories/${id}`)
     await loadCategories()
   }

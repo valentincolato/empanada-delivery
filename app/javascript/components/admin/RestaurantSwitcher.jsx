@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { api } from '@utils/api'
+import { notifyError } from '@utils/notify'
 
 export default function RestaurantSwitcher({ restaurants }) {
   const [switchingId, setSwitchingId] = useState(null)
@@ -10,7 +11,7 @@ export default function RestaurantSwitcher({ restaurants }) {
       const data = await api.post('/api/v1/admin/switch_restaurant', { restaurant_id: restaurantId })
       window.location.href = data.redirect_to || '/admin/orders'
     } catch (err) {
-      alert(err.message)
+      notifyError(err.message)
     } finally {
       setSwitchingId(null)
     }

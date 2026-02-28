@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { api } from '@utils/api'
+import { confirmAction } from '@utils/confirmAction'
 
 export default function MembersManager() {
   const { t } = useTranslation()
@@ -37,7 +38,8 @@ export default function MembersManager() {
   }
 
   async function removeMembership(membershipId) {
-    if (!confirm(t('admin.members.removeConfirm'))) return
+    const approved = await confirmAction(t('admin.members.removeConfirm'))
+    if (!approved) return
     await api.delete(`/api/v1/admin/memberships/${membershipId}`)
     await loadMembers()
   }
