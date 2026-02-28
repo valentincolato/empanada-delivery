@@ -24,6 +24,7 @@ export default function Menu({ slug, restaurantName }) {
   function removeFromCart(productId) {
     const updated = cart.remove(slug, productId)
     setCartItems([...updated])
+    if (updated.length === 0) setShowCart(false)
   }
 
   function totalCents() {
@@ -109,7 +110,7 @@ export default function Menu({ slug, restaurantName }) {
 
 function ProductCard({ product, onAdd }) {
   return (
-    <div style={styles.card}>
+    <div style={styles.card} data-testid="product-card">
       {product.image_url && <img src={product.image_url} alt={product.name} style={styles.productImg} />}
       <div style={styles.cardBody}>
         <h3 style={styles.productName}>{product.name}</h3>

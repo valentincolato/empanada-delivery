@@ -1,6 +1,6 @@
-# Background Jobs
+# Background Jobs Guide
 
-This document describes how background jobs work in this project.
+This project uses Active Job with different adapters per environment.
 
 ## Queue Adapter by Environment
 
@@ -11,57 +11,62 @@ This document describes how background jobs work in this project.
 | production | `solid_queue` | `config/environments/production.rb` |
 
 Notes:
-- In development, `docker compose` includes a `sidekiq` service.
-- In production, jobs run through `Solid Queue` (database-backed queue).
 
-## Queue Names Used in This App
+- Development runs a `sidekiq` worker in Docker/Procfile setups.
+- Production uses Solid Queue (database-backed), configured with `config/queue.yml` and `config/recurring.yml`.
 
-Current jobs use these queues:
+## Existing Jobs and Queues
 
-- `high`
-  - `NotifyRestaurantNewOrderJob`
-  - `NotifyCustomerOrderStatusJob`
-- `low`
-  - `CleanupOldPendingOrdersJob`
-- `default`
-  - Any job without explicit `queue_as`
+- `NotifyRestaurantNewOrderJob` (`high`)
+- `NotifyCustomerOrderStatusJob` (`high`)
+- `CleanupOldPendingOrdersJob` (`low`)
 
-## How to Create a Job
+## Current Responsibilities
+
+- `NotifyRestaurantNewOrderJob`
+  - Loads order with associations and sends `OrderMailer.new_order_notification`
+- `NotifyCustomerOrderStatusJob`
+  - Sends status update email only if `customer_email` is present
+- `CleanupOldPendingOrdersJob`
+  - Cancels pending orders older than 2 hours
+
+## Job Design Rules
+
+1. Pass IDs, not full ActiveRecord objects.
+2. Keep jobs idempotent and retry-safe.
+3. Keep orchestration in workflows/models, not in jobs.
+4. Avoid business branching explosion inside `perform`.
+
+## Creating a New Job
 
 ```ruby
 class ExampleJob < ApplicationJob
   queue_as :default
 
   def perform(record_id)
-    # keep perform focused and idempotent
+    record = Model.find_by(id: record_id)
+    return unless record
+
+    # idempotent work
   end
 end
 ```
 
-Guidelines:
-- Prefer passing IDs, not full objects.
-- Keep `perform` idempotent (safe to retry).
-- Keep business orchestration in workflows/aggregates, not in controllers.
-
-## How to Enqueue
+## Enqueueing
 
 ```ruby
 ExampleJob.perform_later(record.id)
 ```
 
-Do not use `Delayed::Job.enqueue` in this project.
-
 ## Recurring Jobs
 
-Recurring tasks are configured in `config/recurring.yml`.
+`config/recurring.yml` currently defines production cleanup for finished Solid Queue jobs:
 
-Current recurring task in production:
-- `clear_solid_queue_finished_jobs` (hourly cleanup of completed jobs)
+- `clear_solid_queue_finished_jobs` (hourly)
 
-## Operations Checklist
+## Operational Checklist
 
-When adding or changing jobs:
-1. Choose the queue with explicit `queue_as`.
-2. Ensure retries are safe (idempotency).
-3. Add tests for behavior and side effects.
-4. If it is recurring, update `config/recurring.yml`.
+1. Choose queue priority explicitly with `queue_as`.
+2. Ensure safe retries and no duplicate side effects.
+3. Add tests for success and no-op edge cases.
+4. If recurring, update `config/recurring.yml`.

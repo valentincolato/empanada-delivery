@@ -1,80 +1,63 @@
-# 🧩 Vite components
-## New JS File
+# Vite + React Components Guide
 
-The new JS file is located on `app/javascript/entrypoints/application.js`
-## 📁 Structure
+This project mounts React components from Rails views using the `component()` helper and a dynamic auto-loader.
 
-All React components should be placed under:
+## Entry Points
 
-`app/javascript/components/`
+- Rails view helper: `app/helpers/components_helper.rb`
+- Vite entrypoint: `app/javascript/entrypoints/application.js`
+- Mount utility: `app/javascript/utils/mountAllComponents.js`
 
-## Root Component vs. Internal Component
+## Mounting Flow
 
-A **Root Component** is one that gets mounted directly from an `.erb` view using `component("Name")`.
+1. Rails renders:
 
-### If **yes**, it is a Root Component:
-
-1. The file name must match the component name.
-   - Example:
-     - File: `Register.jsx`
-     - Export: `export default function Register() { ... }`
-     - In the `.erb` view: `<%= component("Register") %>`
-
-2. The component will be automatically mounted by `mountAllComponents`.
-
-### If **no**, it is not a Root Component:
-
-1. Just make sure the component is inside the `components` folder.
-2. You can import and use it normally inside other components:
-
-    `import SomeChild from '@components/SomeChild'`
-
-## Auto-Mounting System
-
-In the past, you had to manually register components in a hash so they could be mounted from backend views.  
-**That is no longer necessary.**
-
-Now all components are automatically loads from the `components` folder. Components are mounted dynamically based on the DOM using the helper `component` in `.erb` views.
-
-## Useful Vite Configuration Details
-
-### Aliases
-We have configured the following path aliases in `vite.config.js`:
-```js
-resolve: {
-  alias: {
-    '@components': path.resolve(__dirname, 'app/javascript/components'),
-    '@utils': path.resolve(__dirname, 'app/javascript/utils')
-  }
-}
+```erb
+<%= component("Menu", slug: @restaurant.slug) %>
 ```
 
-This allows for cleaner imports:
-```js
-import MyComponent from '@components/MyComponent';
-import { helper } from '@utils/helper';
-```
+2. Helper emits:
 
-### JavaScript Bundle Report
-You can generate a JavaScript bundle report to analyze sizes using:
-```js
-vite build --report
-```
-This opens a visual breakdown of your JS bundles using rollup-plugin-visualizer.
+- `data-react-component="Menu"`
+- `data-props='{"slug":"..."}'`
 
-### Heavy Libraries and Manual Chunking
+3. `mountAllComponents()` scans `[data-react-component]`, resolves module via `import.meta.glob('../components/**/*.jsx')`, and mounts it with React 18 `createRoot`.
 
-For large libraries like `react-apexcharts` or `react-quill`, we:
+## Naming Rules
 
-1. Use React.lazy and Suspense to load them only when needed.
+- Component file extension must be `.jsx`.
+- Names must match the helper argument and relative path.
 
-2. Define a manual chunk in vite.config.js to separate them into their own bundle:
+Examples:
 
-```js
-manualChunks: {
-  vendor: ['react', 'react-dom'],
-  apexcharts: ['react-apexcharts'],
-  reactquill: ['react-quill'],
-}
-```
-This improves the initial load time by deferring large dependencies.
+- `component("Home")` -> `app/javascript/components/Home.jsx`
+- `component("admin/OrdersDashboard")` -> `app/javascript/components/admin/OrdersDashboard.jsx`
+- `component("super_admin/RestaurantsManager")` -> `app/javascript/components/super_admin/RestaurantsManager.jsx`
+
+## Path Aliases
+
+Configured in `vite.config.js`:
+
+- `@components` -> `app/javascript/components`
+- `@utils` -> `app/javascript/utils`
+
+## Best Practices
+
+1. Keep Rails views as thin shells for root React components.
+2. Keep API access and state logic inside React components/utils.
+3. Prefer small reusable components for shared UI behavior.
+4. Validate incoming props defensively (types/shape checks).
+
+## Common Issues
+
+- "Component not found" in console:
+  - helper name/path does not match file path under `components/**`
+- Props parse errors:
+  - non-JSON-safe values passed to `component()` helper
+- No mount at all:
+  - missing Vite entrypoint include in layout
+
+## Performance Notes
+
+- Use route-level/component-level splitting where appropriate.
+- `import.meta.glob` already loads modules lazily on demand.

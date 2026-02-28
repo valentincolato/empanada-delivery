@@ -15,27 +15,30 @@ describe('Admin — Products Manager', () => {
 
   it('opens the new product modal', () => {
     cy.contains('+ New Product').click()
-    cy.contains('New Product').should('be.visible')
+    cy.contains('h2', 'New Product').should('be.visible')
     cy.get('input').first().should('be.focused')
   })
 
   it('creates a new product', () => {
+    const productName = `Test Product Cypress ${Date.now()}`
+
     cy.contains('+ New Product').click()
-    cy.get('label').contains('Name *').next('input').type('Test Product Cypress')
-    cy.get('label').contains('Price *').next('input').type('999')
+    cy.get('label').contains('Name *').find('input').type(productName)
+    cy.get('label').contains('Price *').find('input').type('999')
     cy.contains('Save').click()
-    cy.contains('Test Product Cypress').should('be.visible')
+    cy.contains(productName).should('be.visible')
   })
 
   it('edits an existing product', () => {
-    cy.contains('tr', 'Carne Picante').contains('Edit').click()
-    cy.get('label').contains('Name *').next('input').clear().type('Carne Picante Edited')
-    cy.contains('Save').click()
-    cy.contains('Carne Picante Edited').should('be.visible')
-    // restore original name
-    cy.contains('tr', 'Carne Picante Edited').contains('Edit').click()
-    cy.get('label').contains('Name *').next('input').clear().type('Carne Picante')
-    cy.contains('Save').click()
+    const updatedName = `Cypress Edited ${Date.now()}`
+
+    cy.get('tbody tr', { timeout: 10000 }).first().within(() => {
+      cy.contains('button', /^Edit$/).click()
+    })
+    cy.contains('h2', 'Edit Product', { timeout: 10000 }).should('be.visible')
+    cy.get('label').contains('Name *').find('input').clear().type(updatedName)
+    cy.contains('button', 'Save').click()
+    cy.contains('tr', updatedName, { timeout: 10000 }).should('be.visible')
   })
 
   it('toggles product availability', () => {
@@ -51,6 +54,7 @@ describe('Admin — Products Manager', () => {
   it('cancels modal without saving', () => {
     cy.contains('+ New Product').click()
     cy.contains('Cancel').click()
-    cy.contains('New Product').should('not.exist')
+    // Modal title should be gone (the "+ New Product" button text still exists, so use h2)
+    cy.contains('h2', 'New Product').should('not.exist')
   })
 })

@@ -109,7 +109,7 @@ export default function ProductsManager() {
             </div>
             <form onSubmit={save} style={s.modalBody}>
               <label style={s.label}>Name *
-                <input required value={form.name} onChange={e => setForm(f => ({ ...f, name: e.target.value }))} style={s.input} />
+                <input autoFocus required value={form.name} onChange={e => setForm(f => ({ ...f, name: e.target.value }))} style={s.input} />
               </label>
               <label style={s.label}>Description
                 <textarea value={form.description} onChange={e => setForm(f => ({ ...f, description: e.target.value }))} style={{ ...s.input, height: '80px' }} />

@@ -3,7 +3,7 @@ const ADMIN_PASSWORD = 'password123'
 const SLUG = 'empanadas-demo'
 
 // Helper: place an order via the API so we have data to manage
-function seedOrder() {
+function seedOrder(customerName = 'Cypress User') {
   return cy.request('GET', `/api/v1/public/menu/${SLUG}`).then((menuRes) => {
     const product = menuRes.body.categories[0].products[0]
     return cy.request({
@@ -12,7 +12,7 @@ function seedOrder() {
       body: {
         order: {
           restaurant_slug: SLUG,
-          customer_name: 'Cypress User',
+          customer_name: customerName,
           customer_email: 'cypress@test.com',
           items: [{ product_id: product.id, quantity: 1, notes: '' }],
         },
@@ -43,7 +43,7 @@ describe('Admin — Orders Dashboard', () => {
   it('displays a new order in the Pending column', () => {
     seedOrder().then(() => {
       cy.reload()
-      cy.contains('Pending').parent().within(() => {
+      cy.get('[data-testid="column-pending"]').within(() => {
         cy.contains('Cypress User').should('be.visible')
       })
     })
@@ -52,12 +52,13 @@ describe('Admin — Orders Dashboard', () => {
   it('moves an order to Confirmed', () => {
     seedOrder().then(() => {
       cy.reload()
-      // Find the Cypress User card and click Confirm
-      cy.contains('Cypress User').closest('[style]').within(() => {
-        cy.contains('Confirm').click()
+      cy.get('[data-testid="column-pending"]').within(() => {
+        cy.contains('[data-testid="order-card"]', 'Cypress User').within(() => {
+          cy.contains('Confirm').click()
+        })
       })
       // Card should move to Confirmed column
-      cy.contains('Confirmed').parent().within(() => {
+      cy.get('[data-testid="column-confirmed"]').within(() => {
         cy.contains('Cypress User').should('be.visible')
       })
     })
@@ -67,33 +68,38 @@ describe('Admin — Orders Dashboard', () => {
     seedOrder().then(() => {
       cy.reload()
 
-      cy.contains('Cypress User').closest('[style]').within(() => {
-        cy.contains('Confirm').click()
+      cy.get('[data-testid="column-pending"]').within(() => {
+        cy.contains('[data-testid="order-card"]', 'Cypress User').within(() => {
+          cy.contains('Confirm').click()
+        })
       })
-      cy.contains('Confirmed').parent().within(() => {
-        cy.contains('Cypress User').closest('[style]').within(() => {
+      cy.get('[data-testid="column-confirmed"]').within(() => {
+        cy.contains('[data-testid="order-card"]', 'Cypress User').within(() => {
           cy.contains('Start Preparing').click()
         })
       })
-      cy.contains('Preparing').parent().within(() => {
-        cy.contains('Cypress User').closest('[style]').within(() => {
+      cy.get('[data-testid="column-preparing"]').within(() => {
+        cy.contains('[data-testid="order-card"]', 'Cypress User').within(() => {
           cy.contains('Mark Ready').click()
         })
       })
-      cy.contains('Ready').parent().within(() => {
+      cy.get('[data-testid="column-ready"]').within(() => {
         cy.contains('Cypress User').should('be.visible')
       })
     })
   })
 
-  it('can cancel an order', () => {
-    seedOrder().then(() => {
-      cy.reload()
-      cy.contains('Cypress User').closest('[style]').within(() => {
-        cy.contains('Cancel').click()
+  it('hides cancelled orders from active kanban columns', () => {
+    const customerName = `Cypress Cancel User ${Date.now()}-${Cypress._.random(1000, 9999)}`
+
+    seedOrder(customerName).then((orderRes) => {
+      const orderId = orderRes.body.id
+      cy.request('PATCH', `/api/v1/admin/orders/${orderId}`, {
+        order: { status: 'cancelled' },
       })
-      // Cancelled orders disappear from the board (no Cancelled column shown)
-      cy.contains('Cypress User').should('not.exist')
+      cy.reload()
+
+      cy.contains('[data-testid="order-card"]', customerName).should('not.exist')
     })
   })
 })

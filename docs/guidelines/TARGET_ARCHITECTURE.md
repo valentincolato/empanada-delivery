@@ -1,211 +1,132 @@
-# Architecture
+# Target Architecture Guide
 
-## Purpose
+This document defines where business logic should live in Empanada Delivery.
 
-This document defines **where business logic lives** in this application and **how to decide** where new code should go.
+## Architectural Units
 
-The goal is:
+## 1. Aggregates (Model Roots)
 
-* Consistency across the team
-* Low cognitive load for new contributors
-* Minimal abstraction, maximum clarity
+Aggregate roots own consistency and invariants for their internal data.
 
-This is a **Vanilla Rails** application with a small number of explicit rules.
+Current aggregate roots:
 
----
+- `Restaurant`
+- `Order`
 
-## Core Concepts
+Examples in code:
 
-### 1. Aggregates
+- `Restaurant#place_order!`
+- `Restaurant#toggle_accepting_orders!`
+- `Restaurant#provision_admin!`
+- `Order#add_items!`
+- `Order#update_status!`
+- `Order#can_transition_to?`
 
-An **aggregate** is a group of domain objects that must remain consistent together.
+Rule:
 
-* Represented by a single **aggregate root**
-* Other objects are modified *through* the root
-* Usually an ActiveRecord model
+- If a rule only affects one aggregate, keep it on the model root.
 
-**Examples**
+## 2. Workflows (Cross-Aggregate Orchestration)
 
-* `Boat` (with pricing, availability, photos)
-* `Lead` (with messages, status changes)
+Workflows coordinate multiple steps, including actions/jobs.
 
-**Rule**
+Location: `app/workflows/`
 
-> If logic affects only one aggregate, it belongs on the aggregate root.
+Current workflows:
 
-```ruby
-# GOOD
-lead.add_message!(author:, body:)
+- `PlaceOrder`
+- `UpdateOrderStatus`
+- `CreateRestaurant`
+- `ConfirmOrder`
+- `CancelOrder`
 
-# BAD
-Message.create!(lead: lead, ...)
-```
+Rule:
 
----
+- If logic coordinates multiple operations or side effects, use a workflow.
 
-### 2. Workflows
+## 3. Actions (Focused Commands)
 
-A **workflow** coordinates multiple aggregates or external systems to accomplish a business action.
+Actions encapsulate small, reusable business operations with explicit success/failure.
 
-* Named after a **business event**
-* Implemented as a plain Ruby object
-* No inheritance, no framework
-* Called by controllers, jobs, or webhooks
+Location: `app/actions/`
 
-**Rule**
+Examples:
 
-> If logic touches more than one aggregate, it is a workflow.
+- `Orders::BuildItemsAction`
+- `Products::ToggleAvailabilityAction`
+- `Restaurants::GenerateQrAction`
 
-**Examples**
+Rule:
 
-* `CreateLead`
-* `CloseLeadAsSold`
-* `RespondToInquiry`
+- Use actions for focused commands, not full process orchestration.
 
-```ruby
-# app/workflows/create_lead.rb
-class CreateLead
-  def initialize(boat:, buyer:, params:)
-    @boat = boat
-    @buyer = buyer
-    @params = params
-  end
+## 4. Entry Points (Controllers / Jobs)
 
-  def call
-    Lead.transaction do
-      lead = Lead.create!(...)
-      lead.add_message!(...)
-      NotifySellerJob.perform_later(lead.id)
-      lead
-    end
-  end
-end
-```
+Controllers and jobs are delivery mechanisms. Keep them thin.
 
-All workflows live in:
+They should:
 
-```
-app/workflows/
-```
+- parse/validate request shape
+- authorize and scope tenant context
+- delegate quickly to workflow/action/model methods
 
----
+They should not:
 
-### 3. Controllers, Jobs, Webhooks
+- contain long business decision trees
+- duplicate aggregate transition rules
 
-These are **entry points**, not business logic containers.
+## 5. API Serialization
 
-They may:
+Use Blueprinter serializers in `app/blueprints/` to keep response shapes centralized.
 
-* Parse input
-* Authorize
-* Call a workflow or aggregate method
+Examples:
 
-They may NOT:
+- `OrderBlueprint`
+- `ProductBlueprint`
+- `RestaurantBlueprint`
 
-* Coordinate multiple aggregates
-* Contain business rules
+## 6. Frontend Boundary
 
-```ruby
-# GOOD
-CreateLead.new(...).call
+Rails views host mount points; React components own interactive UI state.
 
-# BAD
-Lead.create!(...)
-Boat.increment!(...)
-Notifier.send(...)
-```
+- Rails: route + shell rendering
+- React: data fetching, state, interactions
 
----
+## Decision Tree
 
-### 4. External Services
+When adding new logic:
 
-Third-party systems are wrapped in **adapters**.
-
-* No business logic
-* No orchestration
-* Just communication
-
-**Examples**
-
-* `SmsGateway`
-* `PaymentProvider`
-* `ExternalBoatFeed`
-
-Workflows use adapters, not the other way around.
-
----
-
-## Decision Guide
-
-When adding new logic, ask:
-
-1. **Does this affect only one aggregate?**
-   → Put it on the aggregate root
-
-2. **Does this touch multiple aggregates or external systems?**
-   → Create a workflow
-
-3. **Is this triggered by HTTP, a job, or a webhook?**
-   → Delegate immediately
-
----
+1. One aggregate invariant only? -> model root method
+2. Focused command with explicit result? -> action
+3. Multi-step coordination with side effects? -> workflow
+4. HTTP/auth/tenant boundary only? -> controller
+5. Async delivery concern? -> job
 
 ## Naming Rules
 
+Prefer business-event names:
+
+- `PlaceOrder`
+- `UpdateOrderStatus`
+- `CreateRestaurant`
+
 Avoid generic names:
 
-❌ `LeadService`
-❌ `ProcessLead`
-❌ `HandleLead`
+- `OrderService`
+- `RestaurantManager`
+- `HandleOrder`
 
-Use business events:
+## Testing Expectations
 
-✅ `CreateLead`
-✅ `SendMessageToSeller`
-✅ `CloseLeadAsSold`
+- Aggregates: model specs for invariants and transitions
+- Actions: unit specs for success/failure paths
+- Workflows: behavior specs for orchestration + side effects
+- Controllers: request specs focused on auth/scoping/contracts
+- Jobs: job specs for idempotent behavior
 
----
+## Architecture Smells
 
-## Testing
-
-* **Aggregates**: unit tests on models
-* **Workflows**: behavior tests (inputs → side effects)
-* **Controllers/Jobs**: minimal tests (delegation only)
-
----
-
-## Non-Goals
-
-This architecture intentionally avoids:
-
-* Service object frameworks
-* Clean Architecture layers
-* Generic base classes
-* Shared “call” interfaces
-
-If a new abstraction is needed, it must be:
-
-* Named after a business concept
-* Justified by repeated use
-
----
-
-## Summary
-
-* Aggregates own consistency
-* Workflows coordinate behavior
-* Entry points delegate
-* Names matter more than folders
-
-When in doubt, prefer **clarity over cleverness**.
-
----
-
-If you want, next we can:
-
-* Turn this into a **code review checklist**
-* Add a **“how to refactor legacy code”** section
-* Create **LLM prompts** that enforce this structure
-* Walk through a real feature from your app using this guide
-
-Just tell me where you want to go next.
+- Controller updates status transitions directly with duplicated logic
+- Workflow doing raw SQL or rendering JSON
+- Action that mixes HTTP calls, persistence, and mail delivery all together
+- Model callbacks hiding complex orchestration across aggregates

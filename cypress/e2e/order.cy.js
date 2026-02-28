@@ -8,10 +8,10 @@ describe('Placing and tracking an order', () => {
 
   it('completes the full order flow and lands on the status page', () => {
     // Add two products to the cart
-    cy.contains('Carne Picante').closest('[style]').within(() => {
+    cy.contains('[data-testid="product-card"]', 'Carne Picante').within(() => {
       cy.contains('+ Add').click()
     })
-    cy.contains('Jamón y Queso').closest('[style]').within(() => {
+    cy.contains('[data-testid="product-card"]', 'Jamón y Queso').within(() => {
       cy.contains('+ Add').click()
     })
 
@@ -40,7 +40,7 @@ describe('Placing and tracking an order', () => {
   })
 
   it('shows the total on the status page', () => {
-    cy.contains('Agua Mineral').closest('[style]').within(() => {
+    cy.contains('[data-testid="product-card"]', 'Agua Mineral').within(() => {
       cy.contains('+ Add').click()
     })
 
@@ -65,7 +65,7 @@ describe('Placing and tracking an order', () => {
       body: { error: 'Restaurant is not accepting orders' },
     }).as('failedOrder')
 
-    cy.contains('Agua Mineral').closest('[style]').within(() => {
+    cy.contains('[data-testid="product-card"]', 'Agua Mineral').within(() => {
       cy.contains('+ Add').click()
     })
 
@@ -82,7 +82,7 @@ describe('Placing and tracking an order', () => {
     // Verify the polling text is rendered
     cy.intercept('GET', '/api/v1/orders/*').as('statusPoll')
 
-    cy.contains('Carne Suave').closest('[style]').within(() => {
+    cy.contains('[data-testid="product-card"]', 'Carne Suave').within(() => {
       cy.contains('+ Add').click()
     })
     cy.contains('🛒').click()

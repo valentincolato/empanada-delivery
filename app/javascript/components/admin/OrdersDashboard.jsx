@@ -68,7 +68,7 @@ export default function OrdersDashboard() {
         {COLUMNS.map(({ status, label, color, bg }) => {
           const colOrders = orders.filter((o) => o.status === status)
           return (
-            <div key={status} style={s.column}>
+            <div key={status} style={s.column} data-testid={`column-${status}`}>
               <div style={{ ...s.colHeader, borderTopColor: color, background: bg }}>
                 <span style={{ fontWeight: 700, color }}>{label}</span>
                 <span style={{ ...s.badge, background: color }}>{colOrders.length}</span>
@@ -96,7 +96,7 @@ export default function OrdersDashboard() {
 function OrderCard({ order, transitions, onUpdate, isUpdating }) {
   const ago = Math.round((Date.now() - new Date(order.created_at)) / 60000)
   return (
-    <div style={s.card}>
+    <div style={s.card} data-testid="order-card">
       <div style={s.cardHeader}>
         <span style={s.orderId}>#{order.id}</span>
         <span style={s.ago}>{ago}m ago</span>

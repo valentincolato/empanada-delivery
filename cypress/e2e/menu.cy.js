@@ -17,7 +17,7 @@ describe('Public menu', () => {
   })
 
   it('shows product price', () => {
-    cy.contains('Carne Picante').closest('[style]').within(() => {
+    cy.contains('[data-testid="product-card"]', 'Carne Picante').within(() => {
       cy.contains('$').should('be.visible')
     })
   })
@@ -27,7 +27,7 @@ describe('Public menu', () => {
   })
 
   it('adds a product to the cart', () => {
-    cy.contains('Carne Picante').closest('[style]').within(() => {
+    cy.contains('[data-testid="product-card"]', 'Carne Picante').within(() => {
       cy.contains('+ Add').click()
     })
     cy.contains('🛒').should('be.visible')
@@ -35,17 +35,17 @@ describe('Public menu', () => {
   })
 
   it('adds multiple products and updates the cart count', () => {
-    cy.contains('Carne Picante').closest('[style]').within(() => {
+    cy.contains('[data-testid="product-card"]', 'Carne Picante').within(() => {
       cy.contains('+ Add').click()
     })
-    cy.contains('Jamón y Queso').closest('[style]').within(() => {
+    cy.contains('[data-testid="product-card"]', 'Jamón y Queso').within(() => {
       cy.contains('+ Add').click()
     })
     cy.contains('2 —').should('be.visible')
   })
 
   it('opens the cart drawer', () => {
-    cy.contains('Humita').closest('[style]').within(() => {
+    cy.contains('[data-testid="product-card"]', 'Humita').within(() => {
       cy.contains('+ Add').click()
     })
     cy.contains('🛒').click()
@@ -54,20 +54,19 @@ describe('Public menu', () => {
   })
 
   it('removes a product from the cart drawer', () => {
-    cy.contains('Humita').closest('[style]').within(() => {
+    cy.contains('[data-testid="product-card"]', 'Humita').within(() => {
       cy.contains('+ Add').click()
     })
     cy.contains('🛒').click()
     cy.contains('Your Cart').should('be.visible')
     // click the ✕ next to the item
-    cy.get('[style]').contains('Humita').parent().contains('✕').click()
-    cy.contains('No items').should('not.exist')
+    cy.contains('1x Humita').parent().contains('✕').click()
     // cart button disappears after removing last item
     cy.contains('Your Cart').should('not.exist')
   })
 
   it('shows the checkout modal', () => {
-    cy.contains('Choclo').closest('[style]').within(() => {
+    cy.contains('[data-testid="product-card"]', 'Choclo').within(() => {
       cy.contains('+ Add').click()
     })
     cy.contains('🛒').click()

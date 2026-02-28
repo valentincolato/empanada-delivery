@@ -1,4 +1,4 @@
-class Api::V1::SuperAdmin::RestaurantsController < ActionController::API
+class Api::V1::SuperAdmin::RestaurantsController < ApplicationController
   before_action :authenticate_user!
   before_action :require_super_admin!
 
