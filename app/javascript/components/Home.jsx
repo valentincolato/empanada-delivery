@@ -1,5 +1,4 @@
 import { useTranslation } from 'react-i18next'
-import LanguageSwitcher from './LanguageSwitcher'
 
 const RESTAURANT_LINK = '/empanadas-demo'
 
@@ -46,7 +45,6 @@ export default function Home() {
             </div>
             <span className="font-display text-3xl font-semibold">PedidoFácil</span>
           </div>
-          <LanguageSwitcher className="!border-[var(--line-soft)] !bg-[var(--panel-strong)] !text-white" />
         </div>
 
         <div className="relative mx-auto mt-14 grid w-full max-w-6xl gap-12 lg:grid-cols-[1.02fr_0.98fr] lg:items-center">

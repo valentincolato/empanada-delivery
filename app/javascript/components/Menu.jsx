@@ -2,7 +2,6 @@ import { useState, useEffect, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { api } from '@utils/api'
 import { cart } from '@utils/cart'
-import LanguageSwitcher from './LanguageSwitcher'
 
 export default function Menu({ slug }) {
   const { t } = useTranslation()
@@ -134,7 +133,6 @@ export default function Menu({ slug }) {
                   <a href="#menu-sections" className="elegant-button-primary !rounded-lg !px-4 !py-2 !text-xs">
                     Menu
                   </a>
-                  <LanguageSwitcher className="!rounded-lg !bg-[var(--panel)]" />
                 </div>
               </div>
             </div>

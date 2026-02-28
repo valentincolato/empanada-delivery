@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { api } from '@utils/api'
-import LanguageSwitcher from '../LanguageSwitcher'
 
 const PAGE_SIZE = 8
 
@@ -108,7 +107,6 @@ export default function RestaurantsManager() {
             <p className="mt-1 text-sm text-[var(--ink-700)]">{t('superAdmin.restaurants.description')}</p>
           </div>
           <div className="flex items-center gap-3">
-            <LanguageSwitcher className="!border-[var(--line-soft)] !bg-[var(--panel-strong)]" />
             <button onClick={openNew} className="elegant-button-primary !rounded-lg !px-4 !py-2 !text-sm">{t('superAdmin.restaurants.newRestaurant')}</button>
           </div>
         </div>

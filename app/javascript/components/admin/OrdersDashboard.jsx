@@ -1,7 +1,6 @@
 import { useState, useEffect, useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
 import { api } from '@utils/api'
-import LanguageSwitcher from '../LanguageSwitcher'
 
 export default function OrdersDashboard({ isSuperAdmin, is_super_admin, membershipRole, membership_role }) {
   const superAdmin = Boolean(isSuperAdmin ?? is_super_admin)
@@ -119,7 +118,6 @@ export default function OrdersDashboard({ isSuperAdmin, is_super_admin, membersh
               {accepting ? t('admin.orders.toggleClose') : t('admin.orders.toggleOpen')}
             </button>
           )}
-          <LanguageSwitcher />
         </div>
       </div>
 
