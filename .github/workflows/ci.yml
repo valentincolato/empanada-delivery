@@ -102,7 +102,7 @@ jobs:
         run: npm run build
 
       - name: Run Cypress
-        uses: cypress-io/github-action@v6
+        uses: cypress-io/github-action@v7
         with:
           start: bundle exec rails server -e test -p 3000
           wait-on: 'http://localhost:3000/up'
