@@ -4,17 +4,19 @@
 
 @layer base {
   :root {
-    --bg-cream: #0b0d11;
-    --bg-cream-soft: #12151b;
-    --ink-900: #f2ece2;
-    --ink-700: #d3c9ba;
-    --ink-500: #9c9285;
-    --gold-600: #b8945f;
-    --gold-700: #977344;
-    --line-soft: #2b3039;
-    --panel: #262d38;
-    --panel-strong: #323a48;
-    --panel-soft: #1a2029;
+    --bg-cream: #fffaf7;
+    --bg-cream-soft: #fff3ed;
+    --ink-900: #1f1f1f;
+    --ink-700: #4f4f4f;
+    --ink-500: #7a7a7a;
+    --brand-600: #ff5a2f;
+    --brand-700: #d81b60;
+    --brand-500: #ff7a59;
+    --focus-ring: rgba(255, 90, 47, 0.22);
+    --line-soft: #efd8cf;
+    --panel: #ffffff;
+    --panel-strong: #fff7f2;
+    --panel-soft: #fff0e8;
   }
 
   * {
@@ -25,8 +27,8 @@
     font-family: "Manrope", "Segoe UI", sans-serif;
     color: var(--ink-900);
     background:
-      radial-gradient(circle at 8% 12%, rgba(184, 148, 95, 0.18), transparent 30%),
-      radial-gradient(circle at 88% 8%, rgba(151, 115, 68, 0.14), transparent 28%),
+      radial-gradient(circle at 8% 12%, rgba(255, 90, 47, 0.12), transparent 30%),
+      radial-gradient(circle at 88% 8%, rgba(216, 27, 96, 0.1), transparent 28%),
       linear-gradient(180deg, var(--bg-cream-soft) 0%, var(--bg-cream) 100%);
     min-height: 100vh;
   }
@@ -51,14 +53,14 @@
 
 @layer components {
   .elegant-card {
-    @apply rounded-2xl border shadow-[0_14px_30px_rgba(0,0,0,0.28)] backdrop-blur;
+    @apply rounded-2xl border shadow-[0_10px_24px_rgba(31,31,31,0.08)] backdrop-blur;
     background-color: color-mix(in srgb, var(--panel) 92%, white 8%);
     border-color: var(--line-soft);
   }
 
   .elegant-button-primary {
     @apply inline-flex items-center justify-center rounded-full px-5 py-2.5 text-sm font-semibold text-white transition;
-    background: linear-gradient(135deg, var(--gold-700), var(--gold-600));
+    background: linear-gradient(135deg, var(--brand-700), var(--brand-600));
   }
 
   .elegant-button-primary:hover {
@@ -73,6 +75,6 @@
   }
 
   .elegant-button-secondary:hover {
-    background-color: color-mix(in srgb, var(--panel-strong) 84%, var(--gold-700));
+    background-color: color-mix(in srgb, var(--panel-strong) 84%, var(--brand-700));
   }
 }

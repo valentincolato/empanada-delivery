@@ -68,8 +68,8 @@ export default function OrderStatus({ token }) {
               const active = index <= stepIndex
               return (
                 <div key={step} className="text-center">
-                  <div className={`mx-auto mb-2 h-2.5 w-2.5 rounded-full ${active ? 'bg-[var(--gold-600)]' : 'bg-[var(--line-soft)]'}`} />
-                  <span className={`text-[10px] font-medium uppercase tracking-[0.14em] sm:text-xs ${active ? 'text-[var(--gold-700)]' : 'text-[var(--ink-500)]'}`}>
+                  <div className={`mx-auto mb-2 h-2.5 w-2.5 rounded-full ${active ? 'bg-[var(--brand-600)]' : 'bg-[var(--line-soft)]'}`} />
+                  <span className={`text-[10px] font-medium uppercase tracking-[0.14em] sm:text-xs ${active ? 'text-[var(--brand-700)]' : 'text-[var(--ink-500)]'}`}>
                     {t(`orderStatus.status.${step}`)}
                   </span>
                 </div>

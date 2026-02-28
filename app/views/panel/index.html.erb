@@ -2,7 +2,7 @@
   <header class="border-b border-[var(--line-soft)] bg-[var(--panel)]">
     <div class="mx-auto flex w-full max-w-6xl items-center justify-between px-4 py-4 sm:px-6">
       <div>
-        <p class="text-xs font-semibold uppercase tracking-[0.16em] text-[var(--gold-700)]">Admin Panel</p>
+        <p class="text-xs font-semibold uppercase tracking-[0.16em] text-[var(--brand-700)]">Admin Panel</p>
         <h1 class="font-display text-4xl font-semibold text-[var(--ink-900)]"><%= t('panel.greeting', name: current_user.name.presence || current_user.email) %></h1>
         <p class="mt-1 text-sm text-[var(--ink-700)]"><%= t('panel.tagline') %></p>
       </div>
@@ -15,8 +15,8 @@
     <% current_panel_restaurant = admin_restaurants.find { |restaurant| restaurant.id == session[:admin_restaurant_id] } || admin_restaurants.first %>
 
     <% if current_user.super_admin? %>
-      <section class="mb-8 rounded-2xl border border-[var(--line-soft)] bg-[linear-gradient(135deg,#1b2029,#121720)] p-6 text-[var(--ink-900)] shadow-[0_18px_40px_rgba(0,0,0,0.35)]">
-        <p class="text-xs font-semibold uppercase tracking-[0.16em] text-[var(--gold-700)]">Super Admin</p>
+      <section class="mb-8 rounded-2xl border border-[var(--line-soft)] bg-[linear-gradient(135deg,#fff6f1,#ffece3)] p-6 text-[var(--ink-900)] shadow-[0_12px_28px_rgba(31,31,31,0.08)]">
+        <p class="text-xs font-semibold uppercase tracking-[0.16em] text-[var(--brand-700)]">Super Admin</p>
         <h2 class="mt-2 font-display text-4xl font-semibold"><%= t('panel.super_admin.title') %></h2>
         <p class="mt-2 max-w-2xl text-sm text-[var(--ink-700)]"><%= t('panel.super_admin.description') %></p>
         <div class="mt-5 flex flex-wrap gap-3">
@@ -32,7 +32,7 @@
 
       <section class="mb-8">
         <div class="mb-4">
-          <p class="text-xs font-semibold uppercase tracking-[0.16em] text-[var(--gold-700)]"><%= t('panel.restaurant_admin.label') %></p>
+          <p class="text-xs font-semibold uppercase tracking-[0.16em] text-[var(--brand-700)]"><%= t('panel.restaurant_admin.label') %></p>
           <h2 class="font-display text-4xl font-semibold text-[var(--ink-900)]"><%= current_panel_restaurant&.name || "Panel de gestión" %></h2>
         </div>
 
@@ -47,7 +47,7 @@
             <a href="<%= href %>" class="group elegant-card bg-[var(--panel)] p-5 transition hover:-translate-y-0.5">
               <h3 class="font-display text-3xl font-semibold text-[var(--ink-900)]"><%= title %></h3>
               <p class="mt-1 text-sm text-[var(--ink-700)]"><%= description %></p>
-              <p class="mt-4 text-xs font-semibold uppercase tracking-[0.14em] text-[var(--gold-700)]"><%= t('panel.restaurant_admin.enter') %></p>
+              <p class="mt-4 text-xs font-semibold uppercase tracking-[0.14em] text-[var(--brand-700)]"><%= t('panel.restaurant_admin.enter') %></p>
             </a>
           <% end %>
         </div>
@@ -63,7 +63,7 @@
     <% end %>
 
     <% if !current_user.super_admin? && !current_user.restaurant_admin? %>
-      <section class="rounded-xl border border-[var(--gold-700)]/40 bg-[var(--panel-strong)] p-5">
+      <section class="rounded-xl border border-[var(--brand-700)]/40 bg-[var(--panel-strong)] p-5">
         <h2 class="text-lg font-semibold text-[var(--ink-900)]"><%= t('panel.restaurant_admin.no_access_title') %></h2>
         <p class="mt-2 text-sm text-[var(--ink-700)]"><%= t('panel.restaurant_admin.no_access_description') %></p>
       </section>

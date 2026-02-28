@@ -11,7 +11,7 @@ export default function OrdersDashboard({ isSuperAdmin, is_super_admin }) {
   const [updating, setUpdating] = useState(null)
 
   const COLUMNS = [
-    { status: 'pending', labelKey: 'admin.orders.columns.pending', header: 'border-[#c39a5f] bg-[var(--panel-strong)] text-[var(--gold-700)]', badge: 'bg-[var(--gold-600)]' },
+    { status: 'pending', labelKey: 'admin.orders.columns.pending', header: 'border-[var(--brand-500)] bg-[var(--panel-strong)] text-[var(--brand-700)]', badge: 'bg-[var(--brand-600)]' },
     { status: 'confirmed', labelKey: 'admin.orders.columns.confirmed', header: 'border-emerald-800/40 bg-emerald-900/20 text-emerald-300', badge: 'bg-emerald-700' },
     { status: 'out_for_delivery', labelKey: 'admin.orders.columns.out_for_delivery', header: 'border-sky-800/40 bg-sky-900/20 text-sky-300', badge: 'bg-sky-700' },
     { status: 'delivered', labelKey: 'admin.orders.columns.delivered', header: 'border-lime-800/40 bg-lime-900/20 text-lime-300', badge: 'bg-lime-700' },
@@ -96,16 +96,16 @@ export default function OrdersDashboard({ isSuperAdmin, is_super_admin }) {
           {superAdmin && (
             <button
               onClick={clearContext}
-              className="text-sm font-medium text-[var(--gold-700)]"
+              className="text-sm font-medium text-[var(--brand-700)]"
             >
               {t('admin.orders.nav.backToRestaurants')}
             </button>
           )}
-          <a data-testid="nav-products" href="/admin/products" className="text-sm font-medium text-[var(--gold-700)]">{t('admin.orders.nav.products')}</a>
-          <a data-testid="nav-categories" href="/admin/categories" className="text-sm font-medium text-[var(--gold-700)]">{t('admin.orders.nav.categories')}</a>
-          <a data-testid="nav-qr" href="/admin/qr" className="text-sm font-medium text-[var(--gold-700)]">{t('admin.orders.nav.qr')}</a>
+          <a data-testid="nav-products" href="/admin/products" className="text-sm font-medium text-[var(--brand-700)]">{t('admin.orders.nav.products')}</a>
+          <a data-testid="nav-categories" href="/admin/categories" className="text-sm font-medium text-[var(--brand-700)]">{t('admin.orders.nav.categories')}</a>
+          <a data-testid="nav-qr" href="/admin/qr" className="text-sm font-medium text-[var(--brand-700)]">{t('admin.orders.nav.qr')}</a>
           {canManageMembers && (
-            <a data-testid="nav-members" href="/admin/members" className="text-sm font-medium text-[var(--gold-700)]">{t('admin.orders.nav.members')}</a>
+            <a data-testid="nav-members" href="/admin/members" className="text-sm font-medium text-[var(--brand-700)]">{t('admin.orders.nav.members')}</a>
           )}
           {restaurant && (
             <button
@@ -202,7 +202,7 @@ function OrderCard({ order, transitions, onUpdate, isUpdating }) {
             onClick={() => onUpdate(order.id, next)}
             className={next === 'cancelled'
               ? 'rounded-md border border-red-900/50 bg-red-950/35 px-2.5 py-1 text-xs font-medium text-red-300'
-              : 'rounded-md bg-[var(--gold-600)] px-2.5 py-1 text-xs font-semibold text-white'}
+              : 'rounded-md bg-[var(--brand-600)] px-2.5 py-1 text-xs font-semibold text-white'}
           >
             {t(`admin.orders.actions.${next}`) || next}
           </button>

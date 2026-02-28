@@ -102,15 +102,15 @@ export default function Menu({ slug }) {
 
   return (
     <div className="min-h-screen pb-28 text-[var(--ink-900)]">
-      <header className="border-b border-[var(--line-soft)] bg-[linear-gradient(180deg,#171b23,#10141b)]">
+      <header className="border-b border-[var(--line-soft)] bg-[linear-gradient(180deg,#fff7f2,#fff0e8)]">
         <div className="mx-auto max-w-6xl px-4 pb-7 pt-8 sm:px-6">
           <div className="flex flex-wrap items-start justify-between gap-6">
             <div className="flex min-w-0 flex-1 gap-4">
-              <div className="grid h-[74px] w-[74px] shrink-0 place-items-center rounded-full border border-[var(--gold-600)] bg-[var(--panel)] font-display text-2xl font-semibold text-[var(--gold-700)] shadow-sm">
+              <div className="grid h-[74px] w-[74px] shrink-0 place-items-center rounded-full border border-[var(--brand-600)] bg-[var(--panel)] font-display text-2xl font-semibold text-[var(--brand-700)] shadow-sm">
                 {initials(restaurant.name)}
               </div>
               <div className="min-w-0">
-                <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[var(--gold-700)]">Signature Menu</p>
+                <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[var(--brand-700)]">Signature Menu</p>
                 <h1 className="font-display text-5xl font-semibold leading-none text-[var(--ink-900)] sm:text-6xl">{restaurant.name}</h1>
                 <div className="mt-3 flex flex-wrap items-center gap-2 text-xs font-medium text-[var(--ink-500)]">
                   <span>Today 11:30 - 15:00 and 19:15 - 23:00</span>
@@ -177,7 +177,7 @@ export default function Menu({ slug }) {
 
       {isOpen && itemCount > 0 && hasProducts && (
         <button
-          className="fixed bottom-5 left-1/2 z-20 flex -translate-x-1/2 items-center gap-3 rounded-full border border-[#be9f70] bg-[linear-gradient(135deg,#8b6a38,#a68046)] px-5 py-3 text-white shadow-[0_14px_28px_rgba(80,56,22,0.32)]"
+          className="fixed bottom-5 left-1/2 z-20 flex -translate-x-1/2 items-center gap-3 rounded-full border border-[var(--brand-500)] bg-[linear-gradient(135deg,var(--brand-700),var(--brand-600))] px-5 py-3 text-white shadow-[0_14px_28px_rgba(166,41,84,0.34)]"
           onClick={() => setShowCart(true)}
         >
           <span className="text-xs font-medium uppercase tracking-[0.08em]">{t('menu.itemsCount', { count: itemCount, total: totalFormatted })}</span>
@@ -266,7 +266,7 @@ function ProductDetailModal({ product, onClose, onAdd }) {
           <div className="mb-3 flex items-start justify-between gap-4">
             <div>
               <h3 className="font-display text-4xl font-semibold">{product.name}</h3>
-              <p className="mt-1 text-sm font-semibold text-[var(--gold-700)]">${parseFloat(product.price).toFixed(2)}</p>
+              <p className="mt-1 text-sm font-semibold text-[var(--brand-700)]">${parseFloat(product.price).toFixed(2)}</p>
             </div>
             <button onClick={onClose} className="rounded-full border border-[var(--line-soft)] px-2.5 py-1 text-[var(--ink-500)]">x</button>
           </div>
@@ -315,7 +315,7 @@ function EmptyState() {
   return (
     <section className="grid min-h-[380px] place-items-center px-4 text-center text-[var(--ink-700)]">
       <div>
-        <div className="font-display text-7xl text-[var(--gold-700)]">Menu</div>
+        <div className="font-display text-7xl text-[var(--brand-700)]">Menu</div>
         <h2 className="mb-1 mt-2 font-display text-4xl font-semibold text-[var(--ink-900)]">{t('menu.emptyMenuTitle')}</h2>
         <p className="mx-auto max-w-2xl text-sm">{t('menu.emptyMenuDesc')}</p>
       </div>
@@ -389,7 +389,7 @@ function CheckoutModal({ form, items, onChange, onUpdateQuantity, onSubmit, onCl
                     required
                     value={form.customer_name}
                     onChange={(e) => onChange('customer_name', e.target.value)}
-                    className="rounded-md border border-[var(--line-soft)] bg-[var(--panel-strong)] px-3 py-2 text-sm text-[var(--ink-900)] outline-none focus:border-[var(--gold-600)]"
+                    className="rounded-md border border-[var(--line-soft)] bg-[var(--panel-strong)] px-3 py-2 text-sm text-[var(--ink-900)] outline-none focus:border-[var(--brand-600)]"
                   />
                 </label>
                 <label className="flex flex-col gap-1 text-sm text-[var(--ink-700)]">
@@ -399,7 +399,7 @@ function CheckoutModal({ form, items, onChange, onUpdateQuantity, onSubmit, onCl
                     required
                     value={form.customer_email}
                     onChange={(e) => onChange('customer_email', e.target.value)}
-                    className="rounded-md border border-[var(--line-soft)] bg-[var(--panel-strong)] px-3 py-2 text-sm text-[var(--ink-900)] outline-none focus:border-[var(--gold-600)]"
+                    className="rounded-md border border-[var(--line-soft)] bg-[var(--panel-strong)] px-3 py-2 text-sm text-[var(--ink-900)] outline-none focus:border-[var(--brand-600)]"
                   />
                 </label>
                 <label className="flex flex-col gap-1 text-sm text-[var(--ink-700)]">
@@ -409,7 +409,7 @@ function CheckoutModal({ form, items, onChange, onUpdateQuantity, onSubmit, onCl
                     required
                     value={form.customer_phone}
                     onChange={(e) => onChange('customer_phone', e.target.value)}
-                    className="rounded-md border border-[var(--line-soft)] bg-[var(--panel-strong)] px-3 py-2 text-sm text-[var(--ink-900)] outline-none focus:border-[var(--gold-600)]"
+                    className="rounded-md border border-[var(--line-soft)] bg-[var(--panel-strong)] px-3 py-2 text-sm text-[var(--ink-900)] outline-none focus:border-[var(--brand-600)]"
                   />
                 </label>
                 <label className="flex flex-col gap-1 text-sm text-[var(--ink-700)]">
@@ -419,7 +419,7 @@ function CheckoutModal({ form, items, onChange, onUpdateQuantity, onSubmit, onCl
                     required
                     value={form.customer_address}
                     onChange={(e) => onChange('customer_address', e.target.value)}
-                    className="rounded-md border border-[var(--line-soft)] bg-[var(--panel-strong)] px-3 py-2 text-sm text-[var(--ink-900)] outline-none focus:border-[var(--gold-600)]"
+                    className="rounded-md border border-[var(--line-soft)] bg-[var(--panel-strong)] px-3 py-2 text-sm text-[var(--ink-900)] outline-none focus:border-[var(--brand-600)]"
                   />
                 </label>
               </div>
@@ -457,7 +457,7 @@ function CheckoutModal({ form, items, onChange, onUpdateQuantity, onSubmit, onCl
                       value={form.cash_change_for}
                       onChange={(e) => onChange('cash_change_for', e.target.value)}
                       placeholder={t('menu.checkout.changeForPlaceholder')}
-                      className="rounded-md border border-[var(--line-soft)] bg-[var(--panel-strong)] px-3 py-2 text-sm text-[var(--ink-900)] outline-none focus:border-[var(--gold-600)]"
+                      className="rounded-md border border-[var(--line-soft)] bg-[var(--panel-strong)] px-3 py-2 text-sm text-[var(--ink-900)] outline-none focus:border-[var(--brand-600)]"
                     />
                   </label>
                 )}
@@ -470,7 +470,7 @@ function CheckoutModal({ form, items, onChange, onUpdateQuantity, onSubmit, onCl
                 type="text"
                 value={form.notes}
                 onChange={(e) => onChange('notes', e.target.value)}
-                className="rounded-md border border-[var(--line-soft)] bg-[var(--panel-strong)] px-3 py-2 text-sm text-[var(--ink-900)] outline-none focus:border-[var(--gold-600)]"
+                className="rounded-md border border-[var(--line-soft)] bg-[var(--panel-strong)] px-3 py-2 text-sm text-[var(--ink-900)] outline-none focus:border-[var(--brand-600)]"
               />
             </label>
             {error && <div className="text-sm text-red-300">{error}</div>}

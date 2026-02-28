@@ -33,7 +33,7 @@ export default function QrCode() {
         {error && <div className="text-red-300">{error}</div>}
         {data && (
           <div className="w-full max-w-md rounded-3xl border border-[var(--line-soft)] bg-[var(--panel)] p-10 text-center shadow-[0_12px_30px_rgba(22,18,10,0.08)]">
-            <p className="mb-6 break-all text-sm text-[var(--gold-700)]">{data.url}</p>
+            <p className="mb-6 break-all text-sm text-[var(--brand-700)]">{data.url}</p>
             <div className="mx-auto mb-6 inline-block" dangerouslySetInnerHTML={{ __html: data.svg }} />
             <button
               onClick={downloadSvg}

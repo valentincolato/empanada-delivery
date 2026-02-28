@@ -102,7 +102,7 @@ export default function RestaurantsManager() {
       <div className="border-b border-[var(--line-soft)] bg-[var(--panel)] px-4 py-4 sm:px-6">
         <div className="mx-auto flex w-full max-w-7xl flex-wrap items-end justify-between gap-3">
           <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[var(--gold-700)]">{t('superAdmin.restaurants.subtitle')}</p>
+            <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[var(--brand-700)]">{t('superAdmin.restaurants.subtitle')}</p>
             <h1 className="font-display text-5xl font-semibold text-[var(--ink-900)]">{t('superAdmin.restaurants.title')}</h1>
             <p className="mt-1 text-sm text-[var(--ink-700)]">{t('superAdmin.restaurants.description')}</p>
           </div>
@@ -120,7 +120,7 @@ export default function RestaurantsManager() {
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder={t('superAdmin.restaurants.searchPlaceholder')}
-              className="w-full rounded-lg border border-[var(--line-soft)] bg-[var(--panel-strong)] px-3 py-2 text-sm text-[var(--ink-700)] outline-none ring-[rgba(157,122,66,0.2)] transition focus:ring"
+              className="w-full rounded-lg border border-[var(--line-soft)] bg-[var(--panel-strong)] px-3 py-2 text-sm text-[var(--ink-700)] outline-none ring-[var(--focus-ring)] transition focus:ring"
             />
           </label>
           <div className="grid grid-cols-3 gap-2 md:min-w-72">
@@ -206,7 +206,7 @@ export default function RestaurantsManager() {
                 <button
                   type="button"
                   onClick={() => setPage(n)}
-                  className={`rounded-md px-3 py-1.5 text-sm font-medium ${safePage === n ? 'bg-[var(--gold-600)] text-white' : 'border border-[var(--line-soft)] bg-[var(--panel-strong)] text-[var(--ink-700)]'}`}
+                  className={`rounded-md px-3 py-1.5 text-sm font-medium ${safePage === n ? 'bg-[var(--brand-600)] text-white' : 'border border-[var(--line-soft)] bg-[var(--panel-strong)] text-[var(--ink-700)]'}`}
                 >
                   {n}
                 </button>

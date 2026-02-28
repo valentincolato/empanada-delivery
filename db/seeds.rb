@@ -1,4 +1,8 @@
 # Optional super admin (recommended for production via ENV)
+previous_queue_adapter = ActiveJob::Base.queue_adapter
+ActiveJob::Base.queue_adapter = :inline
+
+begin
 if ENV["SEED_SUPER_ADMIN_EMAIL"].present?
   super_admin = User.find_or_create_by!(email: ENV.fetch("SEED_SUPER_ADMIN_EMAIL")) do |u|
     u.password = ENV.fetch("SEED_SUPER_ADMIN_PASSWORD")
@@ -206,3 +210,6 @@ puts "Restaurant admin: demo@empanada.dev / password123"
 puts "Pizza admin:      pizza@pedidofacil.dev / password123"
 puts "Multi member:    multi@pedidofacil.dev / password123"
 puts "Super admin: from ENV (optional)"
+ensure
+ActiveJob::Base.queue_adapter = previous_queue_adapter
+end

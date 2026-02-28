@@ -18,7 +18,7 @@ export default function RestaurantSwitcher({ restaurants }) {
 
   return (
     <div className="mb-8 rounded-2xl border border-[var(--line-soft)] bg-[var(--panel-strong)] p-5">
-      <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[var(--gold-700)]">Restaurant context</p>
+      <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[var(--brand-700)]">Restaurant context</p>
       <h3 className="mt-1 font-display text-3xl font-semibold text-[var(--ink-900)]">Seleccioná restaurante</h3>
       <div className="mt-4 grid gap-3 md:grid-cols-2">
         {(restaurants || []).map((restaurant) => (
