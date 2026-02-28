@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_02_28_155125) do
+ActiveRecord::Schema[8.1].define(version: 2026_02_28_170000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -67,11 +67,14 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_28_155125) do
   end
 
   create_table "orders", force: :cascade do |t|
+    t.integer "cash_change_for_cents"
     t.datetime "created_at", null: false
+    t.text "customer_address"
     t.string "customer_email"
     t.string "customer_name", null: false
     t.string "customer_phone"
     t.text "notes"
+    t.string "payment_method", default: "cash", null: false
     t.bigint "restaurant_id", null: false
     t.integer "status", default: 0, null: false
     t.string "table_number"
@@ -79,6 +82,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_28_155125) do
     t.integer "total_cents", default: 0, null: false
     t.datetime "updated_at", null: false
     t.bigint "user_id"
+    t.index ["payment_method"], name: "index_orders_on_payment_method"
     t.index ["restaurant_id"], name: "index_orders_on_restaurant_id"
     t.index ["status"], name: "index_orders_on_status"
     t.index ["token"], name: "index_orders_on_token", unique: true

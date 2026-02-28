@@ -13,7 +13,11 @@ function seedOrder(customerName = 'Cypress User') {
         order: {
           restaurant_slug: SLUG,
           customer_name: customerName,
+          customer_phone: '+54 11 4444-1111',
           customer_email: 'cypress@test.com',
+          customer_address: 'Cypress 123',
+          payment_method: 'cash',
+          cash_change_for: '5000',
           items: [{ product_id: product.id, quantity: 1, notes: '' }],
         },
       },
@@ -30,8 +34,8 @@ describe('Admin — Orders Dashboard', () => {
   it('shows the kanban board with columns', () => {
     cy.contains('Pending').should('be.visible')
     cy.contains('Confirmed').should('be.visible')
-    cy.contains('Preparing').should('be.visible')
-    cy.contains('Ready').should('be.visible')
+    cy.contains('Out for delivery').should('be.visible')
+    cy.contains('Delivered').should('be.visible')
   })
 
   it('shows nav links to other admin sections', () => {
@@ -75,31 +79,31 @@ describe('Admin — Orders Dashboard', () => {
       })
       cy.get('[data-testid="column-confirmed"]').within(() => {
         cy.contains('[data-testid="order-card"]', 'Cypress User').within(() => {
-          cy.contains('Start Preparing').click()
+          cy.contains('Set Out for delivery').click()
         })
       })
-      cy.get('[data-testid="column-preparing"]').within(() => {
+      cy.get('[data-testid="column-out_for_delivery"]').within(() => {
         cy.contains('[data-testid="order-card"]', 'Cypress User').within(() => {
-          cy.contains('Mark Ready').click()
+          cy.contains('Mark Delivered').click()
         })
       })
-      cy.get('[data-testid="column-ready"]').within(() => {
+      cy.get('[data-testid="column-delivered"]').within(() => {
         cy.contains('Cypress User').should('be.visible')
       })
     })
   })
 
-  it('hides cancelled orders from active kanban columns', () => {
+  it('shows cancel action for pending orders', () => {
     const customerName = `Cypress Cancel User ${Date.now()}-${Cypress._.random(1000, 9999)}`
 
-    seedOrder(customerName).then((orderRes) => {
-      const orderId = orderRes.body.id
-      cy.request('PATCH', `/api/v1/admin/orders/${orderId}`, {
-        order: { status: 'cancelled' },
-      })
+    seedOrder(customerName).then(() => {
       cy.reload()
 
-      cy.contains('[data-testid="order-card"]', customerName).should('not.exist')
+      cy.get('[data-testid="column-pending"]').within(() => {
+        cy.contains('[data-testid="order-card"]', customerName).within(() => {
+          cy.contains('button', 'Cancel').should('be.visible')
+        })
+      })
     })
   })
 })

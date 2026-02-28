@@ -4,11 +4,21 @@
 <h2>Customer</h2>
 <p>
   <strong>Name:</strong> <%= @order.customer_name %><br>
+  <% if @order.customer_email.present? %>
+    <strong>Email:</strong> <%= @order.customer_email %><br>
+  <% end %>
   <% if @order.customer_phone.present? %>
     <strong>Phone:</strong> <%= @order.customer_phone %><br>
   <% end %>
+  <% if @order.customer_address.present? %>
+    <strong>Address:</strong> <%= @order.customer_address %><br>
+  <% end %>
   <% if @order.table_number.present? %>
     <strong>Table:</strong> <%= @order.table_number %><br>
+  <% end %>
+  <strong>Payment:</strong> <%= @order.payment_method == "cash" ? "Cash" : "Bank transfer" %><br>
+  <% if @order.cash_change_for_cents.present? %>
+    <strong>Cash change for:</strong> $<%= (@order.cash_change_for_cents / 100.0).to_s %><br>
   <% end %>
 </p>
 

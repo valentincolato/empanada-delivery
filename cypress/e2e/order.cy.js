@@ -1,5 +1,22 @@
 const SLUG = 'empanadas-demo'
 
+function fillCheckoutForm(customer, options = {}) {
+  cy.contains('label', 'Nombre y apellido *').find('input').clear().type(options.name || customer.name)
+  cy.contains('label', 'Número de teléfono *').find('input').clear().type(options.phone || customer.phone)
+  cy.contains('label', 'Email *').find('input').clear().type(options.email || customer.email)
+  cy.contains('label', 'Dirección de entrega *').find('input').clear().type(options.address || customer.address)
+
+  if (options.paymentMethod === 'transfer') {
+    cy.contains('label', 'Transferencia').find('input[type="radio"]').check({ force: true })
+  } else {
+    cy.contains('label', 'Efectivo').find('input[type="radio"]').check({ force: true })
+  }
+
+  if (options.cashChangeFor) {
+    cy.contains('label', 'Necesito cambio para').find('input').clear().type(options.cashChangeFor)
+  }
+}
+
 describe('Placing and tracking an order', () => {
   beforeEach(() => {
     cy.clearCart(SLUG)
@@ -21,9 +38,7 @@ describe('Placing and tracking an order', () => {
 
     // Fill in customer details
     cy.fixture('customer').then((customer) => {
-      cy.get('input[type="text"]').first().type(customer.name)
-      cy.get('input[type="tel"]').type(customer.phone)
-      cy.get('input[type="email"]').type(customer.email)
+      fillCheckoutForm(customer, { paymentMethod: 'cash' })
     })
 
     // Submit the order
@@ -37,6 +52,7 @@ describe('Placing and tracking an order', () => {
     cy.contains('Pending').should('be.visible')
     cy.contains('Carne Picante').should('be.visible')
     cy.contains('Jamón y Queso').should('be.visible')
+    cy.contains('Payment: Cash').should('be.visible')
   })
 
   it('shows the total on the status page', () => {
@@ -48,8 +64,7 @@ describe('Placing and tracking an order', () => {
     cy.contains('Checkout →').click()
 
     cy.fixture('customer').then((customer) => {
-      cy.get('input[type="text"]').first().type(customer.name)
-      cy.get('input[type="email"]').type(customer.email)
+      fillCheckoutForm(customer, { paymentMethod: 'cash' })
     })
 
     cy.contains('Place Order').click()
@@ -71,7 +86,12 @@ describe('Placing and tracking an order', () => {
 
     cy.contains('🛒').click()
     cy.contains('Checkout →').click()
-    cy.get('input[type="text"]').first().type('Test User')
+    cy.fixture('customer').then((customer) => {
+      fillCheckoutForm(customer, {
+        name: 'Test User',
+        paymentMethod: 'cash'
+      })
+    })
     cy.contains('Place Order').click()
 
     cy.wait('@failedOrder')
@@ -88,11 +108,50 @@ describe('Placing and tracking an order', () => {
     cy.contains('🛒').click()
     cy.contains('Checkout →').click()
     cy.fixture('customer').then((c) => {
-      cy.get('input[type="text"]').first().type(c.name)
+      fillCheckoutForm(c, { paymentMethod: 'cash' })
     })
     cy.contains('Place Order').click()
 
     cy.url().should('match', /\/orders\//)
     cy.contains('Updates automatically').should('be.visible')
+  })
+
+  it('supports transfer payment and hides cash change field', () => {
+    cy.contains('[data-testid="product-card"]', 'Carne Suave').within(() => {
+      cy.contains('+ Add').click()
+    })
+    cy.contains('🛒').click()
+    cy.contains('Checkout →').click()
+
+    cy.fixture('customer').then((customer) => {
+      fillCheckoutForm(customer, { paymentMethod: 'transfer' })
+    })
+
+    cy.contains('Necesito cambio para').should('not.exist')
+    cy.contains('Place Order').click()
+
+    cy.url().should('match', /\/orders\/[0-9a-f-]{36}/)
+    cy.contains('Payment: Bank transfer').should('be.visible')
+    cy.contains('Cash change for').should('not.exist')
+  })
+
+  it('supports cash change request for cash payments', () => {
+    cy.contains('[data-testid="product-card"]', 'Carne Suave').within(() => {
+      cy.contains('+ Add').click()
+    })
+    cy.contains('🛒').click()
+    cy.contains('Checkout →').click()
+
+    cy.fixture('customer').then((customer) => {
+      fillCheckoutForm(customer, {
+        paymentMethod: 'cash',
+        cashChangeFor: '10000'
+      })
+    })
+
+    cy.contains('Place Order').click()
+    cy.url().should('match', /\/orders\/[0-9a-f-]{36}/)
+    cy.contains('Payment: Cash').should('be.visible')
+    cy.contains('Cash change for: $10000.00').should('be.visible')
   })
 })

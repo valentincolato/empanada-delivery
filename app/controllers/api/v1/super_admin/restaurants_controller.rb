@@ -41,6 +41,11 @@ class Api::V1::SuperAdmin::RestaurantsController < ApplicationController
     head :no_content
   end
 
+  def switch_context
+    session[:admin_restaurant_id] = restaurant.id
+    render json: { redirect_to: admin_orders_path }
+  end
+
   private
 
   def restaurant

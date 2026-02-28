@@ -25,7 +25,7 @@ RSpec.describe "Authentication pages", type: :request do
       }
 
       expect(response).to have_http_status(:see_other)
-      expect(response).to redirect_to(root_path)
+      expect(response).to redirect_to(panel_path)
     end
   end
 end

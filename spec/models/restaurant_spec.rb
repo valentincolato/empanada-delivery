@@ -57,14 +57,24 @@ RSpec.describe Restaurant, type: :model do
     end
 
     it "creates an order with items and correct total" do
-      order = restaurant.place_order!(customer_name: "Ana", items: items)
+      order = restaurant.place_order!(
+        customer_name: "Ana",
+        customer_address: "Calle 123",
+        payment_method: "cash",
+        items: items
+      )
       expect(order).to be_persisted
       expect(order.order_items.count).to eq(1)
       expect(order.total_cents).to eq(2000)
     end
 
     it "generates a token" do
-      order = restaurant.place_order!(customer_name: "Ana", items: items)
+      order = restaurant.place_order!(
+        customer_name: "Ana",
+        customer_address: "Calle 123",
+        payment_method: "transfer",
+        items: items
+      )
       expect(order.token).to be_present
     end
   end

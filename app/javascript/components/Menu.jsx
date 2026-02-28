@@ -7,7 +7,15 @@ export default function Menu({ slug }) {
   const [cartItems, setCartItems] = useState([])
   const [showCart, setShowCart] = useState(false)
   const [checkout, setCheckout] = useState(false)
-  const [form, setForm] = useState({ customer_name: '', customer_phone: '', customer_email: '', table_number: '', notes: '' })
+  const [form, setForm] = useState({
+    customer_name: '',
+    customer_phone: '',
+    customer_email: '',
+    customer_address: '',
+    payment_method: 'cash',
+    cash_change_for: '',
+    notes: ''
+  })
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState(null)
 
@@ -24,20 +32,24 @@ export default function Menu({ slug }) {
     setCartItems([...updated])
   }
 
-  function removeFromCart(productId) {
-    const updated = cart.remove(slug, productId)
+  function updateQuantity(productId, quantity) {
+    const updated = cart.updateQuantity(slug, productId, quantity)
     setCartItems([...updated])
-    if (updated.length === 0) setShowCart(false)
+    if (updated.length === 0) {
+      setShowCart(false)
+      setCheckout(false)
+    }
   }
 
   function totalCents() {
-    return cartItems.reduce((s, i) => s + i.unit_price_cents * i.quantity, 0)
+    return cartItems.reduce((sum, item) => sum + item.unit_price_cents * item.quantity, 0)
   }
 
   async function placeOrder(e) {
     e.preventDefault()
     setSubmitting(true)
     setError(null)
+
     try {
       const order = await api.post('/api/v1/orders', {
         order: { restaurant_slug: slug, ...form, items: cartItems }
@@ -51,39 +63,39 @@ export default function Menu({ slug }) {
   }
 
   if (!data) {
-    return <div className="flex h-screen items-center justify-center bg-slate-950 font-sans text-slate-400">Loading menu...</div>
+    return <div className="flex h-screen items-center justify-center bg-slate-950 text-slate-400">Loading restaurant menu...</div>
   }
 
   const restaurant = data.restaurant
   const totalFormatted = `$${(totalCents() / 100).toFixed(2)}`
-  const itemCount = cartItems.reduce((s, i) => s + i.quantity, 0)
+  const itemCount = cartItems.reduce((sum, item) => sum + item.quantity, 0)
 
   return (
-    <div className="min-h-screen bg-slate-950 pb-28 font-sans text-slate-200">
-      <header className="border-b border-slate-700 bg-slate-900">
-        <div className="h-28 bg-gradient-to-br from-slate-700 to-slate-800" />
+    <div className="min-h-screen bg-[#050608] pb-28 text-slate-200">
+      <header className="border-b border-slate-800 bg-slate-900">
+        <div className="h-28 bg-[radial-gradient(circle_at_top_left,#334155,transparent_45%),linear-gradient(130deg,#111827,#1f2937)]" />
         <div className="mx-auto -mt-8 flex max-w-6xl flex-wrap justify-between gap-5 px-4 pb-5">
           <div className="flex min-w-0 flex-1 gap-4">
-            <div className="grid h-[72px] w-[72px] shrink-0 place-items-center rounded-full border-2 border-amber-500 bg-slate-900 font-bold">
+            <div className="grid h-[72px] w-[72px] shrink-0 place-items-center rounded-full border-2 border-orange-400 bg-slate-900 font-bold text-slate-100">
               {initials(restaurant.name)}
             </div>
             <div className="min-w-0">
-              <h1 className="mb-2 text-4xl font-bold text-slate-50">{restaurant.name}</h1>
+              <h1 className="mb-2 text-4xl font-bold text-white">{restaurant.name}</h1>
               <div className="flex flex-wrap items-center gap-2 text-sm text-slate-400">
-                <span>Horarios Hoy 11:30 a 15:00 y 19:15 a 23:00</span>
+                <span>Today 11:30 - 15:00 and 19:15 - 23:00</span>
                 <span className={`rounded-full px-2.5 py-0.5 text-xs font-bold ${restaurant.accepting_orders ? 'bg-green-600 text-green-50' : 'bg-red-700 text-red-100'}`}>
-                  {restaurant.accepting_orders ? 'Abierto' : 'Cerrado'}
+                  {restaurant.accepting_orders ? 'Open' : 'Closed'}
                 </span>
               </div>
-              {!restaurant.accepting_orders && <div className="mt-1 text-sm text-amber-400">Not accepting orders right now</div>}
+              {!restaurant.accepting_orders && <div className="mt-1 text-sm text-amber-400">This restaurant is not accepting orders right now.</div>}
               <div className="mt-3 flex flex-wrap gap-2">
                 {restaurant.phone && (
-                  <a href={`tel:${restaurant.phone}`} className="rounded-lg border border-green-700 bg-green-900 px-3 py-2 text-xs font-semibold text-green-300">
-                    Llamar
+                  <a href={`tel:${restaurant.phone}`} className="rounded-lg border border-green-700 bg-green-900/40 px-3 py-2 text-xs font-semibold text-green-300">
+                    Call
                   </a>
                 )}
                 {restaurant.phone && (
-                  <a href={whatsappUrl(restaurant.phone)} target="_blank" rel="noreferrer" className="rounded-lg border border-green-700 bg-green-900 px-3 py-2 text-xs font-semibold text-green-300">
+                  <a href={whatsappUrl(restaurant.phone)} target="_blank" rel="noreferrer" className="rounded-lg border border-green-700 bg-green-900/40 px-3 py-2 text-xs font-semibold text-green-300">
                     WhatsApp
                   </a>
                 )}
@@ -93,8 +105,8 @@ export default function Menu({ slug }) {
           </div>
 
           <div className="w-full overflow-hidden rounded-xl border border-slate-700 bg-slate-900 text-slate-300 sm:w-60">
-            <div className="border-b border-slate-700 px-3 py-2 text-xs">Donde estamos</div>
-            <div className="min-h-[74px] px-3 py-2 text-sm text-slate-400">{restaurant.address || 'Direccion no disponible'}</div>
+            <div className="border-b border-slate-700 px-3 py-2 text-xs">Location</div>
+            <div className="min-h-[74px] px-3 py-2 text-sm text-slate-400">{restaurant.address || 'Address not available'}</div>
           </div>
         </div>
       </header>
@@ -116,14 +128,14 @@ export default function Menu({ slug }) {
 
       <footer className="border-t border-slate-700 bg-slate-900 px-4 pb-20 pt-6 text-center">
         <div className="mb-4 font-bold text-slate-50">{restaurant.name}</div>
-        <div className="flex flex-wrap justify-center gap-20">
+        <div className="flex flex-wrap justify-center gap-16">
           <div>
-            <div className="mb-1 font-bold text-slate-100">Ubicacion</div>
-            <div className="text-sm text-slate-400">{restaurant.address || 'No definida'}</div>
+            <div className="mb-1 font-bold text-slate-100">Location</div>
+            <div className="text-sm text-slate-400">{restaurant.address || 'Not defined'}</div>
           </div>
           <div>
-            <div className="mb-1 font-bold text-slate-100">Contacto</div>
-            <div className="text-sm text-slate-400">{restaurant.phone || 'No definido'}</div>
+            <div className="mb-1 font-bold text-slate-100">Contact</div>
+            <div className="text-sm text-slate-400">{restaurant.phone || 'Not defined'}</div>
           </div>
         </div>
       </footer>
@@ -133,8 +145,8 @@ export default function Menu({ slug }) {
           className="fixed bottom-5 left-1/2 z-20 flex -translate-x-1/2 items-center gap-4 rounded-full bg-orange-500 px-5 py-3 font-bold text-white shadow-2xl"
           onClick={() => setShowCart(true)}
         >
-          <span className="text-sm">{itemCount} productos - {totalFormatted}</span>
-          <span className="text-base">🛒 Ver pedido</span>
+          <span className="text-sm">{itemCount} items - {totalFormatted}</span>
+          <span className="text-base">🛒 View order</span>
         </button>
       )}
 
@@ -143,7 +155,7 @@ export default function Menu({ slug }) {
       {showCart && !checkout && (
         <CartDrawer
           items={cartItems}
-          onRemove={removeFromCart}
+          onUpdateQuantity={updateQuantity}
           onCheckout={() => { setShowCart(false); setCheckout(true) }}
           onClose={() => setShowCart(false)}
           total={totalFormatted}
@@ -153,7 +165,15 @@ export default function Menu({ slug }) {
       {checkout && (
         <CheckoutModal
           form={form}
-          onChange={(k, v) => setForm((f) => ({ ...f, [k]: v }))}
+          items={cartItems}
+          onChange={(key, value) => {
+            setForm((prev) => {
+              const next = { ...prev, [key]: value }
+              if (key === 'payment_method' && value === 'transfer') next.cash_change_for = ''
+              return next
+            })
+          }}
+          onUpdateQuantity={updateQuantity}
           onSubmit={placeOrder}
           onClose={() => setCheckout(false)}
           submitting={submitting}
@@ -186,28 +206,32 @@ function EmptyState() {
     <section className="grid min-h-[380px] place-items-center px-4 text-center text-slate-400">
       <div>
         <div className="text-6xl opacity-70">🍽</div>
-        <h2 className="mb-1 mt-2 text-3xl font-bold text-slate-50">¡Este menu esta vacio!</h2>
-        <p className="mx-auto max-w-2xl">Si eres el dueno de este restaurante, agrega items y categorias desde el panel de administracion.</p>
+        <h2 className="mb-1 mt-2 text-3xl font-bold text-slate-50">This menu is empty</h2>
+        <p className="mx-auto max-w-2xl">If you manage this restaurant, add categories and products from the admin panel.</p>
       </div>
     </section>
   )
 }
 
-function CartDrawer({ items, onRemove, onCheckout, onClose, total }) {
+function CartDrawer({ items, onUpdateQuantity, onCheckout, onClose, total }) {
   return (
     <div className="fixed inset-0 z-[100] flex justify-end bg-black/60">
-      <div className="flex h-full w-full max-w-[420px] flex-col border-l border-slate-700 bg-slate-900 text-slate-100">
+      <div data-testid="cart-drawer" className="flex h-full w-full max-w-[440px] flex-col border-l border-slate-700 bg-slate-900 text-slate-100">
         <div className="flex items-center justify-between border-b border-slate-700 px-6 py-5">
           <h2 className="text-xl font-bold">Your Cart</h2>
-          <button onClick={onClose} className="text-slate-300">x</button>
+          <button onClick={onClose} className="text-slate-300">✕</button>
         </div>
         <div className="flex-1 space-y-3 overflow-y-auto px-6 py-4">
           {items.map((item) => (
-            <div key={item.product_id} className="flex items-center justify-between text-sm">
-              <span>{item.quantity}x {item.product_name}</span>
-              <div className="flex items-center gap-2">
+            <div key={item.product_id} data-testid="cart-item" className="rounded-lg border border-slate-700 p-3 text-sm">
+              <div className="mb-2 flex items-center justify-between gap-2">
+                <span className="font-medium">{item.product_name}</span>
                 <span>${((item.unit_price_cents * item.quantity) / 100).toFixed(2)}</span>
-                <button onClick={() => onRemove(item.product_id)} className="text-slate-400">x</button>
+              </div>
+              <div className="flex items-center gap-2">
+                <button data-testid="quantity-decrease" onClick={() => onUpdateQuantity(item.product_id, item.quantity - 1)} className="rounded border border-slate-600 px-2 py-1 text-xs">-</button>
+                <span className="min-w-7 text-center">{item.quantity}</span>
+                <button data-testid="quantity-increase" onClick={() => onUpdateQuantity(item.product_id, item.quantity + 1)} className="rounded border border-slate-600 px-2 py-1 text-xs">+</button>
               </div>
             </div>
           ))}
@@ -221,53 +245,151 @@ function CartDrawer({ items, onRemove, onCheckout, onClose, total }) {
   )
 }
 
-function CheckoutModal({ form, onChange, onSubmit, onClose, submitting, error, total }) {
-  const fields = [
-    { key: 'customer_name', label: 'Name *', type: 'text', required: true },
-    { key: 'customer_phone', label: 'Phone', type: 'tel' },
-    { key: 'customer_email', label: 'Email', type: 'email' },
-    { key: 'table_number', label: 'Table number', type: 'text' },
-    { key: 'notes', label: 'Notes', type: 'text' },
-  ]
-
+function CheckoutModal({ form, items, onChange, onUpdateQuantity, onSubmit, onClose, submitting, error, total }) {
   return (
-    <div className="fixed inset-0 z-[100] flex bg-black/60">
-      <div className="m-auto w-full max-w-xl overflow-hidden rounded-2xl border border-slate-700 bg-slate-900 text-slate-100">
-        <div className="flex items-center justify-between border-b border-slate-700 px-6 py-5">
-          <h2 className="text-xl font-bold">Checkout</h2>
-          <button onClick={onClose} className="text-slate-300">x</button>
-        </div>
-        <form onSubmit={onSubmit} className="flex flex-col gap-3 p-6">
-          {fields.map(({ key, label, type, required }) => (
-            <label key={key} className="flex flex-col gap-1 text-sm">
-              {label}
+    <div className="fixed inset-0 z-[100] flex bg-black/60 p-4">
+      <div className="m-auto grid w-full max-w-4xl overflow-hidden rounded-2xl border border-slate-700 bg-slate-900 text-slate-100 md:grid-cols-[1.1fr_0.9fr]">
+        <div className="border-b border-slate-700 p-6 md:border-b-0 md:border-r">
+          <div className="mb-4 flex items-center justify-between">
+            <h2 className="text-xl font-bold">Checkout</h2>
+            <button onClick={onClose} className="text-slate-300">✕</button>
+          </div>
+          <form onSubmit={onSubmit} className="flex flex-col gap-3">
+            <div className="rounded-xl border border-slate-700 bg-slate-950/50 p-4">
+              <h3 className="mb-3 text-sm font-semibold uppercase tracking-wide text-slate-300">Tus datos</h3>
+              <div className="grid gap-3">
+                <label className="flex flex-col gap-1 text-sm">
+                  Nombre y apellido *
+                  <input
+                    type="text"
+                    required
+                    value={form.customer_name}
+                    onChange={(e) => onChange('customer_name', e.target.value)}
+                    className="rounded-md border border-slate-600 bg-slate-950 px-3 py-2 text-sm text-slate-100"
+                  />
+                </label>
+                <label className="flex flex-col gap-1 text-sm">
+                  Email *
+                  <input
+                    type="email"
+                    required
+                    value={form.customer_email}
+                    onChange={(e) => onChange('customer_email', e.target.value)}
+                    className="rounded-md border border-slate-600 bg-slate-950 px-3 py-2 text-sm text-slate-100"
+                  />
+                </label>
+                <label className="flex flex-col gap-1 text-sm">
+                  Número de teléfono *
+                  <input
+                    type="tel"
+                    required
+                    value={form.customer_phone}
+                    onChange={(e) => onChange('customer_phone', e.target.value)}
+                    className="rounded-md border border-slate-600 bg-slate-950 px-3 py-2 text-sm text-slate-100"
+                  />
+                </label>
+                <label className="flex flex-col gap-1 text-sm">
+                  Dirección de entrega *
+                  <input
+                    type="text"
+                    required
+                    value={form.customer_address}
+                    onChange={(e) => onChange('customer_address', e.target.value)}
+                    className="rounded-md border border-slate-600 bg-slate-950 px-3 py-2 text-sm text-slate-100"
+                  />
+                </label>
+              </div>
+            </div>
+
+            <div className="rounded-xl border border-slate-700 bg-slate-950/50 p-4">
+              <h3 className="mb-3 text-sm font-semibold uppercase tracking-wide text-slate-300">Pago</h3>
+              <div className="grid gap-2">
+                <label className="flex items-center gap-2 text-sm">
+                  <input
+                    type="radio"
+                    name="payment_method"
+                    checked={form.payment_method === 'cash'}
+                    onChange={() => onChange('payment_method', 'cash')}
+                  />
+                  Efectivo
+                </label>
+                <label className="flex items-center gap-2 text-sm">
+                  <input
+                    type="radio"
+                    name="payment_method"
+                    checked={form.payment_method === 'transfer'}
+                    onChange={() => onChange('payment_method', 'transfer')}
+                  />
+                  Transferencia
+                </label>
+
+                {form.payment_method === 'cash' && (
+                  <label className="mt-2 flex flex-col gap-1 text-sm">
+                    Necesito cambio para (opcional)
+                    <input
+                      type="number"
+                      min="0"
+                      step="0.01"
+                      value={form.cash_change_for}
+                      onChange={(e) => onChange('cash_change_for', e.target.value)}
+                      placeholder="Ej: 10000"
+                      className="rounded-md border border-slate-600 bg-slate-950 px-3 py-2 text-sm text-slate-100"
+                    />
+                  </label>
+                )}
+              </div>
+            </div>
+
+            <label className="flex flex-col gap-1 text-sm">
+              Aclaraciones
               <input
-                type={type}
-                required={required}
-                value={form[key]}
-                onChange={(e) => onChange(key, e.target.value)}
+                type="text"
+                value={form.notes}
+                onChange={(e) => onChange('notes', e.target.value)}
                 className="rounded-md border border-slate-600 bg-slate-950 px-3 py-2 text-sm text-slate-100"
               />
             </label>
-          ))}
-          {error && <div className="text-sm text-red-300">{error}</div>}
-          <div className="mt-1 font-bold">Total: {total}</div>
-          <button type="submit" disabled={submitting} className="rounded-lg bg-orange-500 px-5 py-3 text-sm font-bold text-white">
-            {submitting ? 'Placing order...' : 'Place Order'}
-          </button>
-        </form>
+            {error && <div className="text-sm text-red-300">{error}</div>}
+            <div className="mt-1 font-bold">Total: {total}</div>
+            <button type="submit" disabled={submitting} className="rounded-lg bg-orange-500 px-5 py-3 text-sm font-bold text-white">
+              {submitting ? 'Placing order...' : 'Place Order'}
+            </button>
+          </form>
+        </div>
+
+        <aside className="p-6">
+          <h3 className="mb-4 text-lg font-semibold">Order summary</h3>
+          <div className="space-y-3">
+            {items.map((item) => (
+              <div key={item.product_id} className="rounded-lg border border-slate-700 p-3 text-sm">
+                <div className="mb-2 flex items-center justify-between gap-2">
+                  <span className="font-medium">{item.product_name}</span>
+                  <span>${((item.unit_price_cents * item.quantity) / 100).toFixed(2)}</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <button onClick={() => onUpdateQuantity(item.product_id, item.quantity - 1)} type="button" className="rounded border border-slate-600 px-2 py-1 text-xs">-</button>
+                  <span className="min-w-7 text-center">{item.quantity}</span>
+                  <button onClick={() => onUpdateQuantity(item.product_id, item.quantity + 1)} type="button" className="rounded border border-slate-600 px-2 py-1 text-xs">+</button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </aside>
       </div>
     </div>
   )
 }
 
-function whatsappUrl(phone) {
-  const cleaned = (phone || '').replace(/[^\d+]/g, '')
-  const numeric = cleaned.startsWith('+') ? cleaned.slice(1) : cleaned
-  return `https://wa.me/${numeric}`
+function initials(name) {
+  return name
+    .split(' ')
+    .slice(0, 2)
+    .map((w) => w[0])
+    .join('')
+    .toUpperCase()
 }
 
-function initials(name) {
-  if (!name) return 'R'
-  return name.split(' ').map((part) => part[0]).join('').slice(0, 2).toUpperCase()
+function whatsappUrl(phone) {
+  const digits = String(phone).replace(/\D/g, '')
+  return `https://wa.me/${digits}`
 }

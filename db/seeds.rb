@@ -1,10 +1,14 @@
-# Create super admin
-super_admin = User.find_or_create_by!(email: "admin@empanada.dev") do |u|
-  u.password = "password123"
-  u.name = "Super Admin"
-  u.role = :super_admin
+# Optional super admin (recommended for production via ENV)
+if ENV["SEED_SUPER_ADMIN_EMAIL"].present?
+  super_admin = User.find_or_create_by!(email: ENV.fetch("SEED_SUPER_ADMIN_EMAIL")) do |u|
+    u.password = ENV.fetch("SEED_SUPER_ADMIN_PASSWORD")
+    u.name = ENV.fetch("SEED_SUPER_ADMIN_NAME", "Super Admin")
+    u.role = :super_admin
+  end
+  puts "Super admin: #{super_admin.email}"
+else
+  puts "Super admin: not seeded (set SEED_SUPER_ADMIN_EMAIL and SEED_SUPER_ADMIN_PASSWORD to create one)"
 end
-puts "Super admin: #{super_admin.email}"
 
 # Create demo restaurant
 result = CreateRestaurant.new(
@@ -62,5 +66,5 @@ puts "Admin panel:  http://localhost:3000/admin/orders"
 puts "Super admin:  http://localhost:3000/super_admin/restaurants"
 puts ""
 puts "=== Login credentials ==="
-puts "Super admin: admin@empanada.dev / password123"
 puts "Restaurant admin: demo@empanada.dev / password123"
+puts "Super admin: from ENV (optional)"

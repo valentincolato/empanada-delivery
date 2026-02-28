@@ -31,7 +31,7 @@ describe('Public menu', () => {
       cy.contains('+ Add').click()
     })
     cy.contains('🛒').should('be.visible')
-    cy.contains('1 —').should('be.visible')
+    cy.contains('1 items').should('be.visible')
   })
 
   it('adds multiple products and updates the cart count', () => {
@@ -41,7 +41,7 @@ describe('Public menu', () => {
     cy.contains('[data-testid="product-card"]', 'Jamón y Queso').within(() => {
       cy.contains('+ Add').click()
     })
-    cy.contains('2 —').should('be.visible')
+    cy.contains('2 items').should('be.visible')
   })
 
   it('opens the cart drawer', () => {
@@ -59,8 +59,12 @@ describe('Public menu', () => {
     })
     cy.contains('🛒').click()
     cy.contains('Your Cart').should('be.visible')
-    // click the ✕ next to the item
-    cy.contains('1x Humita').parent().contains('✕').click()
+    // click the minus button so quantity reaches zero
+    cy.get('[data-testid="cart-drawer"]').within(() => {
+      cy.contains('[data-testid="cart-item"]', 'Humita').within(() => {
+        cy.get('[data-testid="quantity-decrease"]').click()
+      })
+    })
     // cart button disappears after removing last item
     cy.contains('Your Cart').should('not.exist')
   })
@@ -85,6 +89,6 @@ describe('Public menu', () => {
 
     cy.visit(`/r/${SLUG}`)
     cy.wait('@menuApi')
-    cy.contains('Not accepting orders').should('be.visible')
+    cy.contains('not accepting orders').should('be.visible')
   })
 })

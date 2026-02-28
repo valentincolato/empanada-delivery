@@ -1,12 +1,13 @@
 {
   "private": true,
   "type": "module",
+  "packageManager": "npm@10.9.4",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
     "cy:open": "cypress open",
     "cy:run": "cypress run",
-    "cy:ci": "start-server-and-test 'rails server -e test' http://localhost:3000/up 'cypress run'"
+    "cy:ci": "start-server-and-test 'RAILS_ENV=test rails db:prepare && RAILS_ENV=test SEED_SUPER_ADMIN_EMAIL=admin@empanada.dev SEED_SUPER_ADMIN_PASSWORD=password123 rails db:seed:replant && PORT=3100 rails server -e test -p 3100' http://localhost:3100/up 'CYPRESS_BASE_URL=http://localhost:3100 cypress run'"
   },
   "devDependencies": {
     "@vitejs/plugin-react": "^5.1.4",

@@ -3,10 +3,12 @@ Rails.application.routes.draw do
   devise_scope :user do
     get "/panel/login", to: "devise/sessions#new", as: :panel_login
   end
+  get "/panel", to: "panel#index", as: :panel
 
   get "up" => "rails/health#show", as: :rails_health_check
 
   # Public pages (React shell)
+  get "/home", to: "home#index", as: :home
   get "/r/:slug", to: "menu#show", as: :menu
   get "/menu/:slug", to: "menu#show", as: :public_menu
   get "/orders/:token", to: "order_status#show", as: :order_status
@@ -45,10 +47,17 @@ Rails.application.routes.draw do
 
       # Super admin
       namespace :super_admin do
-        resources :restaurants
+        resources :restaurants do
+          post :switch_context, on: :member
+        end
       end
     end
   end
+
+  # Restaurant page
+  get "/:restaurant_name", to: "menu#show", as: :restaurant_page, constraints: {
+    restaurant_name: /[a-z0-9-]+/
+  }
 
   root to: "home#index"
 end

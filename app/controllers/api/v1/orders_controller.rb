@@ -14,6 +14,9 @@ class Api::V1::OrdersController < ActionController::API
       customer_name: order_params[:customer_name],
       customer_phone: order_params[:customer_phone],
       customer_email: order_params[:customer_email],
+      customer_address: order_params[:customer_address],
+      payment_method: order_params[:payment_method],
+      cash_change_for_cents: cash_change_for_cents,
       table_number: order_params[:table_number],
       notes: order_params[:notes],
       cart_items: order_params[:items]
@@ -31,8 +34,15 @@ class Api::V1::OrdersController < ActionController::API
   def order_params
     params.require(:order).permit(
       :restaurant_slug, :customer_name, :customer_phone,
-      :customer_email, :table_number, :notes,
+      :customer_email, :customer_address, :payment_method,
+      :cash_change_for, :table_number, :notes,
       items: [ :product_id, :quantity, :notes ]
     )
+  end
+
+  def cash_change_for_cents
+    return if order_params[:cash_change_for].blank?
+
+    (order_params[:cash_change_for].to_d * 100).to_i
   end
 end

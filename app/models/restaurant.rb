@@ -34,12 +34,16 @@ class Restaurant < ApplicationRecord
   end
 
   def place_order!(customer_name:, customer_phone: nil, customer_email: nil,
+                   customer_address:, payment_method:, cash_change_for_cents: nil,
                    table_number: nil, notes: nil, items:, user: nil)
     transaction do
       order = orders.create!(
         customer_name: customer_name,
         customer_phone: customer_phone,
         customer_email: customer_email,
+        customer_address: customer_address,
+        payment_method: payment_method,
+        cash_change_for_cents: cash_change_for_cents,
         table_number: table_number,
         notes: notes,
         user: user,

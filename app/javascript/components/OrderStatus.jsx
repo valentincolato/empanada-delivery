@@ -1,16 +1,25 @@
 import { useState, useEffect } from 'react'
 import { api } from '@utils/api'
 
-const STATUS_STEPS = ['pending', 'confirmed', 'preparing', 'ready', 'delivered']
+const STATUS_STEPS = ['pending', 'confirmed', 'out_for_delivery', 'delivered']
+
 const STATUS_LABELS = {
-  pending: 'Pending',
+  pending: 'Pending confirmation',
   confirmed: 'Confirmed',
-  preparing: 'Preparing',
-  ready: 'Ready for pickup',
+  out_for_delivery: 'Out for delivery',
   delivered: 'Delivered',
+  ready: 'Ready (legacy)',
   cancelled: 'Cancelled',
 }
-const STATUS_ICONS = { pending: '🕐', confirmed: '✅', preparing: '👨‍🍳', ready: '🛎️', delivered: '🎉', cancelled: '❌' }
+
+const STATUS_ICONS = {
+  pending: '🕐',
+  confirmed: '✅',
+  out_for_delivery: '🛵',
+  delivered: '🎉',
+  ready: '📦',
+  cancelled: '❌'
+}
 
 export default function OrderStatus({ token }) {
   const [order, setOrder] = useState(null)
@@ -33,21 +42,21 @@ export default function OrderStatus({ token }) {
 
   if (error) {
     return (
-      <div className="flex h-screen items-center justify-center font-sans">
+      <div className="flex h-screen items-center justify-center">
         <p className="text-red-600">{error}</p>
       </div>
     )
   }
 
   if (!order) {
-    return <div className="flex h-screen items-center justify-center font-sans">Loading order...</div>
+    return <div className="flex h-screen items-center justify-center">Loading order...</div>
   }
 
   const isCancelled = order.status === 'cancelled'
   const stepIndex = STATUS_STEPS.indexOf(order.status)
 
   return (
-    <div className="min-h-screen bg-slate-50 px-4 py-8 font-sans">
+    <div className="min-h-screen bg-slate-50 px-4 py-8">
       <div className="mx-auto w-full max-w-xl overflow-hidden rounded-2xl bg-white shadow-lg">
         <div className="bg-blue-600 px-6 py-6 text-white">
           <h1 className="text-2xl font-bold">{order.restaurant_name}</h1>
@@ -55,13 +64,13 @@ export default function OrderStatus({ token }) {
         </div>
 
         <div className={`mx-6 mt-6 rounded-xl px-4 py-3 text-center text-base font-bold ${isCancelled ? 'bg-red-100 text-red-800' : 'bg-green-100 text-green-800'}`}>
-          {STATUS_ICONS[order.status]} {STATUS_LABELS[order.status]}
+          {STATUS_ICONS[order.status]} {STATUS_LABELS[order.status] || order.status}
         </div>
 
-        {!isCancelled && (
-          <div className="grid grid-cols-5 gap-2 px-4 py-6 sm:px-6">
-            {STATUS_STEPS.map((step, i) => {
-              const active = i <= stepIndex
+        {!isCancelled && stepIndex >= 0 && (
+          <div className="grid grid-cols-4 gap-2 px-4 py-6 sm:px-6">
+            {STATUS_STEPS.map((step, index) => {
+              const active = index <= stepIndex
               return (
                 <div key={step} className="text-center">
                   <div className={`mx-auto mb-2 h-4 w-4 rounded-full ${active ? 'bg-blue-600' : 'bg-slate-200'}`} />
@@ -86,6 +95,15 @@ export default function OrderStatus({ token }) {
             <span>Total</span>
             <span>${order.total.toFixed(2)}</span>
           </div>
+        </div>
+
+        <div className="border-t border-slate-200 px-6 py-4">
+          <h3 className="mb-2 text-xs font-semibold uppercase tracking-wide text-slate-600">Delivery & Payment</h3>
+          {order.customer_address && <p className="text-sm text-slate-600">Address: {order.customer_address}</p>}
+          <p className="text-sm text-slate-600">Payment: {order.payment_method === 'cash' ? 'Cash' : 'Bank transfer'}</p>
+          {order.cash_change_for && (
+            <p className="text-sm text-slate-600">Cash change for: ${order.cash_change_for.toFixed(2)}</p>
+          )}
         </div>
 
         {order.notes && (

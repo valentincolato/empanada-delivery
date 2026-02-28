@@ -1,9 +1,11 @@
 class OrderBlueprint < Blueprinter::Base
   identifier :id
   fields :customer_name, :customer_phone, :customer_email,
-         :table_number, :status, :total_cents, :notes, :token, :created_at
+         :customer_address, :payment_method, :table_number,
+         :status, :total_cents, :notes, :token, :created_at
 
   field(:total) { |o| o.total_cents / 100.0 }
+  field(:cash_change_for) { |o| o.cash_change_for_cents ? o.cash_change_for_cents / 100.0 : nil }
 
   view :with_items do
     association :order_items, blueprint: OrderItemBlueprint

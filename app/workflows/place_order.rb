@@ -1,11 +1,15 @@
 class PlaceOrder
   def initialize(restaurant:, customer_name:, customer_phone: nil,
-                 customer_email: nil, table_number: nil, notes: nil,
+                 customer_email: nil, customer_address:, payment_method:,
+                 cash_change_for_cents: nil, table_number: nil, notes: nil,
                  cart_items:, user: nil)
     @restaurant = restaurant
     @customer_name = customer_name
     @customer_phone = customer_phone
     @customer_email = customer_email
+    @customer_address = customer_address
+    @payment_method = payment_method
+    @cash_change_for_cents = cash_change_for_cents
     @table_number = table_number
     @notes = notes
     @cart_items = cart_items
@@ -41,6 +45,9 @@ class PlaceOrder
       customer_name: @customer_name,
       customer_phone: @customer_phone,
       customer_email: @customer_email,
+      customer_address: @customer_address,
+      payment_method: @payment_method,
+      cash_change_for_cents: @cash_change_for_cents,
       table_number: @table_number,
       notes: @notes,
       items: items,

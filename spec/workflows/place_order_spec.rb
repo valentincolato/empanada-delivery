@@ -10,7 +10,10 @@ RSpec.describe PlaceOrder do
     described_class.new(
       restaurant: restaurant,
       customer_name: "María",
+      customer_phone: "1122334455",
       customer_email: "maria@test.com",
+      customer_address: "Av. Siempre Viva 742",
+      payment_method: "cash",
       cart_items: cart_items
     )
   end

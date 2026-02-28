@@ -8,13 +8,17 @@ class Api::V1::Admin::BaseController < ApplicationController
   private
 
   def current_restaurant
-    current_user.restaurant
+    return current_user.restaurant if current_user.restaurant_admin?
+    return Restaurant.find_by(id: session[:admin_restaurant_id]) if current_user.super_admin?
+
+    nil
   end
 
   def require_restaurant_admin!
-    unless current_user.restaurant_admin?
-      render json: { error: "Forbidden" }, status: :forbidden
-    end
+    return if current_user.restaurant_admin?
+    return if current_user.super_admin? && current_restaurant.present?
+
+    render json: { error: "Forbidden" }, status: :forbidden
   end
 
   def require_current_restaurant!
