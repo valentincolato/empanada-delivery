@@ -1,8 +1,17 @@
 {
   "private": true,
   "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "cy:open": "cypress open",
+    "cy:run": "cypress run",
+    "cy:ci": "start-server-and-test 'rails server -e test' http://localhost:3000/up 'cypress run'"
+  },
   "devDependencies": {
     "@vitejs/plugin-react": "^5.1.4",
+    "cypress": "^14.3.3",
+    "start-server-and-test": "^2.0.9",
     "vite": "^6.4.1",
     "vite-plugin-ruby": "^5.1.3"
   },

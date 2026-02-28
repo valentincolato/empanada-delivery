@@ -186,6 +186,8 @@ See `docs/guidelines/TARGET_ARCHITECTURE.md` for the full decision guide.
 
 ## Running Tests
 
+### RSpec (unit + integration)
+
 ```bash
 # Full suite
 bundle exec rspec
@@ -196,6 +198,32 @@ docker compose run --rm web bundle exec rspec
 # Single file
 bundle exec rspec spec/models/restaurant_spec.rb
 ```
+
+### Cypress (E2E)
+
+Requires the Rails server and seed data to be running.
+
+```bash
+# 1. Start the server (in one terminal)
+rails server        # or: docker compose up web
+
+# 2a. Open Cypress interactive runner (great for development)
+npm run cy:open
+
+# 2b. Run headless (CI mode, starts server automatically)
+npm run cy:ci
+```
+
+**Test files:**
+
+| File | What it covers |
+|---|---|
+| `cypress/e2e/menu.cy.js` | Public menu, categories, cart add/remove, checkout modal |
+| `cypress/e2e/order.cy.js` | Full order placement flow, status page, error handling |
+| `cypress/e2e/admin/orders.cy.js` | Kanban board, status transitions (Pending → Confirmed → … → Ready), cancel |
+| `cypress/e2e/admin/products.cy.js` | Create, edit, toggle availability, cancel modal |
+
+Screenshots on failure are saved to `cypress/screenshots/` (gitignored, uploaded as CI artifact).
 
 ---
 

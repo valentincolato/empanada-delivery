@@ -43,3 +43,7 @@ node_modules
 *.local
 
 .env.local
+
+# Cypress generated output
+cypress/screenshots
+cypress/videos

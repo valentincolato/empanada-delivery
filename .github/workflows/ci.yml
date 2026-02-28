@@ -7,7 +7,9 @@ on:
     branches: [main]
 
 jobs:
-  test:
+  # ── RSpec + RuboCop ──────────────────────────────────────────────────────────
+  rspec:
+    name: RSpec & RuboCop
     runs-on: ubuntu-latest
 
     services:
@@ -34,14 +36,56 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Set up Ruby
-        uses: ruby/setup-ruby@v1
+      - uses: ruby/setup-ruby@v1
         with:
           ruby-version: '3.2'
           bundler-cache: true
 
-      - name: Set up Node
-        uses: actions/setup-node@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      - run: npm ci
+      - run: bundle exec rails db:migrate
+      - run: bundle exec rspec --format progress
+      - run: bundle exec rubocop --parallel
+
+  # ── Cypress E2E ──────────────────────────────────────────────────────────────
+  cypress:
+    name: Cypress E2E
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: empanada_delivery_test
+        ports: ["5432:5432"]
+        options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
+
+      redis:
+        image: redis:7
+        ports: ["6379:6379"]
+        options: --health-cmd "redis-cli ping" --health-interval 10s --health-timeout 5s --health-retries 5
+
+    env:
+      RAILS_ENV: test
+      DATABASE_URL: postgres://postgres:postgres@localhost:5432/empanada_delivery_test
+      REDIS_URL: redis://localhost:6379/0
+      RAILS_MASTER_KEY: ${{ secrets.RAILS_MASTER_KEY }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.2'
+          bundler-cache: true
+
+      - uses: actions/setup-node@v4
         with:
           node-version: '22'
           cache: 'npm'
@@ -50,20 +94,41 @@ jobs:
         run: npm ci
 
       - name: Set up database
-        run: bundle exec rails db:migrate
+        run: |
+          bundle exec rails db:migrate
+          bundle exec rails db:seed
 
-      - name: Run RSpec
-        run: bundle exec rspec --format progress
+      - name: Build Vite assets
+        run: npm run build
 
-      - name: Run RuboCop
-        run: bundle exec rubocop --parallel
+      - name: Run Cypress
+        uses: cypress-io/github-action@v6
+        with:
+          start: bundle exec rails server -e test -p 3000
+          wait-on: 'http://localhost:3000/up'
+          wait-on-timeout: 60
+          browser: chrome
+        env:
+          RAILS_ENV: test
+          DATABASE_URL: postgres://postgres:postgres@localhost:5432/empanada_delivery_test
+          REDIS_URL: redis://localhost:6379/0
+          RAILS_MASTER_KEY: ${{ secrets.RAILS_MASTER_KEY }}
 
+      - name: Upload screenshots on failure
+        uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: cypress-screenshots
+          path: cypress/screenshots
+          if-no-files-found: ignore
+
+  # ── Deploy ───────────────────────────────────────────────────────────────────
   deploy:
-    needs: test
+    name: Deploy to Render
+    needs: [rspec, cypress]
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
 
     steps:
-      - name: Deploy to Render
-        run: |
-          curl -s -X POST "${{ secrets.RENDER_DEPLOY_HOOK_URL }}"
+      - name: Trigger deploy hook
+        run: curl -s -X POST "${{ secrets.RENDER_DEPLOY_HOOK_URL }}"
