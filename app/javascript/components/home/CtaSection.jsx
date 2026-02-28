@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next'
 
-export default function CtaSection({ restaurantLink }) {
+export default function CtaSection({ restaurantLink, adminLoginPath }) {
   const { t } = useTranslation()
 
   return (
@@ -12,7 +12,7 @@ export default function CtaSection({ restaurantLink }) {
           <a href={restaurantLink} className="elegant-button-primary shadow-[0_12px_24px_rgba(166,41,84,0.32)]">
             {t('home.viewDemo')}
           </a>
-          <a href="/panel/login" className="elegant-button-secondary">
+          <a href={adminLoginPath} className="elegant-button-secondary">
             {t('home.adminLogin')}
           </a>
         </div>

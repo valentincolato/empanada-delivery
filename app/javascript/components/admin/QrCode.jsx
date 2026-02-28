@@ -2,13 +2,13 @@ import { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { api } from '@utils/api'
 
-export default function QrCode() {
+export default function QrCode({ routes = {} }) {
   const { t } = useTranslation()
   const [data, setData] = useState(null)
   const [error, setError] = useState(null)
 
   useEffect(() => {
-    api.get('/api/v1/admin/restaurant/qr_code')
+    api.get(routes.api_admin_restaurant_qr_code)
       .then(setData)
       .catch((err) => setError(err.message))
   }, [])
@@ -26,7 +26,7 @@ export default function QrCode() {
   return (
     <div className="min-h-screen">
       <div className="border-b border-[var(--line-soft)] bg-[var(--panel)] px-6 py-4">
-        <a href="/admin/orders" className="mb-1 block text-sm text-[var(--ink-500)]">{t('admin.qr.backToOrders')}</a>
+        <a href={routes.admin_orders} className="mb-1 block text-sm text-[var(--ink-500)]">{t('admin.qr.backToOrders')}</a>
         <h1 className="font-display text-4xl font-semibold text-[var(--ink-900)]">{t('admin.qr.title')}</h1>
       </div>
       <div className="flex justify-center px-4 py-12">

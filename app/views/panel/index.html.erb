@@ -20,7 +20,7 @@
         <h2 class="mt-2 font-display text-4xl font-semibold"><%= t('panel.super_admin.title') %></h2>
         <p class="mt-2 max-w-2xl text-sm text-[var(--ink-700)]"><%= t('panel.super_admin.description') %></p>
         <div class="mt-5 flex flex-wrap gap-3">
-          <a href="/super_admin/restaurants" class="elegant-button-primary !rounded-lg !px-4 !py-2 !text-sm"><%= t('panel.super_admin.view_restaurants') %></a>
+          <%= link_to t('panel.super_admin.view_restaurants'), super_admin_restaurants_path, class: "elegant-button-primary !rounded-lg !px-4 !py-2 !text-sm" %>
         </div>
       </section>
     <% end %>
@@ -38,17 +38,17 @@
 
         <div class="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
           <% [
-            [t('panel.restaurant_admin.sections.orders'), "/admin/orders", t('panel.restaurant_admin.sections.orders_desc')],
-            [t('panel.restaurant_admin.sections.products'), "/admin/products", t('panel.restaurant_admin.sections.products_desc')],
-            [t('panel.restaurant_admin.sections.categories'), "/admin/categories", t('panel.restaurant_admin.sections.categories_desc')],
-            [t('panel.restaurant_admin.sections.qr'), "/admin/qr", t('panel.restaurant_admin.sections.qr_desc')],
-            [t('panel.restaurant_admin.sections.members'), "/admin/members", t('panel.restaurant_admin.sections.members_desc')]
+            [t('panel.restaurant_admin.sections.orders'), admin_orders_path, t('panel.restaurant_admin.sections.orders_desc')],
+            [t('panel.restaurant_admin.sections.products'), admin_products_path, t('panel.restaurant_admin.sections.products_desc')],
+            [t('panel.restaurant_admin.sections.categories'), admin_categories_path, t('panel.restaurant_admin.sections.categories_desc')],
+            [t('panel.restaurant_admin.sections.qr'), admin_qr_path, t('panel.restaurant_admin.sections.qr_desc')],
+            [t('panel.restaurant_admin.sections.members'), admin_members_path, t('panel.restaurant_admin.sections.members_desc')]
           ].each do |title, href, description| %>
-            <a href="<%= href %>" class="group elegant-card bg-[var(--panel)] p-5 transition hover:-translate-y-0.5">
+            <%= link_to href, class: "group elegant-card bg-[var(--panel)] p-5 transition hover:-translate-y-0.5" do %>
               <h3 class="font-display text-3xl font-semibold text-[var(--ink-900)]"><%= title %></h3>
               <p class="mt-1 text-sm text-[var(--ink-700)]"><%= description %></p>
               <p class="mt-4 text-xs font-semibold uppercase tracking-[0.14em] text-[var(--brand-700)]"><%= t('panel.restaurant_admin.enter') %></p>
-            </a>
+            <% end %>
           <% end %>
         </div>
 
@@ -56,7 +56,7 @@
           <div class="mt-5 elegant-card bg-[var(--panel)] p-5">
             <h3 class="text-base font-semibold text-[var(--ink-900)]"><%= t('panel.restaurant_admin.public_access') %></h3>
             <p class="mt-1 text-sm text-[var(--ink-700)]"><%= t('panel.restaurant_admin.public_access_desc') %></p>
-            <a href="/r/<%= current_panel_restaurant.slug %>" target="_blank" rel="noreferrer" class="elegant-button-secondary mt-4 !rounded-lg !px-3 !py-2 !text-sm"><%= t('panel.restaurant_admin.open_public_menu') %></a>
+            <%= link_to t('panel.restaurant_admin.open_public_menu'), restaurant_page_path(slug: current_panel_restaurant.slug), target: "_blank", rel: "noreferrer", class: "elegant-button-secondary mt-4 !rounded-lg !px-3 !py-2 !text-sm" %>
           </div>
         <% end %>
       </section>

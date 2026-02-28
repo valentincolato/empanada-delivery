@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next'
 import RestaurantCard from './RestaurantCard'
 
-export default function RestaurantsGrid({ restaurants, onManageOperations, onOpenEdit, onDelete }) {
+export default function RestaurantsGrid({ restaurants, routes, onManageOperations, onOpenEdit, onDelete }) {
   const { t } = useTranslation()
 
   if (restaurants.length === 0) {
@@ -18,6 +18,7 @@ export default function RestaurantsGrid({ restaurants, onManageOperations, onOpe
         <RestaurantCard
           key={restaurant.id}
           restaurant={restaurant}
+          routes={routes}
           onManageOperations={onManageOperations}
           onOpenEdit={onOpenEdit}
           onDelete={onDelete}

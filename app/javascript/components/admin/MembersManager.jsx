@@ -2,8 +2,9 @@ import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { api } from '@utils/api'
 import { confirmAction } from '@utils/confirmAction'
+import { fillPath } from '@utils/pathBuilder'
 
-export default function MembersManager() {
+export default function MembersManager({ routes = {} }) {
   const { t } = useTranslation()
   const [memberships, setMemberships] = useState([])
   const [modalOpen, setModalOpen] = useState(false)
@@ -16,7 +17,7 @@ export default function MembersManager() {
   }, [])
 
   async function loadMembers() {
-    const data = await api.get('/api/v1/admin/memberships')
+    const data = await api.get(routes.api_admin_memberships)
     setMemberships(Array.isArray(data) ? data : [])
   }
 
@@ -26,7 +27,7 @@ export default function MembersManager() {
     setError(null)
 
     try {
-      await api.post('/api/v1/admin/memberships', { membership: form })
+      await api.post(routes.api_admin_memberships, { membership: form })
       await loadMembers()
       setForm({ email: '' })
       setModalOpen(false)
@@ -40,7 +41,7 @@ export default function MembersManager() {
   async function removeMembership(membershipId) {
     const approved = await confirmAction(t('admin.members.removeConfirm'))
     if (!approved) return
-    await api.delete(`/api/v1/admin/memberships/${membershipId}`)
+    await api.delete(fillPath(routes.api_admin_membership_template, { id: membershipId }))
     await loadMembers()
   }
 
@@ -48,7 +49,7 @@ export default function MembersManager() {
     <div className="min-h-screen">
       <div className="flex items-center justify-between border-b border-[var(--line-soft)] bg-[var(--panel)] px-6 py-4">
         <div>
-          <a href="/admin/orders" className="text-sm text-[var(--ink-500)]">{t('admin.members.backToOrders')}</a>
+          <a href={routes.admin_orders} className="text-sm text-[var(--ink-500)]">{t('admin.members.backToOrders')}</a>
           <h1 className="mt-1 font-display text-4xl font-semibold text-[var(--ink-900)]">{t('admin.members.title')}</h1>
         </div>
         <button onClick={() => setModalOpen(true)} className="elegant-button-primary !rounded-lg !px-4 !py-2 !text-sm">

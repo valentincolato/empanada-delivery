@@ -11,7 +11,7 @@ function addProductFromCard(productName) {
 describe('Public menu', () => {
   beforeEach(() => {
     cy.clearCart(SLUG)
-    cy.visit(`/r/${SLUG}`)
+    cy.visit(`/${SLUG}`)
   })
 
   it('displays the restaurant name', () => {
@@ -115,7 +115,7 @@ describe('Public menu', () => {
       })
     }).as('menuApi')
 
-    cy.visit(`/r/${SLUG}`)
+    cy.visit(`/${SLUG}`)
     cy.wait('@menuApi')
     cy.contains('no está aceptando pedidos').should('be.visible')
     cy.get('[data-testid="product-card"]').should('not.exist')

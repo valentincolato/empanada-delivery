@@ -77,4 +77,26 @@
   .elegant-button-secondary:hover {
     background-color: color-mix(in srgb, var(--panel-strong) 84%, var(--brand-700));
   }
+
+  .brand-mark {
+    @apply relative grid place-items-center rounded-2xl;
+    background: linear-gradient(145deg, var(--brand-700), var(--brand-600));
+    box-shadow:
+      0 8px 20px rgba(216, 27, 96, 0.28),
+      inset 0 1px 0 rgba(255, 255, 255, 0.35);
+  }
+
+  .brand-mark::before {
+    content: "";
+    @apply absolute inset-[1px] rounded-[14px];
+    background:
+      radial-gradient(circle at 24% 20%, rgba(255, 255, 255, 0.35), transparent 40%),
+      linear-gradient(160deg, rgba(255, 255, 255, 0.14), transparent 55%);
+    pointer-events: none;
+  }
+
+  .brand-mark-text {
+    @apply relative text-sm font-bold tracking-[0.08em] text-white;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
+  }
 }

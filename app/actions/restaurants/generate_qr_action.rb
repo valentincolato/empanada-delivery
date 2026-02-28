@@ -5,7 +5,7 @@ module Restaurants
     validates_presence_of :restaurant, :base_url
 
     def perform
-      menu_url = "#{base_url}/r/#{restaurant.slug}"
+      menu_url = "#{base_url}/#{restaurant.slug}"
       qr = RQRCode::QRCode.new(menu_url)
       svg = qr.as_svg(
         offset: 0,

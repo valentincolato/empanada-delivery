@@ -6,7 +6,7 @@ import RestaurantsGrid from './restaurants/RestaurantsGrid'
 import RestaurantsPagination from './restaurants/RestaurantsPagination'
 import RestaurantFormModal from './restaurants/RestaurantFormModal'
 
-export default function RestaurantsManager() {
+export default function RestaurantsManager({ routes = {} }) {
   const { t } = useTranslation()
   const {
     pageItems,
@@ -30,7 +30,7 @@ export default function RestaurantsManager() {
     save,
     destroy,
     manageOperations,
-  } = useRestaurantDirectory()
+  } = useRestaurantDirectory(routes)
 
   async function handleDelete(restaurantId) {
     const approved = await confirmAction(t('superAdmin.restaurants.deleteConfirm'))
@@ -72,6 +72,7 @@ export default function RestaurantsManager() {
 
         <RestaurantsGrid
           restaurants={pageItems}
+          routes={routes}
           onManageOperations={manageOperations}
           onOpenEdit={openEdit}
           onDelete={handleDelete}

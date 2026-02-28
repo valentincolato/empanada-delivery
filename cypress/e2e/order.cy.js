@@ -28,7 +28,7 @@ function fillCheckoutForm(customer, options = {}) {
 describe('Placing and tracking an order', () => {
   beforeEach(() => {
     cy.clearCart(SLUG)
-    cy.visit(`/r/${SLUG}`)
+    cy.visit(`/${SLUG}`)
   })
 
   it('completes the full order flow and lands on the status page', () => {

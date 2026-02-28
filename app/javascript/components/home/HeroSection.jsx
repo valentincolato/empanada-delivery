@@ -1,6 +1,7 @@
 import { useTranslation } from 'react-i18next'
+import BrandLogo from '../ui/BrandLogo'
 
-export default function HeroSection({ restaurantLink }) {
+export default function HeroSection({ restaurantLink, adminLoginPath }) {
   const { t } = useTranslation()
   const flowSteps = [t('home.steps.1'), t('home.steps.2'), t('home.steps.3'), t('home.steps.4')]
 
@@ -9,12 +10,7 @@ export default function HeroSection({ restaurantLink }) {
       <div className="absolute -left-24 top-24 h-72 w-72 rounded-full bg-[var(--panel-soft)] blur-2xl" aria-hidden="true" />
       <div className="absolute right-0 top-8 h-64 w-64 rounded-full bg-[var(--brand-600)]/15 blur-2xl" aria-hidden="true" />
       <div className="mx-auto flex w-full max-w-6xl items-center justify-between gap-4">
-        <div className="flex items-center gap-3">
-          <div className="grid h-11 w-11 place-items-center rounded-full border border-[var(--line-soft)] bg-[var(--panel-strong)] text-xs font-semibold">
-            QR
-          </div>
-          <span className="font-display text-3xl font-semibold">PedidoFácil</span>
-        </div>
+        <BrandLogo />
       </div>
 
       <div className="relative mx-auto mt-14 grid w-full max-w-6xl gap-12 lg:grid-cols-[1.02fr_0.98fr] lg:items-center">
@@ -26,7 +22,7 @@ export default function HeroSection({ restaurantLink }) {
             <a href={restaurantLink} className="inline-flex items-center justify-center rounded-full bg-[var(--panel-strong)] px-5 py-2.5 text-sm font-semibold text-[var(--brand-700)] shadow-[0_14px_25px_rgba(0,0,0,0.28)] transition hover:-translate-y-0.5 hover:shadow-[0_18px_28px_rgba(0,0,0,0.34)]">
               {t('home.viewDemo')}
             </a>
-            <a href="/panel/login" className="inline-flex items-center justify-center rounded-full border border-[var(--line-soft)] bg-[var(--panel-soft)] px-5 py-2.5 text-sm font-semibold text-[var(--ink-900)] transition hover:bg-[var(--panel-strong)]">
+            <a href={adminLoginPath} className="inline-flex items-center justify-center rounded-full border border-[var(--line-soft)] bg-[var(--panel-soft)] px-5 py-2.5 text-sm font-semibold text-[var(--ink-900)] transition hover:bg-[var(--panel-strong)]">
               {t('home.adminLogin')}
             </a>
           </div>

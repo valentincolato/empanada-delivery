@@ -6,20 +6,22 @@ import WhySection from './home/WhySection'
 import FaqSection from './home/FaqSection'
 import PricingSection from './home/PricingSection'
 import CtaSection from './home/CtaSection'
+import { fillPath } from '@utils/pathBuilder'
 
-const RESTAURANT_LINK = '/empanadas-demo'
+export default function Home({ routes = {} }) {
+  const restaurantLink = fillPath(routes.public_restaurant_template, { slug: 'empanadas-demo' })
+  const adminLoginPath = routes.panel_login
 
-export default function Home() {
   return (
     <div className="min-h-screen overflow-x-clip text-[var(--ink-900)]">
-      <HeroSection restaurantLink={RESTAURANT_LINK} />
+      <HeroSection restaurantLink={restaurantLink} adminLoginPath={adminLoginPath} />
       <FeaturesSection />
       <MoreSection />
       <StatsSection />
       <WhySection />
       <FaqSection />
       <PricingSection />
-      <CtaSection restaurantLink={RESTAURANT_LINK} />
+      <CtaSection restaurantLink={restaurantLink} adminLoginPath={adminLoginPath} />
     </div>
   )
 }

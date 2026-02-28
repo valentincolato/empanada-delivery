@@ -1,6 +1,7 @@
 class Admin::DashboardController < ApplicationController
   include AdminContext
 
+  before_action :redirect_guests_to_panel_login!
   before_action :authenticate_user!
   before_action :require_admin_access!
   before_action :require_current_restaurant!
@@ -16,6 +17,12 @@ class Admin::DashboardController < ApplicationController
   def members; end
 
   private
+
+  def redirect_guests_to_panel_login!
+    return if user_signed_in?
+
+    redirect_to panel_login_path
+  end
 
   def require_admin_access!
     return if current_user.restaurant_admin? || current_user.super_admin?

@@ -10,10 +10,11 @@ import MenuHeader from './menu/MenuHeader'
 import MenuFooter from './menu/MenuFooter'
 import ProductCard from './menu/ProductCard'
 import { EmptyState, ClosedState } from './menu/MenuStates'
+import { fillPath } from '@utils/pathBuilder'
 
-export default function Menu({ slug }) {
+export default function Menu({ slug, routes = {} }) {
   const { t } = useTranslation()
-  const { data, categories, restaurant, hasProducts, isOpen } = useMenuData(slug)
+  const { data, categories, restaurant, hasProducts, isOpen } = useMenuData(slug, routes)
   const {
     cartItems,
     showCart,
@@ -56,11 +57,11 @@ export default function Menu({ slug }) {
     setError(null)
 
     try {
-      const order = await api.post('/api/v1/orders', {
+      const order = await api.post(routes.api_orders, {
         order: { restaurant_slug: slug, ...form, items: cartItems }
       })
       clearCart()
-      window.location.href = `/orders/${order.token}`
+      window.location.href = fillPath(routes.order_status_template, { token: order.token })
     } catch (err) {
       setError(err.message)
       setSubmitting(false)

@@ -2,8 +2,9 @@ import { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { api } from '@utils/api'
 import { confirmAction } from '@utils/confirmAction'
+import { fillPath } from '@utils/pathBuilder'
 
-export default function CategoriesManager() {
+export default function CategoriesManager({ routes = {} }) {
   const { t } = useTranslation()
   const [categories, setCategories] = useState([])
   const [modal, setModal] = useState(null)
@@ -14,7 +15,7 @@ export default function CategoriesManager() {
   useEffect(() => { loadCategories() }, [])
 
   async function loadCategories() {
-    const data = await api.get('/api/v1/admin/categories')
+    const data = await api.get(routes.api_admin_categories)
     setCategories(Array.isArray(data) ? data : [])
   }
 
@@ -35,8 +36,8 @@ export default function CategoriesManager() {
     setSaving(true)
     setError(null)
     try {
-      if (modal === 'new') await api.post('/api/v1/admin/categories', { category: form })
-      else await api.patch(`/api/v1/admin/categories/${modal.id}`, { category: form })
+      if (modal === 'new') await api.post(routes.api_admin_categories, { category: form })
+      else await api.patch(fillPath(routes.api_admin_category_template, { id: modal.id }), { category: form })
       await loadCategories()
       setModal(null)
     } catch (err) {
@@ -49,7 +50,7 @@ export default function CategoriesManager() {
   async function destroy(id) {
     const approved = await confirmAction(t('admin.categories.deleteConfirm'))
     if (!approved) return
-    await api.delete(`/api/v1/admin/categories/${id}`)
+    await api.delete(fillPath(routes.api_admin_category_template, { id }))
     await loadCategories()
   }
 
@@ -57,7 +58,7 @@ export default function CategoriesManager() {
     <div className="min-h-screen">
       <div className="flex items-center justify-between border-b border-[var(--line-soft)] bg-[var(--panel)] px-6 py-4">
         <div>
-          <a href="/admin/orders" className="text-sm text-[var(--ink-500)]">{t('admin.categories.backToOrders')}</a>
+          <a href={routes.admin_orders} className="text-sm text-[var(--ink-500)]">{t('admin.categories.backToOrders')}</a>
           <h1 className="mt-1 font-display text-4xl font-semibold text-[var(--ink-900)]">{t('admin.categories.title')}</h1>
         </div>
         <button onClick={openNew} className="elegant-button-primary !rounded-lg !px-4 !py-2 !text-sm">{t('admin.categories.newCategory')}</button>

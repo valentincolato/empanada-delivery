@@ -14,4 +14,4 @@
   <p>Unfortunately your order has been cancelled. Please contact us if you have questions.</p>
 <% end %>
 
-<p><a href="/orders/<%= @order.token %>">View your order status</a></p>
+<p><%= link_to "View your order status", order_status_url(token: @order.token) %></p>

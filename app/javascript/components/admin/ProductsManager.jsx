@@ -3,8 +3,9 @@ import { useTranslation } from 'react-i18next'
 import { api } from '@utils/api'
 import { confirmAction } from '@utils/confirmAction'
 import ProductFormModal from './products/ProductFormModal'
+import { fillPath } from '@utils/pathBuilder'
 
-export default function ProductsManager() {
+export default function ProductsManager({ routes = {} }) {
   const { t } = useTranslation()
   const [products, setProducts] = useState([])
   const [categories, setCategories] = useState([])
@@ -20,8 +21,8 @@ export default function ProductsManager() {
 
   async function loadData() {
     const [prods, cats] = await Promise.all([
-      api.get('/api/v1/admin/products'),
-      api.get('/api/v1/admin/categories'),
+      api.get(routes.api_admin_products),
+      api.get(routes.api_admin_categories),
     ])
     setProducts(Array.isArray(prods) ? prods : [])
     setCategories(Array.isArray(cats) ? cats : [])
@@ -64,11 +65,11 @@ export default function ProductsManager() {
     try {
       if (imageFile) {
         const fd = buildFormData()
-        if (modal === 'new') await api.postForm('/api/v1/admin/products', fd)
-        else await api.patchForm(`/api/v1/admin/products/${modal.id}`, fd)
+        if (modal === 'new') await api.postForm(routes.api_admin_products, fd)
+        else await api.patchForm(fillPath(routes.api_admin_product_template, { id: modal.id }), fd)
       } else {
-        if (modal === 'new') await api.post('/api/v1/admin/products', { product: form })
-        else await api.patch(`/api/v1/admin/products/${modal.id}`, { product: form })
+        if (modal === 'new') await api.post(routes.api_admin_products, { product: form })
+        else await api.patch(fillPath(routes.api_admin_product_template, { id: modal.id }), { product: form })
       }
       await loadData()
       setModal(null)
@@ -82,12 +83,12 @@ export default function ProductsManager() {
   async function destroy(id) {
     const approved = await confirmAction(t('admin.products.deleteConfirm'))
     if (!approved) return
-    await api.delete(`/api/v1/admin/products/${id}`)
+    await api.delete(fillPath(routes.api_admin_product_template, { id }))
     await loadData()
   }
 
   async function toggleAvailability(product) {
-    await api.patch(`/api/v1/admin/products/${product.id}`, { product: { available: !product.available } })
+    await api.patch(fillPath(routes.api_admin_product_template, { id: product.id }), { product: { available: !product.available } })
     await loadData()
   }
 
@@ -95,7 +96,7 @@ export default function ProductsManager() {
     <div className="min-h-screen">
       <div className="flex items-center justify-between border-b border-[var(--line-soft)] bg-[var(--panel)] px-6 py-4">
         <div>
-          <a href="/admin/orders" className="text-sm text-[var(--ink-500)]">{t('admin.products.backToOrders')}</a>
+          <a href={routes.admin_orders} className="text-sm text-[var(--ink-500)]">{t('admin.products.backToOrders')}</a>
           <h1 data-testid="products-title" className="mt-1 font-display text-4xl font-semibold text-[var(--ink-900)]">{t('admin.products.title')}</h1>
         </div>
         <button data-testid="new-product-button" onClick={openNew} className="elegant-button-primary !rounded-lg !px-4 !py-2 !text-sm">{t('admin.products.newProduct')}</button>

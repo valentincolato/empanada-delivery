@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { api } from '@utils/api'
+import { fillPath } from '@utils/pathBuilder'
 
 const STATUS_STEPS = ['pending', 'confirmed', 'out_for_delivery', 'delivered']
 
@@ -13,7 +14,7 @@ const STATUS_ICONS = {
   cancelled: 'cancel'
 }
 
-export default function OrderStatus({ token }) {
+export default function OrderStatus({ token, routes = {} }) {
   const { t } = useTranslation()
   const [order, setOrder] = useState(null)
   const [error, setError] = useState(null)
@@ -26,7 +27,7 @@ export default function OrderStatus({ token }) {
 
   async function fetchOrder() {
     try {
-      const data = await api.get(`/api/v1/orders/${token}`)
+      const data = await api.get(fillPath(routes.api_order_status_template, { token }))
       setOrder(data)
     } catch (err) {
       setError(err.message)

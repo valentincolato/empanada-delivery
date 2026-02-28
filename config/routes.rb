@@ -9,7 +9,7 @@ Rails.application.routes.draw do
 
   # Public pages (React shell)
   get "/home", to: "home#index", as: :home
-  get "/r/:slug", to: "menu#show", as: :menu
+  get "/r/:slug", to: redirect("/%{slug}")
   get "/menu/:slug", to: "menu#show", as: :public_menu
   get "/orders/:token", to: "order_status#show", as: :order_status
 
@@ -60,8 +60,8 @@ Rails.application.routes.draw do
   end
 
   # Restaurant page
-  get "/:restaurant_name", to: "menu#show", as: :restaurant_page, constraints: {
-    restaurant_name: /[a-z0-9-]+/
+  get "/:slug", to: "menu#show", as: :restaurant_page, constraints: {
+    slug: /[a-z0-9-]+/
   }
 
   root to: "home#index"

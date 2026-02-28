@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { api } from '@utils/api'
+import { fillPath } from '@utils/pathBuilder'
 
 const PAGE_SIZE = 8
 
@@ -27,7 +28,7 @@ function buildEditForm(restaurant) {
   }
 }
 
-export function useRestaurantDirectory() {
+export function useRestaurantDirectory(routes = {}) {
   const [restaurants, setRestaurants] = useState([])
   const [modal, setModal] = useState(null)
   const [form, setForm] = useState(EMPTY_FORM)
@@ -46,7 +47,7 @@ export function useRestaurantDirectory() {
 
   async function loadRestaurants() {
     try {
-      const data = await api.get('/api/v1/super_admin/restaurants')
+      const data = await api.get(routes.api_super_admin_restaurants)
       const rows = Array.isArray(data) ? data : []
       rows.sort((a, b) => Number(b.active) - Number(a.active) || a.name.localeCompare(b.name))
       setRestaurants(rows)
@@ -78,7 +79,7 @@ export function useRestaurantDirectory() {
 
     try {
       if (modal === 'new') {
-        await api.post('/api/v1/super_admin/restaurants', {
+        await api.post(routes.api_super_admin_restaurants, {
           restaurant: {
             name: form.name,
             slug: form.slug,
@@ -92,7 +93,7 @@ export function useRestaurantDirectory() {
           admin_name: form.admin_name,
         })
       } else {
-        await api.patch(`/api/v1/super_admin/restaurants/${modal.id}`, { restaurant: form })
+        await api.patch(fillPath(routes.api_super_admin_restaurant_template, { id: modal.id }), { restaurant: form })
       }
 
       await loadRestaurants()
@@ -105,14 +106,14 @@ export function useRestaurantDirectory() {
   }
 
   async function destroy(restaurantId) {
-    await api.delete(`/api/v1/super_admin/restaurants/${restaurantId}`)
+    await api.delete(fillPath(routes.api_super_admin_restaurant_template, { id: restaurantId }))
     await loadRestaurants()
   }
 
   async function manageOperations(restaurantId) {
     try {
-      const result = await api.post(`/api/v1/super_admin/restaurants/${restaurantId}/switch_context`, {})
-      window.location.href = result?.redirect_to || '/admin/orders'
+      const result = await api.post(fillPath(routes.api_super_admin_restaurant_switch_context_template, { id: restaurantId }), {})
+      window.location.href = result?.redirect_to || routes.admin_orders
     } catch (err) {
       setError(err.message)
     }
