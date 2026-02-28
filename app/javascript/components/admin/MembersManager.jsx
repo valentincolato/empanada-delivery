@@ -2,17 +2,13 @@ import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { api } from '@utils/api'
 
-const ROLE_OPTIONS = ['staff', 'manager', 'owner']
-
-export default function MembersManager({ membershipRole, membership_role, isSuperAdmin, is_super_admin }) {
+export default function MembersManager() {
   const { t } = useTranslation()
   const [memberships, setMemberships] = useState([])
   const [modalOpen, setModalOpen] = useState(false)
-  const [form, setForm] = useState({ email: '', role: 'staff' })
+  const [form, setForm] = useState({ email: '' })
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState(null)
-
-  const canManage = Boolean(isSuperAdmin ?? is_super_admin) || (membershipRole || membership_role) === 'owner'
 
   useEffect(() => {
     loadMembers()
@@ -31,18 +27,13 @@ export default function MembersManager({ membershipRole, membership_role, isSupe
     try {
       await api.post('/api/v1/admin/memberships', { membership: form })
       await loadMembers()
-      setForm({ email: '', role: 'staff' })
+      setForm({ email: '' })
       setModalOpen(false)
     } catch (err) {
       setError(err.message)
     } finally {
       setSaving(false)
     }
-  }
-
-  async function updateRole(membershipId, role) {
-    await api.patch(`/api/v1/admin/memberships/${membershipId}`, { membership: { role } })
-    await loadMembers()
   }
 
   async function removeMembership(membershipId) {
@@ -58,11 +49,9 @@ export default function MembersManager({ membershipRole, membership_role, isSupe
           <a href="/admin/orders" className="text-sm text-[var(--ink-500)]">{t('admin.members.backToOrders')}</a>
           <h1 className="mt-1 font-display text-4xl font-semibold text-[var(--ink-900)]">{t('admin.members.title')}</h1>
         </div>
-        {canManage && (
-          <button onClick={() => setModalOpen(true)} className="elegant-button-primary !rounded-lg !px-4 !py-2 !text-sm">
-            {t('admin.members.invite')}
-          </button>
-        )}
+        <button onClick={() => setModalOpen(true)} className="elegant-button-primary !rounded-lg !px-4 !py-2 !text-sm">
+          {t('admin.members.invite')}
+        </button>
       </div>
 
       <div className="overflow-x-auto p-6">
@@ -82,24 +71,12 @@ export default function MembersManager({ membershipRole, membership_role, isSupe
                   <div className="text-xs text-[var(--ink-500)]">{membership.user?.name || '—'}</div>
                 </td>
                 <td className="px-4 py-3 text-sm text-[var(--ink-700)]">
-                  {canManage ? (
-                    <select
-                      value={membership.role}
-                      onChange={(e) => updateRole(membership.id, e.target.value)}
-                      className="rounded-md border border-[var(--line-soft)] bg-[var(--panel-strong)] px-2 py-1"
-                    >
-                      {ROLE_OPTIONS.map((role) => (
-                        <option key={role} value={role}>{t(`admin.members.roles.${role}`)}</option>
-                      ))}
-                    </select>
-                  ) : t(`admin.members.roles.${membership.role}`)}
+                  {t('admin.members.roles.member')}
                 </td>
                 <td className="px-4 py-3 text-sm text-[var(--ink-700)]">
-                  {canManage && (
-                    <button onClick={() => removeMembership(membership.id)} className="rounded-md border border-red-900/50 bg-red-950/35 px-3 py-1 text-xs text-red-300">
-                      {t('common.delete')}
-                    </button>
-                  )}
+                  <button onClick={() => removeMembership(membership.id)} className="rounded-md border border-red-900/50 bg-red-950/35 px-3 py-1 text-xs text-red-300">
+                    {t('common.delete')}
+                  </button>
                 </td>
               </tr>
             ))}
@@ -125,18 +102,6 @@ export default function MembersManager({ membershipRole, membership_role, isSupe
                   onChange={(e) => setForm((prev) => ({ ...prev, email: e.target.value }))}
                   className="rounded-md border border-[var(--line-soft)] bg-[var(--panel-strong)] px-3 py-2"
                 />
-              </label>
-              <label className="flex flex-col gap-1 text-sm font-medium text-[var(--ink-700)]">
-                {t('admin.members.form.role')}
-                <select
-                  value={form.role}
-                  onChange={(e) => setForm((prev) => ({ ...prev, role: e.target.value }))}
-                  className="rounded-md border border-[var(--line-soft)] bg-[var(--panel-strong)] px-3 py-2"
-                >
-                  {ROLE_OPTIONS.map((role) => (
-                    <option key={role} value={role}>{t(`admin.members.roles.${role}`)}</option>
-                  ))}
-                </select>
               </label>
               {error && <div className="text-sm text-red-300">{error}</div>}
               <div className="mt-1 flex gap-3">

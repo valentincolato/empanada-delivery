@@ -10,7 +10,7 @@ FactoryBot.define do
 
       transient do
         membership_restaurant { nil }
-        membership_role { :owner }
+        membership_role { :member }
       end
 
       after(:create) do |user, evaluator|

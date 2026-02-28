@@ -68,7 +68,7 @@ class Restaurant < ApplicationRecord
       end
 
       membership = restaurant_memberships.find_or_initialize_by(user: user)
-      membership.update!(role: :owner)
+      membership.update!(role: :member)
       user
     end
   end

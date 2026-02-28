@@ -1,13 +1,13 @@
 class OrderPolicy < ApplicationPolicy
   def index?
-    staff?
+    restaurant_member?
   end
 
   def show?
-    staff?
+    restaurant_member?
   end
 
   def update?
-    staff?
+    restaurant_member?
   end
 end

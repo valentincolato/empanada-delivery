@@ -1,17 +1,17 @@
 class RestaurantMembershipPolicy < ApplicationPolicy
   def index?
-    owner?
+    restaurant_member?
   end
 
   def create?
-    owner?
+    restaurant_member?
   end
 
   def update?
-    owner?
+    restaurant_member?
   end
 
   def destroy?
-    owner?
+    restaurant_member?
   end
 end

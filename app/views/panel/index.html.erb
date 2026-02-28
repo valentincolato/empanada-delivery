@@ -13,7 +13,6 @@
   <main class="mx-auto w-full max-w-6xl px-4 py-8 sm:px-6">
     <% admin_restaurants = current_user.restaurants.to_a %>
     <% current_panel_restaurant = admin_restaurants.find { |restaurant| restaurant.id == session[:admin_restaurant_id] } || admin_restaurants.first %>
-    <% current_panel_membership = current_user.membership_for(current_panel_restaurant) if current_panel_restaurant.present? %>
 
     <% if current_user.super_admin? %>
       <section class="mb-8 rounded-2xl border border-[var(--line-soft)] bg-[linear-gradient(135deg,#1b2029,#121720)] p-6 text-[var(--ink-900)] shadow-[0_18px_40px_rgba(0,0,0,0.35)]">
@@ -45,7 +44,6 @@
             [t('panel.restaurant_admin.sections.qr'), "/admin/qr", t('panel.restaurant_admin.sections.qr_desc')],
             [t('panel.restaurant_admin.sections.members'), "/admin/members", t('panel.restaurant_admin.sections.members_desc')]
           ].each do |title, href, description| %>
-            <% next if href == "/admin/members" && !current_panel_membership&.owner? %>
             <a href="<%= href %>" class="group elegant-card bg-[var(--panel)] p-5 transition hover:-translate-y-0.5">
               <h3 class="font-display text-3xl font-semibold text-[var(--ink-900)]"><%= title %></h3>
               <p class="mt-1 text-sm text-[var(--ink-700)]"><%= description %></p>

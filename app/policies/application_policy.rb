@@ -18,15 +18,7 @@ class ApplicationPolicy
     user&.super_admin?
   end
 
-  def owner?
-    super_admin? || membership&.owner?
-  end
-
-  def manager?
-    super_admin? || membership&.owner? || membership&.manager?
-  end
-
-  def staff?
+  def restaurant_member?
     super_admin? || membership.present?
   end
 

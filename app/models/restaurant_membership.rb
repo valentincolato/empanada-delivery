@@ -2,7 +2,7 @@ class RestaurantMembership < ApplicationRecord
   belongs_to :user
   belongs_to :restaurant
 
-  enum :role, { staff: 0, manager: 1, owner: 2 }
+  enum :role, { member: 0 }
 
   validates :user_id, uniqueness: { scope: :restaurant_id }
 end

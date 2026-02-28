@@ -1,21 +1,21 @@
 class CategoryPolicy < ApplicationPolicy
   def index?
-    manager?
+    restaurant_member?
   end
 
   def show?
-    manager?
+    restaurant_member?
   end
 
   def create?
-    manager?
+    restaurant_member?
   end
 
   def update?
-    manager?
+    restaurant_member?
   end
 
   def destroy?
-    manager?
+    restaurant_member?
   end
 end

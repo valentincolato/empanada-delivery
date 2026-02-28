@@ -1,17 +1,17 @@
 class RestaurantPolicy < ApplicationPolicy
   def show?
-    staff?
+    restaurant_member?
   end
 
   def qr_code?
-    manager?
+    restaurant_member?
   end
 
   def toggle_accepting_orders?
-    manager?
+    restaurant_member?
   end
 
   def update?
-    owner?
+    restaurant_member?
   end
 end

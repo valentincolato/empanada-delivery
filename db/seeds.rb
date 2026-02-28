@@ -10,8 +10,31 @@ else
   puts "Super admin: not seeded (set SEED_SUPER_ADMIN_EMAIL and SEED_SUPER_ADMIN_PASSWORD to create one)"
 end
 
-# Create demo restaurant
-result = CreateRestaurant.new(
+# Idempotent helper for demo restaurants
+def ensure_restaurant!(name:, slug:, address:, phone:, description:, currency:, settings:, admin_email:, admin_password:, admin_name:)
+  restaurant = Restaurant.find_or_initialize_by(slug: slug)
+  restaurant.assign_attributes(
+    name: name,
+    address: address,
+    phone: phone,
+    description: description,
+    currency: currency,
+    settings: settings,
+    active: true
+  )
+  restaurant.save!
+
+  admin = restaurant.provision_admin!(
+    email: admin_email,
+    password: admin_password,
+    name: admin_name
+  )
+
+  { restaurant: restaurant, admin: admin }
+end
+
+# Main demo restaurant (empanadas)
+result = ensure_restaurant!(
   name: "Empanadas Demo",
   slug: "empanadas-demo",
   address: "Av. Corrientes 1234, CABA",
@@ -22,7 +45,7 @@ result = CreateRestaurant.new(
   admin_email: "demo@empanada.dev",
   admin_password: "password123",
   admin_name: "Demo Admin"
-).call
+)
 
 restaurant = result[:restaurant]
 puts "Restaurant: #{restaurant.name} (#{restaurant.slug})"
@@ -75,13 +98,111 @@ end
   attach_seed_image(product, image_file)
 end
 
+# Secondary demo restaurant (pizzas)
+pizza_result = ensure_restaurant!(
+  name: "Pizzería Demo",
+  slug: "pizzas-demo",
+  address: "Av. Santa Fe 2500, CABA",
+  phone: "+54 11 4321-7890",
+  description: "Pizzas al horno de piedra, focaccias y postres caseros.",
+  currency: "ARS",
+  settings: { "accepting_orders" => true, "estimated_wait_minutes" => 30 },
+  admin_email: "pizza@pedidofacil.dev",
+  admin_password: "password123",
+  admin_name: "Pizza Admin"
+)
+
+pizza_restaurant = pizza_result[:restaurant]
+puts "Restaurant: #{pizza_restaurant.name} (#{pizza_restaurant.slug})"
+puts "Admin: #{pizza_result[:admin].email}"
+
+pizzas = pizza_restaurant.categories.find_or_create_by!(name: "Pizzas") { |c| c.position = 1 }
+promos = pizza_restaurant.categories.find_or_create_by!(name: "Promos") { |c| c.position = 2 }
+bebidas_pizza = pizza_restaurant.categories.find_or_create_by!(name: "Bebidas") { |c| c.position = 3 }
+postres_pizza = pizza_restaurant.categories.find_or_create_by!(name: "Postres") { |c| c.position = 4 }
+
+[
+  [ pizzas, "Muzzarella", "Salsa de tomate, mozzarella y aceitunas", 8900.00, 1 ],
+  [ pizzas, "Napolitana", "Tomate fresco, ajo, mozzarella y orégano", 9800.00, 2 ],
+  [ pizzas, "Jamón y Morrones", "Jamón cocido, morrones asados y mozzarella", 10400.00, 3 ],
+  [ pizzas, "Fugazzeta Rellena", "Cebolla salteada y doble queso", 11200.00, 4 ],
+  [ promos, "Promo 2 Muzzas + Gaseosa", "Ideal para compartir", 16800.00, 1 ],
+  [ promos, "Promo Familiar", "1 fugazzeta + 1 napolitana + 2 bebidas", 24100.00, 2 ],
+  [ bebidas_pizza, "Gaseosa 1.5L", "Cola / Naranja / Lima-Limón", 3200.00, 1 ],
+  [ bebidas_pizza, "Agua con gas", "1.5L", 2600.00, 2 ],
+  [ postres_pizza, "Flan casero", "Con dulce de leche y crema", 2800.00, 1 ],
+  [ postres_pizza, "Tiramisú", "Porción individual", 3600.00, 2 ],
+].each do |category, name, description, price, position|
+  category.products.find_or_create_by!(name: name) do |p|
+    p.description = description
+    p.price = price
+    p.position = position
+    p.available = true
+  end
+end
+
+# Multi-restaurant demo user (owner in many restaurants)
+multi_admin_email = "multi@pedidofacil.dev"
+multi_admin_password = "password123"
+multi_admin_name = "Multi Restaurant Admin"
+
+[
+  {
+    name: "Burgers Demo",
+    slug: "burgers-demo",
+    address: "Av. Cabildo 1870, CABA",
+    phone: "+54 11 4000-1201",
+    description: "Smash burgers, papas y combos.",
+    currency: "ARS",
+    settings: { "accepting_orders" => true, "estimated_wait_minutes" => 18 }
+  },
+  {
+    name: "Sushi Demo",
+    slug: "sushi-demo",
+    address: "Uriarte 1400, Palermo, CABA",
+    phone: "+54 11 4000-1202",
+    description: "Rolls, nigiris y pokes frescos.",
+    currency: "ARS",
+    settings: { "accepting_orders" => true, "estimated_wait_minutes" => 25 }
+  },
+  {
+    name: "Tacos Demo",
+    slug: "tacos-demo",
+    address: "Honduras 5200, CABA",
+    phone: "+54 11 4000-1203",
+    description: "Tacos, quesadillas y nachos.",
+    currency: "ARS",
+    settings: { "accepting_orders" => true, "estimated_wait_minutes" => 15 }
+  },
+  {
+    name: "Pasta Demo",
+    slug: "pastas-demo",
+    address: "Belgrano 980, CABA",
+    phone: "+54 11 4000-1204",
+    description: "Pastas frescas y salsas caseras.",
+    currency: "ARS",
+    settings: { "accepting_orders" => true, "estimated_wait_minutes" => 22 }
+  }
+].each do |attrs|
+  created = ensure_restaurant!(
+    **attrs,
+    admin_email: multi_admin_email,
+    admin_password: multi_admin_password,
+    admin_name: multi_admin_name
+  )
+  puts "Restaurant: #{created[:restaurant].name} (#{created[:restaurant].slug}) -> member: #{multi_admin_email}"
+end
+
 puts "Seeded #{Product.count} products across #{Category.count} categories"
 puts ""
 puts "=== Demo URLs ==="
 puts "Public menu:  http://localhost:3000/r/empanadas-demo"
+puts "Public menu:  http://localhost:3000/r/pizzas-demo"
 puts "Admin panel:  http://localhost:3000/admin/orders"
 puts "Super admin:  http://localhost:3000/super_admin/restaurants"
 puts ""
 puts "=== Login credentials ==="
 puts "Restaurant admin: demo@empanada.dev / password123"
+puts "Pizza admin:      pizza@pedidofacil.dev / password123"
+puts "Multi member:    multi@pedidofacil.dev / password123"
 puts "Super admin: from ENV (optional)"

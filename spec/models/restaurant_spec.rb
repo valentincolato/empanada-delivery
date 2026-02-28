@@ -83,11 +83,11 @@ RSpec.describe Restaurant, type: :model do
   describe "#provision_admin!" do
     let(:restaurant) { create(:restaurant) }
 
-    it "creates a restaurant_admin owner membership" do
+    it "creates a restaurant_admin membership" do
       admin = restaurant.provision_admin!(email: "admin@test.com", password: "secret123")
       expect(admin.restaurant_admin?).to be true
       expect(admin.membership_for(restaurant)).to be_present
-      expect(admin.membership_for(restaurant).owner?).to be true
+      expect(admin.membership_for(restaurant).present?).to be true
     end
   end
 end

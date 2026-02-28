@@ -22,7 +22,7 @@ RSpec.describe User, type: :model do
     it "returns membership for the given restaurant" do
       user = create(:user)
       restaurant = create(:restaurant)
-      membership = create(:restaurant_membership, user: user, restaurant: restaurant, role: :manager)
+      membership = create(:restaurant_membership, user: user, restaurant: restaurant, role: :member)
 
       expect(user.membership_for(restaurant)).to eq(membership)
     end

@@ -175,9 +175,7 @@
       "backToOrders": "← Pedidos",
       "invite": "+ Invitar miembro",
       "roles": {
-        "staff": "Staff",
-        "manager": "Manager",
-        "owner": "Dueño"
+        "member": "Miembro"
       },
       "form": {
         "email": "Email *",

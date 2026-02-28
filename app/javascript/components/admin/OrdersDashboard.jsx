@@ -2,9 +2,8 @@ import { useState, useEffect, useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
 import { api } from '@utils/api'
 
-export default function OrdersDashboard({ isSuperAdmin, is_super_admin, membershipRole, membership_role }) {
+export default function OrdersDashboard({ isSuperAdmin, is_super_admin }) {
   const superAdmin = Boolean(isSuperAdmin ?? is_super_admin)
-  const role = membershipRole || membership_role
   const { t } = useTranslation()
   const [orders, setOrders] = useState([])
   const [restaurant, setRestaurant] = useState(null)
@@ -87,7 +86,7 @@ export default function OrdersDashboard({ isSuperAdmin, is_super_admin, membersh
 
   const accepting = restaurant?.settings?.accepting_orders !== false
   const legacyReady = orders.filter((order) => order.status === 'ready')
-  const canManageMembers = superAdmin || role === 'owner'
+  const canManageMembers = true
 
   return (
     <div className="min-h-screen">

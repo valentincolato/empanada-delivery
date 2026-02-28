@@ -8,7 +8,7 @@ class Api::V1::Admin::MembershipsController < Api::V1::Admin::BaseController
   def create
     authorize RestaurantMembership, :create?
 
-    membership_attrs = params.require(:membership).permit(:email, :role, :name)
+    membership_attrs = params.require(:membership).permit(:email, :name)
 
     user = User.find_or_initialize_by(email: membership_attrs[:email])
     if user.new_record?
@@ -23,17 +23,9 @@ class Api::V1::Admin::MembershipsController < Api::V1::Admin::BaseController
     end
 
     membership = current_restaurant.restaurant_memberships.find_or_initialize_by(user: user)
-    membership.update!(role: membership_attrs[:role])
+    membership.update!(role: :member)
 
     render json: MembershipBlueprint.render_as_hash(membership), status: :created
-  end
-
-  def update
-    membership = current_restaurant.restaurant_memberships.find(params[:id])
-    authorize membership
-
-    membership.update!(role: params.require(:membership).require(:role))
-    render json: MembershipBlueprint.render_as_hash(membership)
   end
 
   def destroy

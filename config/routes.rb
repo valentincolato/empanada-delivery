@@ -40,7 +40,7 @@ Rails.application.routes.draw do
         resources :orders, only: %i[index show update]
         resources :products
         resources :categories
-        resources :memberships, only: %i[index create update destroy]
+        resources :memberships, only: %i[index create destroy]
         post "switch_restaurant", to: "contexts#switch"
         delete "clear_restaurant", to: "contexts#clear"
         resource :restaurant, only: %i[show update] do
