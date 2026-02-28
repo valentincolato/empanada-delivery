@@ -14,7 +14,7 @@ const STATUS_ICONS = {
   cancelled: 'cancel'
 }
 
-export default function OrderStatus({ token, routes = {} }) {
+export default function OrderStatus({ token, api_order_status_template }) {
   const { t } = useTranslation()
   const [order, setOrder] = useState(null)
   const [error, setError] = useState(null)
@@ -27,7 +27,7 @@ export default function OrderStatus({ token, routes = {} }) {
 
   async function fetchOrder() {
     try {
-      const data = await api.get(fillPath(routes.api_order_status_template, { token }))
+      const data = await api.get(fillPath(api_order_status_template, { token }))
       setOrder(data)
     } catch (err) {
       setError(err.message)

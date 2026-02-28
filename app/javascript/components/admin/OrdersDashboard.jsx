@@ -5,7 +5,20 @@ import { notifyError } from '@utils/notify'
 import OrderCard from './orders/OrderCard'
 import { fillPath } from '@utils/pathBuilder'
 
-export default function OrdersDashboard({ isSuperAdmin, is_super_admin, routes = {} }) {
+export default function OrdersDashboard({
+  isSuperAdmin,
+  is_super_admin,
+  api_admin_orders,
+  api_admin_restaurant,
+  api_admin_order_template,
+  api_admin_restaurant_toggle_accepting_orders,
+  api_super_admin_restaurants_clear_context,
+  super_admin_restaurants,
+  admin_products,
+  admin_categories,
+  admin_qr,
+  admin_members
+}) {
   const superAdmin = Boolean(isSuperAdmin ?? is_super_admin)
   const { t } = useTranslation()
   const [orders, setOrders] = useState([])
@@ -30,7 +43,7 @@ export default function OrdersDashboard({ isSuperAdmin, is_super_admin, routes =
 
   const fetchOrders = useCallback(async () => {
     try {
-      const data = await api.get(routes.api_admin_orders)
+      const data = await api.get(api_admin_orders)
       setOrders(Array.isArray(data) ? data : [])
     } catch (err) {
       console.error(err)
@@ -41,7 +54,7 @@ export default function OrdersDashboard({ isSuperAdmin, is_super_admin, routes =
 
   const fetchRestaurant = useCallback(async () => {
     try {
-      const data = await api.get(routes.api_admin_restaurant)
+      const data = await api.get(api_admin_restaurant)
       setRestaurant(data)
     } catch (err) {
       console.error(err)
@@ -58,7 +71,7 @@ export default function OrdersDashboard({ isSuperAdmin, is_super_admin, routes =
   async function updateStatus(orderId, newStatus) {
     setUpdating(orderId)
     try {
-      await api.patch(fillPath(routes.api_admin_order_template, { id: orderId }), { order: { status: newStatus } })
+      await api.patch(fillPath(api_admin_order_template, { id: orderId }), { order: { status: newStatus } })
       await fetchOrders()
     } catch (err) {
       notifyError(err.message)
@@ -69,7 +82,7 @@ export default function OrdersDashboard({ isSuperAdmin, is_super_admin, routes =
 
   async function toggleAccepting() {
     try {
-      const data = await api.post(routes.api_admin_restaurant_toggle_accepting_orders, {})
+      const data = await api.post(api_admin_restaurant_toggle_accepting_orders, {})
       setRestaurant((prev) => prev ? { ...prev, settings: { ...prev.settings, accepting_orders: data.accepting_orders } } : prev)
     } catch (err) {
       notifyError(err.message)
@@ -78,8 +91,8 @@ export default function OrdersDashboard({ isSuperAdmin, is_super_admin, routes =
 
   async function clearContext() {
     try {
-      await api.delete(routes.api_super_admin_restaurants_clear_context)
-      window.location.href = routes.super_admin_restaurants
+      await api.delete(api_super_admin_restaurants_clear_context)
+      window.location.href = super_admin_restaurants
     } catch (err) {
       notifyError(err.message)
     }
@@ -104,11 +117,11 @@ export default function OrdersDashboard({ isSuperAdmin, is_super_admin, routes =
               {t('admin.orders.nav.backToRestaurants')}
             </button>
           )}
-          <a data-testid="nav-products" href={routes.admin_products} className="text-sm font-medium text-[var(--brand-700)]">{t('admin.orders.nav.products')}</a>
-          <a data-testid="nav-categories" href={routes.admin_categories} className="text-sm font-medium text-[var(--brand-700)]">{t('admin.orders.nav.categories')}</a>
-          <a data-testid="nav-qr" href={routes.admin_qr} className="text-sm font-medium text-[var(--brand-700)]">{t('admin.orders.nav.qr')}</a>
+          <a data-testid="nav-products" href={admin_products} className="text-sm font-medium text-[var(--brand-700)]">{t('admin.orders.nav.products')}</a>
+          <a data-testid="nav-categories" href={admin_categories} className="text-sm font-medium text-[var(--brand-700)]">{t('admin.orders.nav.categories')}</a>
+          <a data-testid="nav-qr" href={admin_qr} className="text-sm font-medium text-[var(--brand-700)]">{t('admin.orders.nav.qr')}</a>
           {canManageMembers && (
-            <a data-testid="nav-members" href={routes.admin_members} className="text-sm font-medium text-[var(--brand-700)]">{t('admin.orders.nav.members')}</a>
+            <a data-testid="nav-members" href={admin_members} className="text-sm font-medium text-[var(--brand-700)]">{t('admin.orders.nav.members')}</a>
           )}
           {restaurant && (
             <button

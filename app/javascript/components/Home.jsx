@@ -8,9 +8,9 @@ import PricingSection from './home/PricingSection'
 import CtaSection from './home/CtaSection'
 import { fillPath } from '@utils/pathBuilder'
 
-export default function Home({ routes = {} }) {
-  const restaurantLink = fillPath(routes.public_restaurant_template, { slug: 'empanadas-demo' })
-  const adminLoginPath = routes.panel_login
+export default function Home({ public_restaurant_template, panel_login }) {
+  const restaurantLink = fillPath(public_restaurant_template, { slug: 'empanadas-demo' })
+  const adminLoginPath = panel_login
 
   return (
     <div className="min-h-screen overflow-x-clip text-[var(--ink-900)]">

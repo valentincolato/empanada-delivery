@@ -1,6 +1,6 @@
 module ComponentsHelper
   def component(name, props = {})
-    payload = props.merge(routes: frontend_routes)
+    payload = props.merge(frontend_routes)
 
     tag.div(
       "",

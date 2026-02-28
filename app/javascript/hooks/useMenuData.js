@@ -2,12 +2,12 @@ import { useEffect, useMemo, useState } from 'react'
 import { api } from '@utils/api'
 import { fillPath } from '@utils/pathBuilder'
 
-export function useMenuData(slug, routes = {}) {
+export function useMenuData(slug, api_public_menu_template) {
   const [data, setData] = useState(null)
 
   useEffect(() => {
-    api.get(fillPath(routes.api_public_menu_template, { slug })).then(setData).catch(console.error)
-  }, [slug, routes.api_public_menu_template])
+    api.get(fillPath(api_public_menu_template, { slug })).then(setData).catch(console.error)
+  }, [slug, api_public_menu_template])
 
   const categories = data?.categories || []
   const restaurant = data?.restaurant || null

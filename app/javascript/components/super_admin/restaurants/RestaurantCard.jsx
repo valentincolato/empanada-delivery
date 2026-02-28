@@ -3,9 +3,9 @@ import Card from '../../ui/Card'
 import StatusBadge from '../../ui/StatusBadge'
 import { fillPath } from '@utils/pathBuilder'
 
-export default function RestaurantCard({ restaurant, routes = {}, onManageOperations, onOpenEdit, onDelete }) {
+export default function RestaurantCard({ restaurant, public_restaurant_template, onManageOperations, onOpenEdit, onDelete }) {
   const { t } = useTranslation()
-  const publicMenuPath = fillPath(routes.public_restaurant_template, { slug: restaurant.slug })
+  const publicMenuPath = fillPath(public_restaurant_template, { slug: restaurant.slug })
 
   return (
     <Card as="article" className="bg-[var(--panel)] p-4 transition hover:-translate-y-0.5">

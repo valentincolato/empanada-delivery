@@ -28,7 +28,12 @@ function buildEditForm(restaurant) {
   }
 }
 
-export function useRestaurantDirectory(routes = {}) {
+export function useRestaurantDirectory({
+  api_super_admin_restaurants,
+  api_super_admin_restaurant_template,
+  api_super_admin_restaurant_switch_context_template,
+  admin_orders
+}) {
   const [restaurants, setRestaurants] = useState([])
   const [modal, setModal] = useState(null)
   const [form, setForm] = useState(EMPTY_FORM)
@@ -47,7 +52,7 @@ export function useRestaurantDirectory(routes = {}) {
 
   async function loadRestaurants() {
     try {
-      const data = await api.get(routes.api_super_admin_restaurants)
+      const data = await api.get(api_super_admin_restaurants)
       const rows = Array.isArray(data) ? data : []
       rows.sort((a, b) => Number(b.active) - Number(a.active) || a.name.localeCompare(b.name))
       setRestaurants(rows)
@@ -79,7 +84,7 @@ export function useRestaurantDirectory(routes = {}) {
 
     try {
       if (modal === 'new') {
-        await api.post(routes.api_super_admin_restaurants, {
+        await api.post(api_super_admin_restaurants, {
           restaurant: {
             name: form.name,
             slug: form.slug,
@@ -93,7 +98,7 @@ export function useRestaurantDirectory(routes = {}) {
           admin_name: form.admin_name,
         })
       } else {
-        await api.patch(fillPath(routes.api_super_admin_restaurant_template, { id: modal.id }), { restaurant: form })
+        await api.patch(fillPath(api_super_admin_restaurant_template, { id: modal.id }), { restaurant: form })
       }
 
       await loadRestaurants()
@@ -106,14 +111,14 @@ export function useRestaurantDirectory(routes = {}) {
   }
 
   async function destroy(restaurantId) {
-    await api.delete(fillPath(routes.api_super_admin_restaurant_template, { id: restaurantId }))
+    await api.delete(fillPath(api_super_admin_restaurant_template, { id: restaurantId }))
     await loadRestaurants()
   }
 
   async function manageOperations(restaurantId) {
     try {
-      const result = await api.post(fillPath(routes.api_super_admin_restaurant_switch_context_template, { id: restaurantId }), {})
-      window.location.href = result?.redirect_to || routes.admin_orders
+      const result = await api.post(fillPath(api_super_admin_restaurant_switch_context_template, { id: restaurantId }), {})
+      window.location.href = result?.redirect_to || admin_orders
     } catch (err) {
       setError(err.message)
     }
