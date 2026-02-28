@@ -1,7 +1,9 @@
 import { useState, useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
 import { api } from '@utils/api'
 
 export default function ProductsManager() {
+  const { t } = useTranslation()
   const [products, setProducts] = useState([])
   const [categories, setCategories] = useState([])
   const [modal, setModal] = useState(null)
@@ -49,7 +51,7 @@ export default function ProductsManager() {
   }
 
   async function destroy(id) {
-    if (!confirm('Delete this product?')) return
+    if (!confirm(t('admin.products.deleteConfirm'))) return
     await api.delete(`/api/v1/admin/products/${id}`)
     await loadData()
   }
@@ -63,16 +65,20 @@ export default function ProductsManager() {
     <div className="min-h-screen bg-slate-100 font-sans">
       <div className="flex items-center justify-between border-b border-slate-200 bg-white px-6 py-4">
         <div>
-          <a href="/admin/orders" className="text-sm text-slate-500">← Orders</a>
-          <h1 className="mt-1 text-xl font-bold text-slate-900">Products</h1>
+          <a href="/admin/orders" className="text-sm text-slate-500">{t('admin.products.backToOrders')}</a>
+          <h1 className="mt-1 text-xl font-bold text-slate-900">{t('admin.products.title')}</h1>
         </div>
-        <button onClick={openNew} className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700">+ New Product</button>
+        <button onClick={openNew} className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700">{t('admin.products.newProduct')}</button>
       </div>
 
       <div className="overflow-x-auto p-6">
         <table className="w-full overflow-hidden rounded-xl bg-white shadow">
           <thead className="bg-slate-50">
-            <tr>{['Name', 'Category', 'Price', 'Available', 'Actions'].map((h) => <th key={h} className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">{h}</th>)}</tr>
+            <tr>
+              {[t('admin.products.headers.name'), t('admin.products.headers.category'), t('admin.products.headers.price'), t('admin.products.headers.available'), t('admin.products.headers.actions')].map((h) => (
+                <th key={h} className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">{h}</th>
+              ))}
+            </tr>
           </thead>
           <tbody>
             {products.map((p) => (
@@ -85,12 +91,12 @@ export default function ProductsManager() {
                     onClick={() => toggleAvailability(p)}
                     className={`rounded-full px-3 py-1 text-xs font-semibold ${p.available ? 'bg-green-100 text-green-700' : 'bg-slate-200 text-slate-500'}`}
                   >
-                    {p.available ? 'Available' : 'Unavailable'}
+                    {p.available ? t('admin.products.available') : t('admin.products.unavailable')}
                   </button>
                 </td>
                 <td className="px-4 py-3 text-sm text-slate-700">
-                  <button onClick={() => openEdit(p)} className="mr-2 rounded-md bg-slate-100 px-3 py-1 text-xs text-slate-700">Edit</button>
-                  <button onClick={() => destroy(p.id)} className="rounded-md bg-red-100 px-3 py-1 text-xs text-red-600">Delete</button>
+                  <button onClick={() => openEdit(p)} className="mr-2 rounded-md bg-slate-100 px-3 py-1 text-xs text-slate-700">{t('common.edit')}</button>
+                  <button onClick={() => destroy(p.id)} className="rounded-md bg-red-100 px-3 py-1 text-xs text-red-600">{t('common.delete')}</button>
                 </td>
               </tr>
             ))}
@@ -102,42 +108,42 @@ export default function ProductsManager() {
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
           <div className="w-full max-w-xl overflow-hidden rounded-2xl bg-white">
             <div className="flex items-center justify-between border-b border-slate-200 px-6 py-5">
-              <h2 className="text-xl font-semibold text-slate-900">{modal === 'new' ? 'New Product' : 'Edit Product'}</h2>
+              <h2 className="text-xl font-semibold text-slate-900">{modal === 'new' ? t('admin.products.newProductTitle') : t('admin.products.editProductTitle')}</h2>
               <button onClick={() => setModal(null)} className="text-slate-500">✕</button>
             </div>
             <form onSubmit={save} className="flex flex-col gap-3 p-6">
               <label className="flex flex-col gap-1 text-sm font-medium text-slate-700">
-                Name *
+                {t('admin.products.form.name')}
                 <input autoFocus required value={form.name} onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))} className="rounded-md border border-slate-300 px-3 py-2" />
               </label>
               <label className="flex flex-col gap-1 text-sm font-medium text-slate-700">
-                Description
+                {t('admin.products.form.description')}
                 <textarea value={form.description} onChange={(e) => setForm((f) => ({ ...f, description: e.target.value }))} className="h-20 resize-y rounded-md border border-slate-300 px-3 py-2" />
               </label>
               <label className="flex flex-col gap-1 text-sm font-medium text-slate-700">
-                Price *
+                {t('admin.products.form.price')}
                 <input required type="number" step="0.01" value={form.price} onChange={(e) => setForm((f) => ({ ...f, price: e.target.value }))} className="rounded-md border border-slate-300 px-3 py-2" />
               </label>
               <label className="flex flex-col gap-1 text-sm font-medium text-slate-700">
-                Category *
+                {t('admin.products.form.category')}
                 <select value={form.category_id} onChange={(e) => setForm((f) => ({ ...f, category_id: Number(e.target.value) }))} className="rounded-md border border-slate-300 px-3 py-2">
                   {categories.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
                 </select>
               </label>
               <label className="flex flex-col gap-1 text-sm font-medium text-slate-700">
-                Position
+                {t('admin.products.form.position')}
                 <input type="number" value={form.position} onChange={(e) => setForm((f) => ({ ...f, position: Number(e.target.value) }))} className="rounded-md border border-slate-300 px-3 py-2" />
               </label>
               <label className="flex items-center gap-2 text-sm font-medium text-slate-700">
                 <input type="checkbox" checked={form.available} onChange={(e) => setForm((f) => ({ ...f, available: e.target.checked }))} />
-                Available
+                {t('admin.products.form.available')}
               </label>
               {error && <div className="text-sm text-red-600">{error}</div>}
               <div className="mt-1 flex gap-3">
                 <button type="submit" disabled={saving} className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700">
-                  {saving ? 'Saving…' : 'Save'}
+                  {saving ? t('common.saving') : t('common.save')}
                 </button>
-                <button type="button" onClick={() => setModal(null)} className="rounded-lg bg-slate-100 px-4 py-2 text-sm font-medium text-slate-700">Cancel</button>
+                <button type="button" onClick={() => setModal(null)} className="rounded-lg bg-slate-100 px-4 py-2 text-sm font-medium text-slate-700">{t('common.cancel')}</button>
               </div>
             </form>
           </div>

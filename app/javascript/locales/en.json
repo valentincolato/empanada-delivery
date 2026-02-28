@@ -1,0 +1,233 @@
+{
+  "common": {
+    "save": "Save",
+    "saving": "Saving…",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "loading": "Loading…",
+    "error": "Error",
+    "close": "Close",
+    "actions": "Actions",
+    "active": "Active",
+    "inactive": "Inactive",
+    "notSet": "Not set",
+    "notDefined": "Not defined",
+    "position": "Position",
+    "name": "Name",
+    "total": "Total",
+    "new": "New"
+  },
+  "menu": {
+    "loading": "Loading restaurant menu…",
+    "open": "Open",
+    "closed": "Closed",
+    "notAccepting": "This restaurant is not accepting orders right now.",
+    "call": "Call",
+    "location": "Location",
+    "contact": "Contact",
+    "addressNotAvailable": "Address not available",
+    "add": "+ Add",
+    "viewOrder": "🛒 View order",
+    "itemsCount": "{{count}} items - {{total}}",
+    "emptyMenuTitle": "This menu is empty",
+    "emptyMenuDesc": "If you manage this restaurant, add categories and products from the admin panel.",
+    "cart": {
+      "title": "Your Cart",
+      "checkout": "Checkout →",
+      "total": "Total: {{total}}"
+    },
+    "checkout": {
+      "title": "Checkout",
+      "yourData": "Your details",
+      "fullName": "Full name *",
+      "email": "Email *",
+      "phone": "Phone number *",
+      "deliveryAddress": "Delivery address *",
+      "payment": "Payment",
+      "cash": "Cash",
+      "transfer": "Bank transfer",
+      "changeFor": "I need change for (optional)",
+      "changeForPlaceholder": "e.g. 10000",
+      "notes": "Notes",
+      "placeOrder": "Place Order",
+      "placingOrder": "Placing order…",
+      "orderSummary": "Order summary"
+    }
+  },
+  "orderStatus": {
+    "loading": "Loading order…",
+    "order": "Order #{{id}}",
+    "items": "Items",
+    "deliveryAndPayment": "Delivery & Payment",
+    "address": "Address: {{address}}",
+    "payment": "Payment: {{method}}",
+    "cashChangeFor": "Cash change for: ${{amount}}",
+    "cash": "Cash",
+    "bankTransfer": "Bank transfer",
+    "notes": "Notes",
+    "autoRefresh": "Updates automatically every 15 seconds",
+    "status": {
+      "pending": "Pending confirmation",
+      "confirmed": "Confirmed",
+      "out_for_delivery": "Out for delivery",
+      "delivered": "Delivered",
+      "ready": "Ready (legacy)",
+      "cancelled": "Cancelled"
+    }
+  },
+  "admin": {
+    "orders": {
+      "title": "Orders Dashboard",
+      "loading": "Loading orders…",
+      "noOrders": "No orders",
+      "minutesAgo": "{{count}}m ago",
+      "tel": "Tel: {{phone}}",
+      "email": "Email: {{email}}",
+      "address": "Addr: {{address}}",
+      "table": "Table {{number}}",
+      "payment": "Payment: {{method}}",
+      "cash": "Cash",
+      "transfer": "Transfer",
+      "changeFor": "(change for ${{amount}})",
+      "legacyReady": "Legacy ready orders",
+      "nav": {
+        "products": "Products",
+        "categories": "Categories",
+        "qr": "QR Code"
+      },
+      "columns": {
+        "pending": "Pending",
+        "confirmed": "Confirmed",
+        "out_for_delivery": "Out for delivery",
+        "delivered": "Delivered"
+      },
+      "actions": {
+        "confirmed": "Confirm",
+        "out_for_delivery": "Set Out for delivery",
+        "delivered": "Mark Delivered",
+        "cancelled": "Cancel"
+      }
+    },
+    "products": {
+      "title": "Products",
+      "backToOrders": "← Orders",
+      "newProduct": "+ New Product",
+      "newProductTitle": "New Product",
+      "editProductTitle": "Edit Product",
+      "headers": {
+        "name": "Name",
+        "category": "Category",
+        "price": "Price",
+        "available": "Available",
+        "actions": "Actions"
+      },
+      "available": "Available",
+      "unavailable": "Unavailable",
+      "form": {
+        "name": "Name *",
+        "description": "Description",
+        "price": "Price *",
+        "category": "Category *",
+        "position": "Position",
+        "available": "Available"
+      },
+      "deleteConfirm": "Delete this product?"
+    },
+    "categories": {
+      "title": "Categories",
+      "backToOrders": "← Orders",
+      "newCategory": "+ New Category",
+      "newCategoryTitle": "New Category",
+      "editCategoryTitle": "Edit Category",
+      "headers": {
+        "name": "Name",
+        "position": "Position",
+        "active": "Active",
+        "actions": "Actions"
+      },
+      "activeStatus": "✅ Active",
+      "inactiveStatus": "⏸ Inactive",
+      "form": {
+        "name": "Name *",
+        "position": "Position",
+        "active": "Active"
+      },
+      "deleteConfirm": "Delete this category? All products in it will also be deleted."
+    },
+    "qr": {
+      "title": "QR Code",
+      "backToOrders": "← Orders",
+      "download": "⬇ Download SVG",
+      "instructions": "Print and place at tables so customers can scan to order."
+    }
+  },
+  "superAdmin": {
+    "restaurants": {
+      "title": "Restaurants Grid",
+      "subtitle": "Super Admin",
+      "description": "Card-based view with search and pagination.",
+      "newRestaurant": "+ New Restaurant",
+      "search": "Search restaurants",
+      "searchPlaceholder": "Name, slug, phone, currency…",
+      "stats": {
+        "total": "Total",
+        "active": "Active",
+        "inactive": "Inactive"
+      },
+      "showing": "Showing {{from}}-{{to}} of {{total}}",
+      "page": "Page {{current}} of {{total}}",
+      "noResults": "No restaurants matched your search.",
+      "currency": "Currency",
+      "phone": "Phone",
+      "address": "Address",
+      "active": "Active",
+      "inactive": "Inactive",
+      "notSet": "Not set",
+      "manageOperations": "Manage operations",
+      "viewMenu": "View menu",
+      "deleteConfirm": "Delete this restaurant? This cannot be undone.",
+      "modal": {
+        "new": "New Restaurant",
+        "edit": "Edit: {{name}}",
+        "adminUser": "Admin User",
+        "fields": {
+          "name": "Name *",
+          "slug": "Slug",
+          "address": "Address",
+          "phone": "Phone",
+          "description": "Description",
+          "currency": "Currency",
+          "adminEmail": "Admin Email *",
+          "adminPassword": "Admin Password *",
+          "adminName": "Admin Name"
+        }
+      },
+      "pagination": {
+        "first": "« First",
+        "prev": "‹ Prev",
+        "next": "Next ›",
+        "last": "Last »"
+      }
+    }
+  },
+  "home": {
+    "badge": "QueResto Inspired",
+    "title": "Digital ordering for modern restaurants.",
+    "description": "We help restaurants publish menus, receive orders in real time, and manage delivery flow from one admin panel.",
+    "viewDemo": "View Demo Restaurant",
+    "adminLogin": "Admin Login",
+    "howItWorks": "How it works",
+    "steps": {
+      "1": "1. Customer opens `/:restaurant_name` and browses menu categories.",
+      "2": "2. Customer adds items, adjusts quantity, and places order at checkout.",
+      "3": "3. Restaurant updates status in admin: pending, confirmed, out for delivery, delivered.",
+      "4": "4. Customer tracks status updates live on the order page."
+    },
+    "features": {
+      "menu": { "title": "Menu + Checkout", "text": "Fast mobile-first flow with sticky cart and quantity controls." },
+      "orders": { "title": "Order Operations", "text": "Board view by status to manage kitchen and delivery workload." },
+      "products": { "title": "Product Control", "text": "Edit products, categories, pricing, and availability instantly." }
+    }
+  }
+}

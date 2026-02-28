@@ -14,7 +14,7 @@ RSpec.describe User, type: :model do
       admin = build(:user, :restaurant_admin, restaurant: nil)
 
       expect(admin).not_to be_valid
-      expect(admin.errors[:restaurant]).to include("can't be blank")
+      expect(admin.errors[:restaurant]).to include("no puede estar en blanco")
     end
 
     it "allows super_admin users without restaurant" do

@@ -1,5 +1,13 @@
 const SLUG = 'empanadas-demo'
 
+function addProductFromCard(productName) {
+  cy.contains('[data-testid="product-card"]', productName).within(() => {
+    cy.contains('+ Agregar').click()
+  })
+  cy.get('[data-testid="product-modal"]').should('be.visible')
+  cy.get('[data-testid="product-modal-add"]').click()
+}
+
 describe('Public menu', () => {
   beforeEach(() => {
     cy.clearCart(SLUG)
@@ -27,38 +35,28 @@ describe('Public menu', () => {
   })
 
   it('adds a product to the cart', () => {
-    cy.contains('[data-testid="product-card"]', 'Carne Picante').within(() => {
-      cy.contains('+ Add').click()
-    })
+    addProductFromCard('Carne Picante')
     cy.contains('🛒').should('be.visible')
-    cy.contains('1 items').should('be.visible')
+    cy.contains('1 ítems').should('be.visible')
   })
 
   it('adds multiple products and updates the cart count', () => {
-    cy.contains('[data-testid="product-card"]', 'Carne Picante').within(() => {
-      cy.contains('+ Add').click()
-    })
-    cy.contains('[data-testid="product-card"]', 'Jamón y Queso').within(() => {
-      cy.contains('+ Add').click()
-    })
-    cy.contains('2 items').should('be.visible')
+    addProductFromCard('Carne Picante')
+    addProductFromCard('Jamón y Queso')
+    cy.contains('2 ítems').should('be.visible')
   })
 
   it('opens the cart drawer', () => {
-    cy.contains('[data-testid="product-card"]', 'Humita').within(() => {
-      cy.contains('+ Add').click()
-    })
+    addProductFromCard('Humita')
     cy.contains('🛒').click()
-    cy.contains('Your Cart').should('be.visible')
+    cy.contains('Tu carrito').should('be.visible')
     cy.contains('Humita').should('be.visible')
   })
 
   it('removes a product from the cart drawer', () => {
-    cy.contains('[data-testid="product-card"]', 'Humita').within(() => {
-      cy.contains('+ Add').click()
-    })
+    addProductFromCard('Humita')
     cy.contains('🛒').click()
-    cy.contains('Your Cart').should('be.visible')
+    cy.contains('Tu carrito').should('be.visible')
     // click the minus button so quantity reaches zero
     cy.get('[data-testid="cart-drawer"]').within(() => {
       cy.contains('[data-testid="cart-item"]', 'Humita').within(() => {
@@ -66,17 +64,48 @@ describe('Public menu', () => {
       })
     })
     // cart button disappears after removing last item
-    cy.contains('Your Cart').should('not.exist')
+    cy.contains('Tu carrito').should('not.exist')
   })
 
   it('shows the checkout modal', () => {
-    cy.contains('[data-testid="product-card"]', 'Choclo').within(() => {
-      cy.contains('+ Add').click()
-    })
+    addProductFromCard('Choclo')
     cy.contains('🛒').click()
-    cy.contains('Checkout →').click()
+    cy.contains('Continuar →').click()
     cy.contains('Checkout').should('be.visible')
     cy.get('input[type="text"]').first().should('be.visible')
+  })
+
+  it('opens product modal with optional content', () => {
+    cy.contains('[data-testid="product-card"]', 'Carne Picante').within(() => {
+      cy.contains('+ Agregar').click()
+    })
+    cy.get('[data-testid="product-modal"]').within(() => {
+      cy.contains('Carne Picante').should('be.visible')
+      cy.contains('Relleno de carne vacuna').should('be.visible')
+      cy.get('img').should('have.length', 0)
+      cy.contains('button', 'Cancelar').click()
+    })
+    cy.get('[data-testid="product-modal"]').should('not.exist')
+  })
+
+  it('adds selected quantity from the product modal', () => {
+    cy.contains('[data-testid="product-card"]', 'Carne Picante').within(() => {
+      cy.get('button').last().click()
+    })
+
+    cy.get('[data-testid="product-modal"]').within(() => {
+      cy.get('[data-testid="product-modal-quantity-value"]').should('have.text', '1')
+      cy.get('[data-testid="product-modal-quantity-increase"]').click().click()
+      cy.get('[data-testid="product-modal-quantity-value"]').should('have.text', '3')
+      cy.get('[data-testid="product-modal-add"]').click()
+    })
+
+    cy.contains('🛒').click()
+    cy.get('[data-testid="cart-drawer"]').within(() => {
+      cy.contains('[data-testid="cart-item"]', 'Carne Picante').within(() => {
+        cy.contains('span', '3').should('be.visible')
+      })
+    })
   })
 
   it('shows "Not accepting orders" banner when restaurant is closed', () => {
@@ -89,6 +118,6 @@ describe('Public menu', () => {
 
     cy.visit(`/r/${SLUG}`)
     cy.wait('@menuApi')
-    cy.contains('not accepting orders').should('be.visible')
+    cy.contains('no está aceptando pedidos').should('be.visible')
   })
 })

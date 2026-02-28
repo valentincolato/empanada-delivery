@@ -1,0 +1,233 @@
+{
+  "common": {
+    "save": "Guardar",
+    "saving": "Guardando…",
+    "cancel": "Cancelar",
+    "delete": "Eliminar",
+    "edit": "Editar",
+    "loading": "Cargando…",
+    "error": "Error",
+    "close": "Cerrar",
+    "actions": "Acciones",
+    "active": "Activo",
+    "inactive": "Inactivo",
+    "notSet": "No definido",
+    "notDefined": "No definido",
+    "position": "Posición",
+    "name": "Nombre",
+    "total": "Total",
+    "new": "Nuevo"
+  },
+  "menu": {
+    "loading": "Cargando menú del restaurante…",
+    "open": "Abierto",
+    "closed": "Cerrado",
+    "notAccepting": "Este restaurante no está aceptando pedidos en este momento.",
+    "call": "Llamar",
+    "location": "Ubicación",
+    "contact": "Contacto",
+    "addressNotAvailable": "Dirección no disponible",
+    "add": "+ Agregar",
+    "viewOrder": "🛒 Ver pedido",
+    "itemsCount": "{{count}} ítems - {{total}}",
+    "emptyMenuTitle": "Este menú está vacío",
+    "emptyMenuDesc": "Si gestionás este restaurante, agregá categorías y productos desde el panel de administración.",
+    "cart": {
+      "title": "Tu carrito",
+      "checkout": "Continuar →",
+      "total": "Total: {{total}}"
+    },
+    "checkout": {
+      "title": "Checkout",
+      "yourData": "Tus datos",
+      "fullName": "Nombre y apellido *",
+      "email": "Email *",
+      "phone": "Número de teléfono *",
+      "deliveryAddress": "Dirección de entrega *",
+      "payment": "Pago",
+      "cash": "Efectivo",
+      "transfer": "Transferencia",
+      "changeFor": "Necesito cambio para (opcional)",
+      "changeForPlaceholder": "Ej: 10000",
+      "notes": "Aclaraciones",
+      "placeOrder": "Realizar pedido",
+      "placingOrder": "Realizando pedido…",
+      "orderSummary": "Resumen del pedido"
+    }
+  },
+  "orderStatus": {
+    "loading": "Cargando pedido…",
+    "order": "Pedido #{{id}}",
+    "items": "Ítems",
+    "deliveryAndPayment": "Entrega y pago",
+    "address": "Dirección: {{address}}",
+    "payment": "Pago: {{method}}",
+    "cashChangeFor": "Cambio para: ${{amount}}",
+    "cash": "Efectivo",
+    "bankTransfer": "Transferencia bancaria",
+    "notes": "Aclaraciones",
+    "autoRefresh": "Se actualiza automáticamente cada 15 segundos",
+    "status": {
+      "pending": "Pendiente de confirmación",
+      "confirmed": "Confirmado",
+      "out_for_delivery": "En camino",
+      "delivered": "Entregado",
+      "ready": "Listo (legado)",
+      "cancelled": "Cancelado"
+    }
+  },
+  "admin": {
+    "orders": {
+      "title": "Panel de pedidos",
+      "loading": "Cargando pedidos…",
+      "noOrders": "Sin pedidos",
+      "minutesAgo": "Hace {{count}}m",
+      "tel": "Tel: {{phone}}",
+      "email": "Email: {{email}}",
+      "address": "Dir: {{address}}",
+      "table": "Mesa {{number}}",
+      "payment": "Pago: {{method}}",
+      "cash": "Efectivo",
+      "transfer": "Transferencia",
+      "changeFor": "(cambio para ${{amount}})",
+      "legacyReady": "Pedidos listos (legado)",
+      "nav": {
+        "products": "Productos",
+        "categories": "Categorías",
+        "qr": "Código QR"
+      },
+      "columns": {
+        "pending": "Pendiente",
+        "confirmed": "Confirmado",
+        "out_for_delivery": "En camino",
+        "delivered": "Entregado"
+      },
+      "actions": {
+        "confirmed": "Confirmar",
+        "out_for_delivery": "Enviar a domicilio",
+        "delivered": "Marcar entregado",
+        "cancelled": "Cancelar"
+      }
+    },
+    "products": {
+      "title": "Productos",
+      "backToOrders": "← Pedidos",
+      "newProduct": "+ Nuevo producto",
+      "newProductTitle": "Nuevo producto",
+      "editProductTitle": "Editar producto",
+      "headers": {
+        "name": "Nombre",
+        "category": "Categoría",
+        "price": "Precio",
+        "available": "Disponible",
+        "actions": "Acciones"
+      },
+      "available": "Disponible",
+      "unavailable": "No disponible",
+      "form": {
+        "name": "Nombre *",
+        "description": "Descripción",
+        "price": "Precio *",
+        "category": "Categoría *",
+        "position": "Posición",
+        "available": "Disponible"
+      },
+      "deleteConfirm": "¿Eliminar este producto?"
+    },
+    "categories": {
+      "title": "Categorías",
+      "backToOrders": "← Pedidos",
+      "newCategory": "+ Nueva categoría",
+      "newCategoryTitle": "Nueva categoría",
+      "editCategoryTitle": "Editar categoría",
+      "headers": {
+        "name": "Nombre",
+        "position": "Posición",
+        "active": "Activa",
+        "actions": "Acciones"
+      },
+      "activeStatus": "✅ Activa",
+      "inactiveStatus": "⏸ Inactiva",
+      "form": {
+        "name": "Nombre *",
+        "position": "Posición",
+        "active": "Activa"
+      },
+      "deleteConfirm": "¿Eliminar esta categoría? Todos los productos en ella también serán eliminados."
+    },
+    "qr": {
+      "title": "Código QR",
+      "backToOrders": "← Pedidos",
+      "download": "⬇ Descargar SVG",
+      "instructions": "Imprimí y colocá en las mesas para que los clientes puedan escanear y ordenar."
+    }
+  },
+  "superAdmin": {
+    "restaurants": {
+      "title": "Grilla de restaurantes",
+      "subtitle": "Super Admin",
+      "description": "Vista en tarjetas con búsqueda y paginación.",
+      "newRestaurant": "+ Nuevo restaurante",
+      "search": "Buscar restaurantes",
+      "searchPlaceholder": "Nombre, slug, teléfono, moneda…",
+      "stats": {
+        "total": "Total",
+        "active": "Activos",
+        "inactive": "Inactivos"
+      },
+      "showing": "Mostrando {{from}}-{{to}} de {{total}}",
+      "page": "Página {{current}} de {{total}}",
+      "noResults": "Ningún restaurante coincidió con tu búsqueda.",
+      "currency": "Moneda",
+      "phone": "Teléfono",
+      "address": "Dirección",
+      "active": "Activo",
+      "inactive": "Inactivo",
+      "notSet": "No definido",
+      "manageOperations": "Gestionar operaciones",
+      "viewMenu": "Ver menú",
+      "deleteConfirm": "¿Eliminar este restaurante? Esta acción no se puede deshacer.",
+      "modal": {
+        "new": "Nuevo restaurante",
+        "edit": "Editar: {{name}}",
+        "adminUser": "Usuario administrador",
+        "fields": {
+          "name": "Nombre *",
+          "slug": "Slug",
+          "address": "Dirección",
+          "phone": "Teléfono",
+          "description": "Descripción",
+          "currency": "Moneda",
+          "adminEmail": "Email del administrador *",
+          "adminPassword": "Contraseña del administrador *",
+          "adminName": "Nombre del administrador"
+        }
+      },
+      "pagination": {
+        "first": "« Primera",
+        "prev": "‹ Anterior",
+        "next": "Siguiente ›",
+        "last": "Última »"
+      }
+    }
+  },
+  "home": {
+    "badge": "Inspirado en QueResto",
+    "title": "Pedidos digitales para restaurantes modernos.",
+    "description": "Ayudamos a restaurantes a publicar menús, recibir pedidos en tiempo real y gestionar el flujo de delivery desde un panel de administración.",
+    "viewDemo": "Ver restaurante demo",
+    "adminLogin": "Acceso administrador",
+    "howItWorks": "Cómo funciona",
+    "steps": {
+      "1": "1. El cliente abre `/:nombre_restaurante` y explora las categorías del menú.",
+      "2": "2. El cliente agrega ítems, ajusta cantidades y realiza el pedido en el checkout.",
+      "3": "3. El restaurante actualiza el estado en el admin: pendiente, confirmado, en camino, entregado.",
+      "4": "4. El cliente sigue las actualizaciones en vivo en la página del pedido."
+    },
+    "features": {
+      "menu": { "title": "Menú + Checkout", "text": "Flujo móvil rápido con carrito flotante y controles de cantidad." },
+      "orders": { "title": "Gestión de pedidos", "text": "Vista en tablero por estado para manejar cocina y delivery." },
+      "products": { "title": "Control de productos", "text": "Editá productos, categorías, precios y disponibilidad al instante." }
+    }
+  }
+}

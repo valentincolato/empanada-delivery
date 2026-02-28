@@ -1,9 +1,12 @@
 import { useEffect, useMemo, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { api } from '@utils/api'
+import LanguageSwitcher from '../LanguageSwitcher'
 
 const PAGE_SIZE = 8
 
 export default function RestaurantsManager() {
+  const { t } = useTranslation()
   const [restaurants, setRestaurants] = useState([])
   const [modal, setModal] = useState(null)
   const [form, setForm] = useState({})
@@ -58,7 +61,7 @@ export default function RestaurantsManager() {
   }
 
   async function destroy(id) {
-    if (!confirm('Delete this restaurant? This cannot be undone.')) return
+    if (!confirm(t('superAdmin.restaurants.deleteConfirm'))) return
     await api.delete(`/api/v1/super_admin/restaurants/${id}`)
     await loadRestaurants()
   }
@@ -100,37 +103,40 @@ export default function RestaurantsManager() {
       <div className="border-b border-slate-200 bg-white px-4 py-4 sm:px-6">
         <div className="mx-auto flex w-full max-w-7xl flex-wrap items-end justify-between gap-3">
           <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.16em] text-slate-500">Super Admin</p>
-            <h1 className="text-2xl font-bold text-slate-900">Restaurants Grid</h1>
-            <p className="mt-1 text-sm text-slate-600">Card-based view with search and pagination.</p>
+            <p className="text-xs font-semibold uppercase tracking-[0.16em] text-slate-500">{t('superAdmin.restaurants.subtitle')}</p>
+            <h1 className="text-2xl font-bold text-slate-900">{t('superAdmin.restaurants.title')}</h1>
+            <p className="mt-1 text-sm text-slate-600">{t('superAdmin.restaurants.description')}</p>
           </div>
-          <button onClick={openNew} className="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-indigo-700">+ New Restaurant</button>
+          <div className="flex items-center gap-3">
+            <LanguageSwitcher className="border-slate-300 bg-slate-100" />
+            <button onClick={openNew} className="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-indigo-700">{t('superAdmin.restaurants.newRestaurant')}</button>
+          </div>
         </div>
       </div>
 
       <div className="mx-auto w-full max-w-7xl px-4 py-6 sm:px-6">
         <div className="mb-5 grid gap-3 rounded-xl border border-slate-200 bg-white p-4 shadow-sm md:grid-cols-[1fr_auto]">
           <label className="text-sm">
-            <span className="mb-1 block font-medium text-slate-700">Search restaurants</span>
+            <span className="mb-1 block font-medium text-slate-700">{t('superAdmin.restaurants.search')}</span>
             <input
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              placeholder="Name, slug, phone, currency..."
+              placeholder={t('superAdmin.restaurants.searchPlaceholder')}
               className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-800 outline-none ring-indigo-200 transition focus:ring"
             />
           </label>
           <div className="grid grid-cols-3 gap-2 md:min-w-72">
-            <StatCard label="Total" value={restaurants.length} />
-            <StatCard label="Active" value={restaurants.filter((r) => r.active).length} />
-            <StatCard label="Inactive" value={restaurants.filter((r) => !r.active).length} />
+            <StatCard label={t('superAdmin.restaurants.stats.total')} value={restaurants.length} />
+            <StatCard label={t('superAdmin.restaurants.stats.active')} value={restaurants.filter((r) => r.active).length} />
+            <StatCard label={t('superAdmin.restaurants.stats.inactive')} value={restaurants.filter((r) => !r.active).length} />
           </div>
         </div>
 
         <div className="mb-4 flex items-center justify-between text-sm text-slate-600">
           <span>
-            Showing {pageItems.length === 0 ? 0 : startIndex + 1}-{startIndex + pageItems.length} of {filtered.length}
+            {t('superAdmin.restaurants.showing', { from: pageItems.length === 0 ? 0 : startIndex + 1, to: startIndex + pageItems.length, total: filtered.length })}
           </span>
-          <span>Page {safePage} of {pageCount}</span>
+          <span>{t('superAdmin.restaurants.page', { current: safePage, total: pageCount })}</span>
         </div>
 
         {error && (
@@ -141,7 +147,7 @@ export default function RestaurantsManager() {
 
         {pageItems.length === 0 ? (
           <div className="rounded-xl border border-slate-200 bg-white p-10 text-center text-slate-500 shadow-sm">
-            No restaurants matched your search.
+            {t('superAdmin.restaurants.noResults')}
           </div>
         ) : (
           <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
@@ -153,23 +159,23 @@ export default function RestaurantsManager() {
                     <p className="mt-1 inline-flex rounded bg-slate-100 px-2 py-0.5 font-mono text-xs text-slate-600">{r.slug}</p>
                   </div>
                   <span className={`rounded-full px-2 py-0.5 text-xs font-semibold ${r.active ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700'}`}>
-                    {r.active ? 'Active' : 'Inactive'}
+                    {r.active ? t('superAdmin.restaurants.active') : t('superAdmin.restaurants.inactive')}
                   </span>
                 </div>
 
                 <div className="space-y-1 text-sm text-slate-600">
-                  <p><span className="font-medium text-slate-700">Currency:</span> {r.currency}</p>
-                  <p><span className="font-medium text-slate-700">Phone:</span> {r.phone || 'Not set'}</p>
-                  <p><span className="font-medium text-slate-700">Address:</span> {r.address || 'Not set'}</p>
+                  <p><span className="font-medium text-slate-700">{t('superAdmin.restaurants.currency')}:</span> {r.currency}</p>
+                  <p><span className="font-medium text-slate-700">{t('superAdmin.restaurants.phone')}:</span> {r.phone || t('superAdmin.restaurants.notSet')}</p>
+                  <p><span className="font-medium text-slate-700">{t('superAdmin.restaurants.address')}:</span> {r.address || t('superAdmin.restaurants.notSet')}</p>
                 </div>
 
                 <div className="mt-4 flex flex-wrap gap-2">
                   <button onClick={() => manageOperations(r.id)} className="rounded-md bg-indigo-600 px-2.5 py-1.5 text-xs font-semibold text-white transition hover:bg-indigo-700">
-                    Manage operations
+                    {t('superAdmin.restaurants.manageOperations')}
                   </button>
-                  <a href={`/r/${r.slug}`} target="_blank" rel="noreferrer" className="rounded-md border border-slate-300 px-2.5 py-1.5 text-xs font-semibold text-slate-700 transition hover:bg-slate-50">View menu</a>
-                  <button onClick={() => openEdit(r)} className="rounded-md bg-slate-100 px-2.5 py-1.5 text-xs font-semibold text-slate-700 transition hover:bg-slate-200">Edit</button>
-                  <button onClick={() => destroy(r.id)} className="rounded-md bg-red-100 px-2.5 py-1.5 text-xs font-semibold text-red-700 transition hover:bg-red-200">Delete</button>
+                  <a href={`/r/${r.slug}`} target="_blank" rel="noreferrer" className="rounded-md border border-slate-300 px-2.5 py-1.5 text-xs font-semibold text-slate-700 transition hover:bg-slate-50">{t('superAdmin.restaurants.viewMenu')}</a>
+                  <button onClick={() => openEdit(r)} className="rounded-md bg-slate-100 px-2.5 py-1.5 text-xs font-semibold text-slate-700 transition hover:bg-slate-200">{t('common.edit')}</button>
+                  <button onClick={() => destroy(r.id)} className="rounded-md bg-red-100 px-2.5 py-1.5 text-xs font-semibold text-red-700 transition hover:bg-red-200">{t('common.delete')}</button>
                 </div>
               </article>
             ))}
@@ -183,7 +189,7 @@ export default function RestaurantsManager() {
             onClick={() => setPage(1)}
             className="rounded-md border border-slate-300 bg-white px-3 py-1.5 text-sm text-slate-700 disabled:cursor-not-allowed disabled:opacity-50"
           >
-            « First
+            {t('superAdmin.restaurants.pagination.first')}
           </button>
           <button
             type="button"
@@ -191,7 +197,7 @@ export default function RestaurantsManager() {
             onClick={() => setPage((p) => Math.max(1, p - 1))}
             className="rounded-md border border-slate-300 bg-white px-3 py-1.5 text-sm text-slate-700 disabled:cursor-not-allowed disabled:opacity-50"
           >
-            ‹ Prev
+            {t('superAdmin.restaurants.pagination.prev')}
           </button>
 
           {Array.from({ length: pageCount }, (_, i) => i + 1)
@@ -215,7 +221,7 @@ export default function RestaurantsManager() {
             onClick={() => setPage((p) => Math.min(pageCount, p + 1))}
             className="rounded-md border border-slate-300 bg-white px-3 py-1.5 text-sm text-slate-700 disabled:cursor-not-allowed disabled:opacity-50"
           >
-            Next ›
+            {t('superAdmin.restaurants.pagination.next')}
           </button>
           <button
             type="button"
@@ -223,7 +229,7 @@ export default function RestaurantsManager() {
             onClick={() => setPage(pageCount)}
             className="rounded-md border border-slate-300 bg-white px-3 py-1.5 text-sm text-slate-700 disabled:cursor-not-allowed disabled:opacity-50"
           >
-            Last »
+            {t('superAdmin.restaurants.pagination.last')}
           </button>
         </div>
       </div>
@@ -232,11 +238,17 @@ export default function RestaurantsManager() {
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
           <div className="max-h-[90vh] w-full max-w-xl overflow-y-auto rounded-2xl bg-white">
             <div className="flex items-center justify-between border-b border-slate-200 px-6 py-5">
-              <h2 className="text-xl font-semibold text-slate-900">{modal === 'new' ? 'New Restaurant' : `Edit: ${modal.name}`}</h2>
+              <h2 className="text-xl font-semibold text-slate-900">{modal === 'new' ? t('superAdmin.restaurants.modal.new') : t('superAdmin.restaurants.modal.edit', { name: modal.name })}</h2>
               <button onClick={() => setModal(null)} className="text-slate-500">✕</button>
             </div>
             <form onSubmit={save} className="flex flex-col gap-3 p-6">
-              {[['name', 'Name *', true], ['slug', 'Slug'], ['address', 'Address'], ['phone', 'Phone'], ['description', 'Description']].map(([key, label, req]) => (
+              {[
+                ['name', t('superAdmin.restaurants.modal.fields.name'), true],
+                ['slug', t('superAdmin.restaurants.modal.fields.slug')],
+                ['address', t('superAdmin.restaurants.modal.fields.address')],
+                ['phone', t('superAdmin.restaurants.modal.fields.phone')],
+                ['description', t('superAdmin.restaurants.modal.fields.description')],
+              ].map(([key, label, req]) => (
                 <label key={key} className="flex flex-col gap-1 text-sm font-medium text-slate-700">
                   {label}
                   <input required={req} value={form[key] || ''} onChange={(e) => setForm((f) => ({ ...f, [key]: e.target.value }))} className="rounded-md border border-slate-300 px-3 py-2" />
@@ -244,7 +256,7 @@ export default function RestaurantsManager() {
               ))}
 
               <label className="flex flex-col gap-1 text-sm font-medium text-slate-700">
-                Currency
+                {t('superAdmin.restaurants.modal.fields.currency')}
                 <select value={form.currency} onChange={(e) => setForm((f) => ({ ...f, currency: e.target.value }))} className="rounded-md border border-slate-300 px-3 py-2">
                   {['ARS', 'USD', 'EUR'].map((c) => <option key={c} value={c}>{c}</option>)}
                 </select>
@@ -253,8 +265,12 @@ export default function RestaurantsManager() {
               {modal === 'new' && (
                 <>
                   <hr className="my-2 border-slate-200" />
-                  <p className="font-semibold text-slate-700">Admin User</p>
-                  {[['admin_email', 'Admin Email *', true, 'email'], ['admin_password', 'Admin Password *', true, 'password'], ['admin_name', 'Admin Name']].map(([key, label, req, type = 'text']) => (
+                  <p className="font-semibold text-slate-700">{t('superAdmin.restaurants.modal.adminUser')}</p>
+                  {[
+                    ['admin_email', t('superAdmin.restaurants.modal.fields.adminEmail'), true, 'email'],
+                    ['admin_password', t('superAdmin.restaurants.modal.fields.adminPassword'), true, 'password'],
+                    ['admin_name', t('superAdmin.restaurants.modal.fields.adminName'), false, 'text'],
+                  ].map(([key, label, req, type]) => (
                     <label key={key} className="flex flex-col gap-1 text-sm font-medium text-slate-700">
                       {label}
                       <input required={req} type={type} value={form[key] || ''} onChange={(e) => setForm((f) => ({ ...f, [key]: e.target.value }))} className="rounded-md border border-slate-300 px-3 py-2" />
@@ -266,9 +282,9 @@ export default function RestaurantsManager() {
               {error && <div className="text-sm text-red-600">{error}</div>}
               <div className="mt-1 flex gap-3">
                 <button type="submit" disabled={saving} className="rounded-lg bg-violet-600 px-4 py-2 text-sm font-semibold text-white hover:bg-violet-700">
-                  {saving ? 'Saving…' : 'Save'}
+                  {saving ? t('common.saving') : t('common.save')}
                 </button>
-                <button type="button" onClick={() => setModal(null)} className="rounded-lg bg-slate-100 px-4 py-2 text-sm font-medium text-slate-700">Cancel</button>
+                <button type="button" onClick={() => setModal(null)} className="rounded-lg bg-slate-100 px-4 py-2 text-sm font-medium text-slate-700">{t('common.cancel')}</button>
               </div>
             </form>
           </div>

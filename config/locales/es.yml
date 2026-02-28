@@ -1,0 +1,43 @@
+es:
+  errors:
+    messages:
+      blank: "no puede estar en blanco"
+      invalid: "no es válido"
+      taken: "ya está en uso"
+      too_short:
+        one: "es demasiado corto (mínimo 1 carácter)"
+        other: "es demasiado corto (mínimo %{count} caracteres)"
+      too_long:
+        one: "es demasiado largo (máximo 1 carácter)"
+        other: "es demasiado largo (máximo %{count} caracteres)"
+  panel:
+    greeting: "Hola %{name}"
+    tagline: "Elegí a dónde querés entrar."
+    sign_out: "Cerrar sesión"
+    super_admin:
+      title: "Gestión de restaurantes"
+      description: "Creá restaurantes, editá datos y administrá el alta de usuarios administradores."
+      view_restaurants: "Ver restaurantes"
+    restaurant_admin:
+      label: "Restaurante"
+      no_access_title: "No tenés accesos de administración"
+      no_access_description: "Tu usuario no tiene rol de restaurante ni super admin."
+      sections:
+        orders: "Pedidos"
+        orders_desc: "Tablero de pedidos en tiempo real"
+        products: "Productos"
+        products_desc: "Alta, edición y disponibilidad"
+        categories: "Categorías"
+        categories_desc: "Orden y estructura del menú"
+        qr: "QR"
+        qr_desc: "Acceso rápido al menú público"
+      public_access: "Acceso público"
+      public_access_desc: "Vista del menú que ven tus clientes."
+      open_public_menu: "Abrir menú público"
+      enter: "Entrar →"
+  devise:
+    sessions:
+      new:
+        welcome: "Bienvenido"
+        forgot_password: "Olvidé mi contraseña"
+        submit: "Ingresar"
