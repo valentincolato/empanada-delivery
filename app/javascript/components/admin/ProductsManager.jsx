@@ -109,10 +109,10 @@ export default function ProductsManager({
 
       <div className="overflow-x-auto p-6">
         <table className="w-full overflow-hidden rounded-2xl border border-[var(--line-soft)] bg-[var(--panel)] shadow-[0_12px_30px_rgba(22,18,10,0.08)]">
-          <thead className="bg-[var(--panel-strong)]">
+          <thead className="bg-[var(--panel-soft)]">
             <tr>
               {[t('admin.products.headers.name'), t('admin.products.headers.category'), t('admin.products.headers.price'), t('admin.products.headers.available'), t('admin.products.headers.actions')].map((h) => (
-                <th key={h} className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-[0.12em] text-[var(--ink-500)]">{h}</th>
+                <th key={h} className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-[0.12em] text-[var(--ink-700)]">{h}</th>
               ))}
             </tr>
           </thead>
@@ -134,14 +134,14 @@ export default function ProductsManager({
                     data-testid={`toggle-availability-${p.id}`}
                     data-available={String(p.available)}
                     onClick={() => toggleAvailability(p)}
-                    className={`rounded-full px-3 py-1 text-xs font-semibold ${p.available ? 'bg-emerald-900/30 text-emerald-700' : 'bg-[var(--panel-soft)] text-[var(--ink-500)]'}`}
+                    className={`rounded-full border px-3 py-1 text-xs font-semibold ${p.available ? 'border-emerald-300 bg-emerald-100 text-emerald-900' : 'border-amber-300 bg-amber-100 text-amber-900'}`}
                   >
                     {p.available ? t('admin.products.available') : t('admin.products.unavailable')}
                   </button>
                 </td>
                 <td className="px-4 py-3 text-sm text-[var(--ink-700)]">
                   <button data-testid={`edit-product-${p.id}`} onClick={() => openEdit(p)} className="mr-2 rounded-md bg-[var(--panel-strong)] px-3 py-1 text-xs text-[var(--ink-700)]">{t('common.edit')}</button>
-                  <button onClick={() => destroy(p.id)} className="rounded-md border border-red-900/50 bg-red-950/35 px-3 py-1 text-xs text-red-300">{t('common.delete')}</button>
+                  <button onClick={() => destroy(p.id)} className="rounded-md border border-red-300 bg-red-100 px-3 py-1 text-xs text-red-900">{t('common.delete')}</button>
                 </td>
               </tr>
             ))}

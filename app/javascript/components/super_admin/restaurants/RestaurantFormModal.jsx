@@ -65,7 +65,7 @@ export default function RestaurantFormModal({ modal, form, saving, error, onClos
             </>
           )}
 
-          {error && <div className="text-sm text-red-300">{error}</div>}
+          {error && <div className="text-sm text-red-900">{error}</div>}
           <div className="mt-1 flex gap-3">
             <button type="submit" disabled={saving} className="elegant-button-primary !rounded-lg !px-4 !py-2 !text-sm">
               {saving ? t('common.saving') : t('common.save')}

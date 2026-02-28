@@ -27,11 +27,11 @@ export default function OrdersDashboard({
   const [updating, setUpdating] = useState(null)
 
   const COLUMNS = [
-    { status: 'pending', labelKey: 'admin.orders.columns.pending', header: 'border-[var(--brand-500)] bg-[var(--panel-strong)] text-[var(--brand-700)]', badge: 'bg-[var(--brand-600)]' },
-    { status: 'confirmed', labelKey: 'admin.orders.columns.confirmed', header: 'border-emerald-800/40 bg-emerald-900/20 text-emerald-300', badge: 'bg-emerald-700' },
-    { status: 'out_for_delivery', labelKey: 'admin.orders.columns.out_for_delivery', header: 'border-sky-800/40 bg-sky-900/20 text-sky-300', badge: 'bg-sky-700' },
-    { status: 'delivered', labelKey: 'admin.orders.columns.delivered', header: 'border-lime-800/40 bg-lime-900/20 text-lime-300', badge: 'bg-lime-700' },
-    { status: 'cancelled', labelKey: 'admin.orders.columns.cancelled', header: 'border-red-900/50 bg-red-950/35 text-red-300', badge: 'bg-red-700' },
+    { status: 'pending', labelKey: 'admin.orders.columns.pending', header: 'border-[var(--brand-500)] bg-[var(--panel-soft)] text-[var(--brand-700)]', badge: 'bg-[var(--brand-600)]' },
+    { status: 'confirmed', labelKey: 'admin.orders.columns.confirmed', header: 'border-emerald-300 bg-emerald-100 text-emerald-900', badge: 'bg-emerald-700' },
+    { status: 'out_for_delivery', labelKey: 'admin.orders.columns.out_for_delivery', header: 'border-sky-300 bg-sky-100 text-sky-900', badge: 'bg-sky-700' },
+    { status: 'delivered', labelKey: 'admin.orders.columns.delivered', header: 'border-lime-300 bg-lime-100 text-lime-900', badge: 'bg-lime-700' },
+    { status: 'cancelled', labelKey: 'admin.orders.columns.cancelled', header: 'border-red-300 bg-red-100 text-red-900', badge: 'bg-red-700' },
   ]
 
   const TRANSITIONS = {
@@ -126,7 +126,7 @@ export default function OrdersDashboard({
           {restaurant && (
             <button
               onClick={toggleAccepting}
-              className={`rounded-full px-3 py-1 text-xs font-semibold ${accepting ? 'border border-emerald-800/40 bg-emerald-900/30 text-emerald-300' : 'border border-red-900/50 bg-red-950/35 text-red-300'}`}
+              className={`rounded-full px-3 py-1 text-xs font-semibold ${accepting ? 'border border-emerald-300 bg-emerald-100 text-emerald-900' : 'border border-red-300 bg-red-100 text-red-900'}`}
             >
               {accepting ? t('admin.orders.accepting') : t('admin.orders.notAccepting')}
               {' · '}

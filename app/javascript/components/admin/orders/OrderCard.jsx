@@ -35,7 +35,7 @@ export default function OrderCard({ order, transitions, onUpdate, isUpdating }) 
             disabled={isUpdating}
             onClick={() => onUpdate(order.id, next)}
             className={next === 'cancelled'
-              ? 'rounded-md border border-red-900/50 bg-red-950/35 px-2.5 py-1 text-xs font-medium text-red-300'
+              ? 'rounded-md border border-red-300 bg-red-100 px-2.5 py-1 text-xs font-medium text-red-900'
               : 'rounded-md bg-[var(--brand-600)] px-2.5 py-1 text-xs font-semibold text-white'}
           >
             {t(`admin.orders.actions.${next}`) || next}

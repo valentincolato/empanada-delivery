@@ -65,7 +65,7 @@ export default function RestaurantsManager(props) {
         </div>
 
         {error && (
-          <div className="mb-4 rounded-lg border border-red-900/50 bg-red-950/35 px-3 py-2 text-sm text-red-300">
+          <div className="mb-4 rounded-lg border border-red-300 bg-red-100 px-3 py-2 text-sm text-red-900">
             {error}
           </div>
         )}

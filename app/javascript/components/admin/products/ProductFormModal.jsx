@@ -70,7 +70,7 @@ export default function ProductFormModal({
             {t('admin.products.form.available')}
           </label>
 
-          {error && <div className="text-sm text-red-300">{error}</div>}
+          {error && <div className="text-sm text-red-900">{error}</div>}
 
           <div className="mt-1 flex gap-3">
             <button data-testid="save-product-button" type="submit" disabled={saving} className="elegant-button-primary !rounded-lg !px-4 !py-2 !text-sm">

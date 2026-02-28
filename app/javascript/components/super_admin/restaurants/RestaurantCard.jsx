@@ -31,7 +31,7 @@ export default function RestaurantCard({ restaurant, public_restaurant_template,
         </button>
         <a href={publicMenuPath} target="_blank" rel="noreferrer" className="elegant-button-secondary !rounded-md !px-2.5 !py-1.5 !text-xs">{t('superAdmin.restaurants.viewMenu')}</a>
         <button onClick={() => onOpenEdit(restaurant)} className="rounded-md bg-[var(--panel-strong)] px-2.5 py-1.5 text-xs font-semibold text-[var(--ink-700)]">{t('common.edit')}</button>
-        <button onClick={() => onDelete(restaurant.id)} className="rounded-md border border-red-900/50 bg-red-950/35 px-2.5 py-1.5 text-xs font-semibold text-red-300">{t('common.delete')}</button>
+        <button onClick={() => onDelete(restaurant.id)} className="rounded-md border border-red-300 bg-red-100 px-2.5 py-1.5 text-xs font-semibold text-red-900">{t('common.delete')}</button>
       </div>
     </Card>
   )

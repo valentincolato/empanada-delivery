@@ -66,10 +66,10 @@ export default function CategoriesManager({ api_admin_categories, api_admin_cate
 
       <div className="overflow-x-auto p-6">
         <table className="w-full overflow-hidden rounded-2xl border border-[var(--line-soft)] bg-[var(--panel)] shadow-[0_12px_30px_rgba(22,18,10,0.08)]">
-          <thead className="bg-[var(--panel-strong)]">
+          <thead className="bg-[var(--panel-soft)]">
             <tr>
               {[t('admin.categories.headers.name'), t('admin.categories.headers.position'), t('admin.categories.headers.active'), t('admin.categories.headers.actions')].map((h) => (
-                <th key={h} className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-[0.12em] text-[var(--ink-500)]">{h}</th>
+                <th key={h} className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-[0.12em] text-[var(--ink-700)]">{h}</th>
               ))}
             </tr>
           </thead>
@@ -81,7 +81,7 @@ export default function CategoriesManager({ api_admin_categories, api_admin_cate
                 <td className="px-4 py-3 text-sm text-[var(--ink-700)]">{c.active ? t('admin.categories.activeStatus') : t('admin.categories.inactiveStatus')}</td>
                 <td className="px-4 py-3 text-sm text-[var(--ink-700)]">
                   <button onClick={() => openEdit(c)} className="mr-2 rounded-md bg-[var(--panel-strong)] px-3 py-1 text-xs text-[var(--ink-700)]">{t('common.edit')}</button>
-                  <button onClick={() => destroy(c.id)} className="rounded-md border border-red-900/50 bg-red-950/35 px-3 py-1 text-xs text-red-300">{t('common.delete')}</button>
+                  <button onClick={() => destroy(c.id)} className="rounded-md border border-red-300 bg-red-100 px-3 py-1 text-xs text-red-900">{t('common.delete')}</button>
                 </td>
               </tr>
             ))}
@@ -109,7 +109,7 @@ export default function CategoriesManager({ api_admin_categories, api_admin_cate
                 <input type="checkbox" checked={form.active} onChange={(e) => setForm((f) => ({ ...f, active: e.target.checked }))} />
                 {t('admin.categories.form.active')}
               </label>
-              {error && <div className="text-sm text-red-300">{error}</div>}
+              {error && <div className="text-sm text-red-900">{error}</div>}
               <div className="mt-1 flex gap-3">
                 <button type="submit" disabled={saving} className="elegant-button-primary !rounded-lg !px-4 !py-2 !text-sm">
                   {saving ? t('common.saving') : t('common.save')}

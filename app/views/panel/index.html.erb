@@ -12,7 +12,8 @@
 
   <main class="mx-auto w-full max-w-6xl px-4 py-8 sm:px-6">
     <% admin_restaurants = current_user.restaurants.to_a %>
-    <% current_panel_restaurant = admin_restaurants.find { |restaurant| restaurant.id == session[:admin_restaurant_id] } || admin_restaurants.first %>
+    <% selected_restaurant_id = session[:admin_restaurant_id].presence&.to_i %>
+    <% current_panel_restaurant = admin_restaurants.find { |restaurant| restaurant.id == selected_restaurant_id } || admin_restaurants.first %>
 
     <% if current_user.super_admin? %>
       <section class="mb-8 rounded-2xl border border-[var(--line-soft)] bg-[linear-gradient(135deg,#fff6f1,#ffece3)] p-6 text-[var(--ink-900)] shadow-[0_12px_28px_rgba(31,31,31,0.08)]">

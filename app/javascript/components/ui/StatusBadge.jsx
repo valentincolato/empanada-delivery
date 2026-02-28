@@ -1,7 +1,7 @@
 const VARIANTS = {
-  success: 'border border-emerald-800/40 bg-emerald-900/30 text-emerald-300',
-  danger: 'border border-red-900/50 bg-red-950/35 text-red-300',
-  warning: 'border border-amber-800/40 bg-amber-900/30 text-amber-300',
+  success: 'border border-emerald-300 bg-emerald-100 text-emerald-900',
+  danger: 'border border-red-300 bg-red-100 text-red-900',
+  warning: 'border border-amber-300 bg-amber-100 text-amber-900',
   neutral: 'border border-[var(--line-soft)] bg-[var(--panel-strong)] text-[var(--ink-700)]',
 }
 

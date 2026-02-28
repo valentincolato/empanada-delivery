@@ -3,19 +3,52 @@ previous_queue_adapter = ActiveJob::Base.queue_adapter
 ActiveJob::Base.queue_adapter = :inline
 
 begin
+def ensure_user!(email:, password:, name:, role:)
+  user = User.find_or_initialize_by(email: email)
+  user.assign_attributes(
+    password: password,
+    name: name,
+    role: role
+  )
+  user.save!
+  user
+end
+
 if ENV["SEED_SUPER_ADMIN_EMAIL"].present?
-  super_admin = User.find_or_create_by!(email: ENV.fetch("SEED_SUPER_ADMIN_EMAIL")) do |u|
-    u.password = ENV.fetch("SEED_SUPER_ADMIN_PASSWORD")
-    u.name = ENV.fetch("SEED_SUPER_ADMIN_NAME", "Super Admin")
-    u.role = :super_admin
-  end
+  super_admin = ensure_user!(
+    email: ENV.fetch("SEED_SUPER_ADMIN_EMAIL"),
+    password: ENV.fetch("SEED_SUPER_ADMIN_PASSWORD"),
+    name: ENV.fetch("SEED_SUPER_ADMIN_NAME", "Super Admin"),
+    role: :super_admin
+  )
   puts "Super admin: #{super_admin.email}"
 else
   puts "Super admin: not seeded (set SEED_SUPER_ADMIN_EMAIL and SEED_SUPER_ADMIN_PASSWORD to create one)"
 end
 
+demo_admin_user = ensure_user!(
+  email: "demo@empanada.dev",
+  password: "password123",
+  name: "Demo Admin",
+  role: :restaurant_admin
+)
+
+pizza_admin_user = ensure_user!(
+  email: "pizza@pedidofacil.dev",
+  password: "password123",
+  name: "Pizza Admin",
+  role: :restaurant_admin
+)
+
+multi_admin_user = ensure_user!(
+  email: "multi@pedidofacil.dev",
+  password: "password123",
+  name: "Multi Restaurant Admin",
+  role: :restaurant_admin
+)
+
 # Idempotent helper for demo restaurants
-def ensure_restaurant!(name:, slug:, address:, phone:, description:, currency:, settings:, admin_email:, admin_password:, admin_name:)
+def ensure_restaurant!(name:, slug:, address:, phone:, description:, currency:, settings:, admin_user:)
   restaurant = Restaurant.find_or_initialize_by(slug: slug)
   restaurant.assign_attributes(
     name: name,
@@ -28,13 +61,10 @@ def ensure_restaurant!(name:, slug:, address:, phone:, description:, currency:, 
   )
   restaurant.save!
 
-  admin = restaurant.provision_admin!(
-    email: admin_email,
-    password: admin_password,
-    name: admin_name
-  )
+  membership = restaurant.restaurant_memberships.find_or_initialize_by(user: admin_user)
+  membership.update!(role: :member)
 
-  { restaurant: restaurant, admin: admin }
+  { restaurant: restaurant, admin: admin_user }
 end
 
 # Main demo restaurant (empanadas)
@@ -46,9 +76,7 @@ result = ensure_restaurant!(
   description: "Las mejores empanadas artesanales de Buenos Aires 🫔",
   currency: "ARS",
   settings: { "accepting_orders" => true, "estimated_wait_minutes" => 20 },
-  admin_email: "demo@empanada.dev",
-  admin_password: "password123",
-  admin_name: "Demo Admin"
+  admin_user: demo_admin_user
 )
 
 restaurant = result[:restaurant]
@@ -111,9 +139,7 @@ pizza_result = ensure_restaurant!(
   description: "Pizzas al horno de piedra, focaccias y postres caseros.",
   currency: "ARS",
   settings: { "accepting_orders" => true, "estimated_wait_minutes" => 30 },
-  admin_email: "pizza@pedidofacil.dev",
-  admin_password: "password123",
-  admin_name: "Pizza Admin"
+  admin_user: pizza_admin_user
 )
 
 pizza_restaurant = pizza_result[:restaurant]
@@ -144,11 +170,6 @@ postres_pizza = pizza_restaurant.categories.find_or_create_by!(name: "Postres") 
     p.available = true
   end
 end
-
-# Multi-restaurant demo user (owner in many restaurants)
-multi_admin_email = "multi@pedidofacil.dev"
-multi_admin_password = "password123"
-multi_admin_name = "Multi Restaurant Admin"
 
 [
   {
@@ -190,11 +211,9 @@ multi_admin_name = "Multi Restaurant Admin"
 ].each do |attrs|
   created = ensure_restaurant!(
     **attrs,
-    admin_email: multi_admin_email,
-    admin_password: multi_admin_password,
-    admin_name: multi_admin_name
+    admin_user: multi_admin_user
   )
-  puts "Restaurant: #{created[:restaurant].name} (#{created[:restaurant].slug}) -> member: #{multi_admin_email}"
+  puts "Restaurant: #{created[:restaurant].name} (#{created[:restaurant].slug}) -> member: #{multi_admin_user.email}"
 end
 
 puts "Seeded #{Product.count} products across #{Category.count} categories"

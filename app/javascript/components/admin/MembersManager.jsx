@@ -59,10 +59,10 @@ export default function MembersManager({ api_admin_memberships, api_admin_member
 
       <div className="overflow-x-auto p-6">
         <table className="w-full overflow-hidden rounded-2xl border border-[var(--line-soft)] bg-[var(--panel)] shadow-[0_12px_30px_rgba(22,18,10,0.08)]">
-          <thead className="bg-[var(--panel-strong)]">
+          <thead className="bg-[var(--panel-soft)]">
             <tr>
               {[t('admin.members.headers.user'), t('admin.members.headers.role'), t('admin.members.headers.actions')].map((h) => (
-                <th key={h} className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-[0.12em] text-[var(--ink-500)]">{h}</th>
+                <th key={h} className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-[0.12em] text-[var(--ink-700)]">{h}</th>
               ))}
             </tr>
           </thead>
@@ -77,7 +77,7 @@ export default function MembersManager({ api_admin_memberships, api_admin_member
                   {t('admin.members.roles.member')}
                 </td>
                 <td className="px-4 py-3 text-sm text-[var(--ink-700)]">
-                  <button onClick={() => removeMembership(membership.id)} className="rounded-md border border-red-900/50 bg-red-950/35 px-3 py-1 text-xs text-red-300">
+                  <button onClick={() => removeMembership(membership.id)} className="rounded-md border border-red-300 bg-red-100 px-3 py-1 text-xs text-red-900">
                     {t('common.delete')}
                   </button>
                 </td>
@@ -106,7 +106,7 @@ export default function MembersManager({ api_admin_memberships, api_admin_member
                   className="rounded-md border border-[var(--line-soft)] bg-[var(--panel-strong)] px-3 py-2"
                 />
               </label>
-              {error && <div className="text-sm text-red-300">{error}</div>}
+              {error && <div className="text-sm text-red-900">{error}</div>}
               <div className="mt-1 flex gap-3">
                 <button type="submit" disabled={saving} className="elegant-button-primary !rounded-lg !px-4 !py-2 !text-sm">
                   {saving ? t('common.saving') : t('common.save')}
