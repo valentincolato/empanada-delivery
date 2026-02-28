@@ -277,4 +277,4 @@ CI runs on every pull request (RSpec + RuboCop) and deploys automatically on pus
 
 ## Domain Research
 
-See `docs/queresto-research.md` for the product analysis that informed this project's design (features, entity model, business flows, competitive context).
+Product/domain research notes were removed from this repository.
