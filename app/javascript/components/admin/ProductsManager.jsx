@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 import { api } from '@utils/api'
 
@@ -8,8 +8,11 @@ export default function ProductsManager() {
   const [categories, setCategories] = useState([])
   const [modal, setModal] = useState(null)
   const [form, setForm] = useState({})
+  const [imageFile, setImageFile] = useState(null)
+  const [imagePreview, setImagePreview] = useState(null)
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState(null)
+  const fileInputRef = useRef(null)
 
   useEffect(() => { loadData() }, [])
 
@@ -24,14 +27,32 @@ export default function ProductsManager() {
 
   function openNew() {
     setForm({ name: '', description: '', price: '', category_id: categories[0]?.id || '', available: true, position: 0 })
+    setImageFile(null)
+    setImagePreview(null)
     setModal('new')
     setError(null)
   }
 
   function openEdit(p) {
     setForm({ name: p.name, description: p.description || '', price: p.price, category_id: p.category_id, available: p.available, position: p.position })
+    setImageFile(null)
+    setImagePreview(p.image_url || null)
     setModal(p)
     setError(null)
+  }
+
+  function handleImageChange(e) {
+    const file = e.target.files[0]
+    if (!file) return
+    setImageFile(file)
+    setImagePreview(URL.createObjectURL(file))
+  }
+
+  function buildFormData() {
+    const fd = new FormData()
+    Object.entries(form).forEach(([k, v]) => fd.append(`product[${k}]`, v))
+    fd.append('product[image]', imageFile)
+    return fd
   }
 
   async function save(e) {
@@ -39,8 +60,14 @@ export default function ProductsManager() {
     setSaving(true)
     setError(null)
     try {
-      if (modal === 'new') await api.post('/api/v1/admin/products', { product: form })
-      else await api.patch(`/api/v1/admin/products/${modal.id}`, { product: form })
+      if (imageFile) {
+        const fd = buildFormData()
+        if (modal === 'new') await api.postForm('/api/v1/admin/products', fd)
+        else await api.patchForm(`/api/v1/admin/products/${modal.id}`, fd)
+      } else {
+        if (modal === 'new') await api.post('/api/v1/admin/products', { product: form })
+        else await api.patch(`/api/v1/admin/products/${modal.id}`, { product: form })
+      }
       await loadData()
       setModal(null)
     } catch (err) {
@@ -62,40 +89,47 @@ export default function ProductsManager() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-100 font-sans">
-      <div className="flex items-center justify-between border-b border-slate-200 bg-white px-6 py-4">
+    <div className="min-h-screen">
+      <div className="flex items-center justify-between border-b border-[var(--line-soft)] bg-[var(--panel)] px-6 py-4">
         <div>
-          <a href="/admin/orders" className="text-sm text-slate-500">{t('admin.products.backToOrders')}</a>
-          <h1 className="mt-1 text-xl font-bold text-slate-900">{t('admin.products.title')}</h1>
+          <a href="/admin/orders" className="text-sm text-[var(--ink-500)]">{t('admin.products.backToOrders')}</a>
+          <h1 className="mt-1 font-display text-4xl font-semibold text-[var(--ink-900)]">{t('admin.products.title')}</h1>
         </div>
-        <button onClick={openNew} className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700">{t('admin.products.newProduct')}</button>
+        <button onClick={openNew} className="elegant-button-primary !rounded-lg !px-4 !py-2 !text-sm">{t('admin.products.newProduct')}</button>
       </div>
 
       <div className="overflow-x-auto p-6">
-        <table className="w-full overflow-hidden rounded-xl bg-white shadow">
-          <thead className="bg-slate-50">
+        <table className="w-full overflow-hidden rounded-2xl border border-[var(--line-soft)] bg-white/80 shadow-[0_12px_30px_rgba(22,18,10,0.08)]">
+          <thead className="bg-[#faf4e9]">
             <tr>
               {[t('admin.products.headers.name'), t('admin.products.headers.category'), t('admin.products.headers.price'), t('admin.products.headers.available'), t('admin.products.headers.actions')].map((h) => (
-                <th key={h} className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">{h}</th>
+                <th key={h} className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-[0.12em] text-[var(--ink-500)]">{h}</th>
               ))}
             </tr>
           </thead>
           <tbody>
             {products.map((p) => (
-              <tr key={p.id} className="border-t border-slate-200">
-                <td className="px-4 py-3 text-sm text-slate-700"><span className="font-semibold">{p.name}</span></td>
-                <td className="px-4 py-3 text-sm text-slate-700">{categories.find((c) => c.id === p.category_id)?.name || '—'}</td>
-                <td className="px-4 py-3 text-sm text-slate-700">${parseFloat(p.price).toFixed(2)}</td>
-                <td className="px-4 py-3 text-sm text-slate-700">
+              <tr key={p.id} className="border-t border-[var(--line-soft)]">
+                <td className="px-4 py-3 text-sm text-[var(--ink-700)]">
+                  <div className="flex items-center gap-2">
+                    {p.image_url
+                      ? <img src={p.image_url} alt={p.name} className="h-9 w-9 rounded-lg object-cover flex-shrink-0" />
+                      : <div className="h-9 w-9 rounded-lg bg-[#f1e8db] flex-shrink-0" />}
+                    <span className="font-semibold">{p.name}</span>
+                  </div>
+                </td>
+                <td className="px-4 py-3 text-sm text-[var(--ink-700)]">{categories.find((c) => c.id === p.category_id)?.name || '—'}</td>
+                <td className="px-4 py-3 text-sm text-[var(--ink-700)]">${parseFloat(p.price).toFixed(2)}</td>
+                <td className="px-4 py-3 text-sm text-[var(--ink-700)]">
                   <button
                     onClick={() => toggleAvailability(p)}
-                    className={`rounded-full px-3 py-1 text-xs font-semibold ${p.available ? 'bg-green-100 text-green-700' : 'bg-slate-200 text-slate-500'}`}
+                    className={`rounded-full px-3 py-1 text-xs font-semibold ${p.available ? 'bg-emerald-100 text-emerald-700' : 'bg-[#e9dfcf] text-[var(--ink-500)]'}`}
                   >
                     {p.available ? t('admin.products.available') : t('admin.products.unavailable')}
                   </button>
                 </td>
-                <td className="px-4 py-3 text-sm text-slate-700">
-                  <button onClick={() => openEdit(p)} className="mr-2 rounded-md bg-slate-100 px-3 py-1 text-xs text-slate-700">{t('common.edit')}</button>
+                <td className="px-4 py-3 text-sm text-[var(--ink-700)]">
+                  <button onClick={() => openEdit(p)} className="mr-2 rounded-md bg-[#f1e8db] px-3 py-1 text-xs text-[var(--ink-700)]">{t('common.edit')}</button>
                   <button onClick={() => destroy(p.id)} className="rounded-md bg-red-100 px-3 py-1 text-xs text-red-600">{t('common.delete')}</button>
                 </td>
               </tr>
@@ -105,45 +139,57 @@ export default function ProductsManager() {
       </div>
 
       {modal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-          <div className="w-full max-w-xl overflow-hidden rounded-2xl bg-white">
-            <div className="flex items-center justify-between border-b border-slate-200 px-6 py-5">
-              <h2 className="text-xl font-semibold text-slate-900">{modal === 'new' ? t('admin.products.newProductTitle') : t('admin.products.editProductTitle')}</h2>
-              <button onClick={() => setModal(null)} className="text-slate-500">✕</button>
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4 backdrop-blur-[1px]">
+          <div className="w-full max-w-xl overflow-hidden rounded-3xl border border-[var(--line-soft)] bg-[var(--panel)]">
+            <div className="flex items-center justify-between border-b border-[var(--line-soft)] px-6 py-5">
+              <h2 className="font-display text-4xl font-semibold text-[var(--ink-900)]">{modal === 'new' ? t('admin.products.newProductTitle') : t('admin.products.editProductTitle')}</h2>
+              <button onClick={() => setModal(null)} className="rounded-full border border-[var(--line-soft)] px-2.5 py-1 text-[var(--ink-500)]">x</button>
             </div>
             <form onSubmit={save} className="flex flex-col gap-3 p-6">
-              <label className="flex flex-col gap-1 text-sm font-medium text-slate-700">
+              <label className="flex flex-col gap-1 text-sm font-medium text-[var(--ink-700)]">
                 {t('admin.products.form.name')}
-                <input autoFocus required value={form.name} onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))} className="rounded-md border border-slate-300 px-3 py-2" />
+                <input autoFocus required value={form.name} onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))} className="rounded-md border border-[var(--line-soft)] bg-white px-3 py-2" />
               </label>
-              <label className="flex flex-col gap-1 text-sm font-medium text-slate-700">
+              <label className="flex flex-col gap-1 text-sm font-medium text-[var(--ink-700)]">
                 {t('admin.products.form.description')}
-                <textarea value={form.description} onChange={(e) => setForm((f) => ({ ...f, description: e.target.value }))} className="h-20 resize-y rounded-md border border-slate-300 px-3 py-2" />
+                <textarea value={form.description} onChange={(e) => setForm((f) => ({ ...f, description: e.target.value }))} className="h-20 resize-y rounded-md border border-[var(--line-soft)] bg-white px-3 py-2" />
               </label>
-              <label className="flex flex-col gap-1 text-sm font-medium text-slate-700">
+              <label className="flex flex-col gap-1 text-sm font-medium text-[var(--ink-700)]">
                 {t('admin.products.form.price')}
-                <input required type="number" step="0.01" value={form.price} onChange={(e) => setForm((f) => ({ ...f, price: e.target.value }))} className="rounded-md border border-slate-300 px-3 py-2" />
+                <input required type="number" step="0.01" value={form.price} onChange={(e) => setForm((f) => ({ ...f, price: e.target.value }))} className="rounded-md border border-[var(--line-soft)] bg-white px-3 py-2" />
               </label>
-              <label className="flex flex-col gap-1 text-sm font-medium text-slate-700">
+              <label className="flex flex-col gap-1 text-sm font-medium text-[var(--ink-700)]">
                 {t('admin.products.form.category')}
-                <select value={form.category_id} onChange={(e) => setForm((f) => ({ ...f, category_id: Number(e.target.value) }))} className="rounded-md border border-slate-300 px-3 py-2">
+                <select value={form.category_id} onChange={(e) => setForm((f) => ({ ...f, category_id: Number(e.target.value) }))} className="rounded-md border border-[var(--line-soft)] bg-white px-3 py-2">
                   {categories.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
                 </select>
               </label>
-              <label className="flex flex-col gap-1 text-sm font-medium text-slate-700">
+              <label className="flex flex-col gap-1 text-sm font-medium text-[var(--ink-700)]">
                 {t('admin.products.form.position')}
-                <input type="number" value={form.position} onChange={(e) => setForm((f) => ({ ...f, position: Number(e.target.value) }))} className="rounded-md border border-slate-300 px-3 py-2" />
+                <input type="number" value={form.position} onChange={(e) => setForm((f) => ({ ...f, position: Number(e.target.value) }))} className="rounded-md border border-[var(--line-soft)] bg-white px-3 py-2" />
               </label>
-              <label className="flex items-center gap-2 text-sm font-medium text-slate-700">
+              <div className="flex flex-col gap-1 text-sm font-medium text-[var(--ink-700)]">
+                {t('admin.products.form.image')}
+                <div className="flex items-center gap-3">
+                  {imagePreview && (
+                    <img src={imagePreview} alt="preview" className="h-16 w-16 rounded-lg object-cover flex-shrink-0 border border-[var(--line-soft)]" />
+                  )}
+                  <label className="cursor-pointer rounded-md border border-[var(--line-soft)] bg-white px-3 py-2 text-sm text-[var(--ink-500)] hover:bg-[#faf4e9]">
+                    {imageFile ? imageFile.name : t('admin.products.form.chooseImage')}
+                    <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={handleImageChange} />
+                  </label>
+                </div>
+              </div>
+              <label className="flex items-center gap-2 text-sm font-medium text-[var(--ink-700)]">
                 <input type="checkbox" checked={form.available} onChange={(e) => setForm((f) => ({ ...f, available: e.target.checked }))} />
                 {t('admin.products.form.available')}
               </label>
-              {error && <div className="text-sm text-red-600">{error}</div>}
+              {error && <div className="text-sm text-red-700">{error}</div>}
               <div className="mt-1 flex gap-3">
-                <button type="submit" disabled={saving} className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700">
+                <button type="submit" disabled={saving} className="elegant-button-primary !rounded-lg !px-4 !py-2 !text-sm">
                   {saving ? t('common.saving') : t('common.save')}
                 </button>
-                <button type="button" onClick={() => setModal(null)} className="rounded-lg bg-slate-100 px-4 py-2 text-sm font-medium text-slate-700">{t('common.cancel')}</button>
+                <button type="button" onClick={() => setModal(null)} className="elegant-button-secondary !rounded-lg !px-4 !py-2 !text-sm">{t('common.cancel')}</button>
               </div>
             </form>
           </div>

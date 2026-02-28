@@ -46,6 +46,11 @@ class Api::V1::SuperAdmin::RestaurantsController < ApplicationController
     render json: { redirect_to: admin_orders_path }
   end
 
+  def clear_context
+    session.delete(:admin_restaurant_id)
+    render json: { redirect_to: super_admin_restaurants_path }
+  end
+
   private
 
   def restaurant

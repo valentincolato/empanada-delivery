@@ -99,30 +99,30 @@ export default function RestaurantsManager() {
   }, [page, pageCount])
 
   return (
-    <div className="min-h-screen bg-slate-100">
-      <div className="border-b border-slate-200 bg-white px-4 py-4 sm:px-6">
+    <div className="min-h-screen">
+      <div className="border-b border-[var(--line-soft)] bg-[var(--panel)] px-4 py-4 sm:px-6">
         <div className="mx-auto flex w-full max-w-7xl flex-wrap items-end justify-between gap-3">
           <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.16em] text-slate-500">{t('superAdmin.restaurants.subtitle')}</p>
-            <h1 className="text-2xl font-bold text-slate-900">{t('superAdmin.restaurants.title')}</h1>
-            <p className="mt-1 text-sm text-slate-600">{t('superAdmin.restaurants.description')}</p>
+            <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[var(--gold-700)]">{t('superAdmin.restaurants.subtitle')}</p>
+            <h1 className="font-display text-5xl font-semibold text-[var(--ink-900)]">{t('superAdmin.restaurants.title')}</h1>
+            <p className="mt-1 text-sm text-[var(--ink-700)]">{t('superAdmin.restaurants.description')}</p>
           </div>
           <div className="flex items-center gap-3">
-            <LanguageSwitcher className="border-slate-300 bg-slate-100" />
-            <button onClick={openNew} className="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-indigo-700">{t('superAdmin.restaurants.newRestaurant')}</button>
+            <LanguageSwitcher className="!border-[var(--line-soft)] !bg-white/70" />
+            <button onClick={openNew} className="elegant-button-primary !rounded-lg !px-4 !py-2 !text-sm">{t('superAdmin.restaurants.newRestaurant')}</button>
           </div>
         </div>
       </div>
 
       <div className="mx-auto w-full max-w-7xl px-4 py-6 sm:px-6">
-        <div className="mb-5 grid gap-3 rounded-xl border border-slate-200 bg-white p-4 shadow-sm md:grid-cols-[1fr_auto]">
+        <div className="mb-5 grid gap-3 rounded-2xl border border-[var(--line-soft)] bg-white/80 p-4 shadow-[0_12px_30px_rgba(22,18,10,0.08)] md:grid-cols-[1fr_auto]">
           <label className="text-sm">
-            <span className="mb-1 block font-medium text-slate-700">{t('superAdmin.restaurants.search')}</span>
+            <span className="mb-1 block font-medium text-[var(--ink-700)]">{t('superAdmin.restaurants.search')}</span>
             <input
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder={t('superAdmin.restaurants.searchPlaceholder')}
-              className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-800 outline-none ring-indigo-200 transition focus:ring"
+              className="w-full rounded-lg border border-[var(--line-soft)] bg-white px-3 py-2 text-sm text-[var(--ink-800)] outline-none ring-[rgba(157,122,66,0.2)] transition focus:ring"
             />
           </label>
           <div className="grid grid-cols-3 gap-2 md:min-w-72">
@@ -132,7 +132,7 @@ export default function RestaurantsManager() {
           </div>
         </div>
 
-        <div className="mb-4 flex items-center justify-between text-sm text-slate-600">
+        <div className="mb-4 flex items-center justify-between text-sm text-[var(--ink-700)]">
           <span>
             {t('superAdmin.restaurants.showing', { from: pageItems.length === 0 ? 0 : startIndex + 1, to: startIndex + pageItems.length, total: filtered.length })}
           </span>
@@ -146,36 +146,36 @@ export default function RestaurantsManager() {
         )}
 
         {pageItems.length === 0 ? (
-          <div className="rounded-xl border border-slate-200 bg-white p-10 text-center text-slate-500 shadow-sm">
+          <div className="rounded-2xl border border-[var(--line-soft)] bg-white/80 p-10 text-center text-[var(--ink-500)] shadow-[0_12px_30px_rgba(22,18,10,0.08)]">
             {t('superAdmin.restaurants.noResults')}
           </div>
         ) : (
           <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
             {pageItems.map((r) => (
-              <article key={r.id} className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm transition hover:-translate-y-0.5 hover:shadow">
+              <article key={r.id} className="elegant-card bg-white/80 p-4 transition hover:-translate-y-0.5">
                 <div className="mb-3 flex items-start justify-between gap-2">
                   <div>
-                    <h3 className="text-base font-bold text-slate-900">{r.name}</h3>
-                    <p className="mt-1 inline-flex rounded bg-slate-100 px-2 py-0.5 font-mono text-xs text-slate-600">{r.slug}</p>
+                    <h3 className="font-display text-3xl font-semibold text-[var(--ink-900)]">{r.name}</h3>
+                    <p className="mt-1 inline-flex rounded bg-[#f1e8db] px-2 py-0.5 font-mono text-xs text-[var(--ink-700)]">{r.slug}</p>
                   </div>
                   <span className={`rounded-full px-2 py-0.5 text-xs font-semibold ${r.active ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700'}`}>
                     {r.active ? t('superAdmin.restaurants.active') : t('superAdmin.restaurants.inactive')}
                   </span>
                 </div>
 
-                <div className="space-y-1 text-sm text-slate-600">
-                  <p><span className="font-medium text-slate-700">{t('superAdmin.restaurants.currency')}:</span> {r.currency}</p>
-                  <p><span className="font-medium text-slate-700">{t('superAdmin.restaurants.phone')}:</span> {r.phone || t('superAdmin.restaurants.notSet')}</p>
-                  <p><span className="font-medium text-slate-700">{t('superAdmin.restaurants.address')}:</span> {r.address || t('superAdmin.restaurants.notSet')}</p>
+                <div className="space-y-1 text-sm text-[var(--ink-700)]">
+                  <p><span className="font-medium text-[var(--ink-900)]">{t('superAdmin.restaurants.currency')}:</span> {r.currency}</p>
+                  <p><span className="font-medium text-[var(--ink-900)]">{t('superAdmin.restaurants.phone')}:</span> {r.phone || t('superAdmin.restaurants.notSet')}</p>
+                  <p><span className="font-medium text-[var(--ink-900)]">{t('superAdmin.restaurants.address')}:</span> {r.address || t('superAdmin.restaurants.notSet')}</p>
                 </div>
 
                 <div className="mt-4 flex flex-wrap gap-2">
-                  <button onClick={() => manageOperations(r.id)} className="rounded-md bg-indigo-600 px-2.5 py-1.5 text-xs font-semibold text-white transition hover:bg-indigo-700">
+                  <button onClick={() => manageOperations(r.id)} className="elegant-button-primary !rounded-md !px-2.5 !py-1.5 !text-xs">
                     {t('superAdmin.restaurants.manageOperations')}
                   </button>
-                  <a href={`/r/${r.slug}`} target="_blank" rel="noreferrer" className="rounded-md border border-slate-300 px-2.5 py-1.5 text-xs font-semibold text-slate-700 transition hover:bg-slate-50">{t('superAdmin.restaurants.viewMenu')}</a>
-                  <button onClick={() => openEdit(r)} className="rounded-md bg-slate-100 px-2.5 py-1.5 text-xs font-semibold text-slate-700 transition hover:bg-slate-200">{t('common.edit')}</button>
-                  <button onClick={() => destroy(r.id)} className="rounded-md bg-red-100 px-2.5 py-1.5 text-xs font-semibold text-red-700 transition hover:bg-red-200">{t('common.delete')}</button>
+                  <a href={`/r/${r.slug}`} target="_blank" rel="noreferrer" className="elegant-button-secondary !rounded-md !px-2.5 !py-1.5 !text-xs">{t('superAdmin.restaurants.viewMenu')}</a>
+                  <button onClick={() => openEdit(r)} className="rounded-md bg-[#f1e8db] px-2.5 py-1.5 text-xs font-semibold text-[var(--ink-700)]">{t('common.edit')}</button>
+                  <button onClick={() => destroy(r.id)} className="rounded-md bg-red-100 px-2.5 py-1.5 text-xs font-semibold text-red-700">{t('common.delete')}</button>
                 </div>
               </article>
             ))}
@@ -187,7 +187,7 @@ export default function RestaurantsManager() {
             type="button"
             disabled={safePage === 1}
             onClick={() => setPage(1)}
-            className="rounded-md border border-slate-300 bg-white px-3 py-1.5 text-sm text-slate-700 disabled:cursor-not-allowed disabled:opacity-50"
+            className="rounded-md border border-[var(--line-soft)] bg-white px-3 py-1.5 text-sm text-[var(--ink-700)] disabled:cursor-not-allowed disabled:opacity-50"
           >
             {t('superAdmin.restaurants.pagination.first')}
           </button>
@@ -195,7 +195,7 @@ export default function RestaurantsManager() {
             type="button"
             disabled={safePage === 1}
             onClick={() => setPage((p) => Math.max(1, p - 1))}
-            className="rounded-md border border-slate-300 bg-white px-3 py-1.5 text-sm text-slate-700 disabled:cursor-not-allowed disabled:opacity-50"
+            className="rounded-md border border-[var(--line-soft)] bg-white px-3 py-1.5 text-sm text-[var(--ink-700)] disabled:cursor-not-allowed disabled:opacity-50"
           >
             {t('superAdmin.restaurants.pagination.prev')}
           </button>
@@ -204,11 +204,11 @@ export default function RestaurantsManager() {
             .filter((n) => Math.abs(n - safePage) <= 2 || n === 1 || n === pageCount)
             .map((n, idx, arr) => (
               <span key={n} className="inline-flex items-center">
-                {idx > 0 && arr[idx - 1] !== n - 1 && <span className="px-1 text-slate-400">…</span>}
+                {idx > 0 && arr[idx - 1] !== n - 1 && <span className="px-1 text-[var(--ink-500)]">...</span>}
                 <button
                   type="button"
                   onClick={() => setPage(n)}
-                  className={`rounded-md px-3 py-1.5 text-sm font-medium ${safePage === n ? 'bg-indigo-600 text-white' : 'border border-slate-300 bg-white text-slate-700'}`}
+                  className={`rounded-md px-3 py-1.5 text-sm font-medium ${safePage === n ? 'bg-[var(--gold-600)] text-white' : 'border border-[var(--line-soft)] bg-white text-[var(--ink-700)]'}`}
                 >
                   {n}
                 </button>
@@ -219,7 +219,7 @@ export default function RestaurantsManager() {
             type="button"
             disabled={safePage === pageCount}
             onClick={() => setPage((p) => Math.min(pageCount, p + 1))}
-            className="rounded-md border border-slate-300 bg-white px-3 py-1.5 text-sm text-slate-700 disabled:cursor-not-allowed disabled:opacity-50"
+            className="rounded-md border border-[var(--line-soft)] bg-white px-3 py-1.5 text-sm text-[var(--ink-700)] disabled:cursor-not-allowed disabled:opacity-50"
           >
             {t('superAdmin.restaurants.pagination.next')}
           </button>
@@ -227,7 +227,7 @@ export default function RestaurantsManager() {
             type="button"
             disabled={safePage === pageCount}
             onClick={() => setPage(pageCount)}
-            className="rounded-md border border-slate-300 bg-white px-3 py-1.5 text-sm text-slate-700 disabled:cursor-not-allowed disabled:opacity-50"
+            className="rounded-md border border-[var(--line-soft)] bg-white px-3 py-1.5 text-sm text-[var(--ink-700)] disabled:cursor-not-allowed disabled:opacity-50"
           >
             {t('superAdmin.restaurants.pagination.last')}
           </button>
@@ -235,11 +235,11 @@ export default function RestaurantsManager() {
       </div>
 
       {modal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-          <div className="max-h-[90vh] w-full max-w-xl overflow-y-auto rounded-2xl bg-white">
-            <div className="flex items-center justify-between border-b border-slate-200 px-6 py-5">
-              <h2 className="text-xl font-semibold text-slate-900">{modal === 'new' ? t('superAdmin.restaurants.modal.new') : t('superAdmin.restaurants.modal.edit', { name: modal.name })}</h2>
-              <button onClick={() => setModal(null)} className="text-slate-500">✕</button>
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4 backdrop-blur-[1px]">
+          <div className="max-h-[90vh] w-full max-w-xl overflow-y-auto rounded-3xl border border-[var(--line-soft)] bg-[var(--panel)]">
+            <div className="flex items-center justify-between border-b border-[var(--line-soft)] px-6 py-5">
+              <h2 className="font-display text-4xl font-semibold text-[var(--ink-900)]">{modal === 'new' ? t('superAdmin.restaurants.modal.new') : t('superAdmin.restaurants.modal.edit', { name: modal.name })}</h2>
+              <button onClick={() => setModal(null)} className="rounded-full border border-[var(--line-soft)] px-2.5 py-1 text-[var(--ink-500)]">x</button>
             </div>
             <form onSubmit={save} className="flex flex-col gap-3 p-6">
               {[
@@ -249,42 +249,42 @@ export default function RestaurantsManager() {
                 ['phone', t('superAdmin.restaurants.modal.fields.phone')],
                 ['description', t('superAdmin.restaurants.modal.fields.description')],
               ].map(([key, label, req]) => (
-                <label key={key} className="flex flex-col gap-1 text-sm font-medium text-slate-700">
+                <label key={key} className="flex flex-col gap-1 text-sm font-medium text-[var(--ink-700)]">
                   {label}
-                  <input required={req} value={form[key] || ''} onChange={(e) => setForm((f) => ({ ...f, [key]: e.target.value }))} className="rounded-md border border-slate-300 px-3 py-2" />
+                  <input required={req} value={form[key] || ''} onChange={(e) => setForm((f) => ({ ...f, [key]: e.target.value }))} className="rounded-md border border-[var(--line-soft)] bg-white px-3 py-2" />
                 </label>
               ))}
 
-              <label className="flex flex-col gap-1 text-sm font-medium text-slate-700">
+              <label className="flex flex-col gap-1 text-sm font-medium text-[var(--ink-700)]">
                 {t('superAdmin.restaurants.modal.fields.currency')}
-                <select value={form.currency} onChange={(e) => setForm((f) => ({ ...f, currency: e.target.value }))} className="rounded-md border border-slate-300 px-3 py-2">
+                <select value={form.currency} onChange={(e) => setForm((f) => ({ ...f, currency: e.target.value }))} className="rounded-md border border-[var(--line-soft)] bg-white px-3 py-2">
                   {['ARS', 'USD', 'EUR'].map((c) => <option key={c} value={c}>{c}</option>)}
                 </select>
               </label>
 
               {modal === 'new' && (
                 <>
-                  <hr className="my-2 border-slate-200" />
-                  <p className="font-semibold text-slate-700">{t('superAdmin.restaurants.modal.adminUser')}</p>
+                  <hr className="my-2 border-[var(--line-soft)]" />
+                  <p className="font-semibold text-[var(--ink-700)]">{t('superAdmin.restaurants.modal.adminUser')}</p>
                   {[
                     ['admin_email', t('superAdmin.restaurants.modal.fields.adminEmail'), true, 'email'],
                     ['admin_password', t('superAdmin.restaurants.modal.fields.adminPassword'), true, 'password'],
                     ['admin_name', t('superAdmin.restaurants.modal.fields.adminName'), false, 'text'],
                   ].map(([key, label, req, type]) => (
-                    <label key={key} className="flex flex-col gap-1 text-sm font-medium text-slate-700">
+                    <label key={key} className="flex flex-col gap-1 text-sm font-medium text-[var(--ink-700)]">
                       {label}
-                      <input required={req} type={type} value={form[key] || ''} onChange={(e) => setForm((f) => ({ ...f, [key]: e.target.value }))} className="rounded-md border border-slate-300 px-3 py-2" />
+                      <input required={req} type={type} value={form[key] || ''} onChange={(e) => setForm((f) => ({ ...f, [key]: e.target.value }))} className="rounded-md border border-[var(--line-soft)] bg-white px-3 py-2" />
                     </label>
                   ))}
                 </>
               )}
 
-              {error && <div className="text-sm text-red-600">{error}</div>}
+              {error && <div className="text-sm text-red-700">{error}</div>}
               <div className="mt-1 flex gap-3">
-                <button type="submit" disabled={saving} className="rounded-lg bg-violet-600 px-4 py-2 text-sm font-semibold text-white hover:bg-violet-700">
+                <button type="submit" disabled={saving} className="elegant-button-primary !rounded-lg !px-4 !py-2 !text-sm">
                   {saving ? t('common.saving') : t('common.save')}
                 </button>
-                <button type="button" onClick={() => setModal(null)} className="rounded-lg bg-slate-100 px-4 py-2 text-sm font-medium text-slate-700">{t('common.cancel')}</button>
+                <button type="button" onClick={() => setModal(null)} className="elegant-button-secondary !rounded-lg !px-4 !py-2 !text-sm">{t('common.cancel')}</button>
               </div>
             </form>
           </div>
@@ -296,9 +296,9 @@ export default function RestaurantsManager() {
 
 function StatCard({ label, value }) {
   return (
-    <div className="rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-center">
-      <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">{label}</p>
-      <p className="text-lg font-bold text-slate-900">{value}</p>
+    <div className="rounded-lg border border-[var(--line-soft)] bg-[#f9f1e5] px-3 py-2 text-center">
+      <p className="text-xs font-semibold uppercase tracking-wide text-[var(--ink-500)]">{label}</p>
+      <p className="text-lg font-bold text-[var(--ink-900)]">{value}</p>
     </div>
   )
 }

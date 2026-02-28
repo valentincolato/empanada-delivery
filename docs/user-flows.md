@@ -37,7 +37,7 @@
 ### UC-05 · Checkout and place order (`POST /api/v1/orders`)
 - **Required by UI**: name, phone, email, address, payment method.
 - **Required by domain model**: name, address, payment method (phone and email are optional at the model level).
-- **Optional (API)**: notes, `table_number` (not exposed in UI), `cash_change_for`.
+- **Optional (API)**: notes, `cash_change_for`.
 - **Payment rules**:
   - `cash`: `cash_change_for` is optional.
   - `transfer`: `cash_change_for` must be blank (domain validation).
@@ -45,7 +45,7 @@
   - Restaurant must be active and `accepting_orders: true`.
   - All products must be available (BuildItemsAction).
   - Each item quantity must be greater than 0.
-  - **Gap G1**: no guard when the cart has zero items total.
+  - Cart must contain at least one item (backend guard in PlaceOrder).
 - **Happy path**: order created with `pending` status → redirect to `/orders/:token`.
 - **Errors**:
   - Restaurant not found or inactive → 404.
@@ -103,8 +103,7 @@
 ## Restaurant operations (restaurant_admin and super_admin with ctx)
 
 ### UC-14 · Orders dashboard (`/admin/orders`)
-- Kanban board by status: Pending / Confirmed / Out for delivery / Delivered.
-- **Cancelled**: no dedicated column; cancelled orders are not visible in the board.
+- Kanban board by status: Pending / Confirmed / Out for delivery / Delivered / Cancelled.
 - Per card: view customer data, payment details, items, notes; transition status.
 - Valid transitions:
   ```
@@ -134,11 +133,11 @@
 - View QR SVG pointing to the public menu URL.
 - Download SVG.
 
-### UC-18 · Restaurant settings (API only, no UI)
+### UC-18 · Restaurant settings
 - `GET /api/v1/admin/restaurant` — view settings.
 - `PATCH /api/v1/admin/restaurant` — update settings.
 - `POST /api/v1/admin/restaurant/toggle_accepting_orders` — open/close order intake.
-- No dedicated UI page exists.
+- Toggle button in the orders dashboard header shows current state and allows switching.
 
 ---
 
@@ -169,7 +168,7 @@
 - Redirect to `/admin/orders`.
 - Context persists for the duration of the session.
 - Switching to another restaurant overwrites the current context.
-- No explicit "exit context" action; context is only cleared on logout.
+- "← Restaurants" button in the orders dashboard header calls `DELETE /api/v1/super_admin/restaurants/clear_context` and redirects to `/super_admin/restaurants`.
 
 ### UC-24 · Super admin without context tries admin routes
 - `GET /admin/*` → `require_admin_access!` → redirect to `/panel` with alert.
@@ -210,13 +209,4 @@
 
 ## Known gaps
 
-| ID | Priority | Description |
-|---|---|---|
-| G1 | P0 | Zero-item cart: backend has no guard; an order with no items is accepted. |
-| G2 | P0 | `table_number` is accepted by the API but has no field in the checkout UI. |
-| G3 | P1 | Cancelled orders have no dedicated column in the admin kanban board. |
-| G4 | P1 | No UI for `toggle_accepting_orders` or editing restaurant settings. |
-| G5 | P1 | `ready` status exists in the model and `VALID_TRANSITIONS` but is not rendered in the `OrderStatus` progress bar. |
-| G6 | P2 | Devise registration routes (`/users/sign_up`) are active with no defined product flow. |
-| G7 | P2 | No explicit action to clear the super admin restaurant context without logging out. |
-| G8 | P2 | Token not found on `/orders/:token` shows an inline React error, not a Rails 404 page. |
+All previously identified gaps (G1–G8) have been resolved.

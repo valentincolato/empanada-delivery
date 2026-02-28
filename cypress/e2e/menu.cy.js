@@ -82,7 +82,6 @@ describe('Public menu', () => {
     cy.get('[data-testid="product-modal"]').within(() => {
       cy.contains('Carne Picante').should('be.visible')
       cy.contains('Relleno de carne vacuna').should('be.visible')
-      cy.get('img').should('have.length', 0)
       cy.contains('button', 'Cancelar').click()
     })
     cy.get('[data-testid="product-modal"]').should('not.exist')
@@ -119,5 +118,7 @@ describe('Public menu', () => {
     cy.visit(`/r/${SLUG}`)
     cy.wait('@menuApi')
     cy.contains('no está aceptando pedidos').should('be.visible')
+    cy.get('[data-testid="product-card"]').should('not.exist')
+    cy.contains('🛒').should('not.exist')
   })
 })

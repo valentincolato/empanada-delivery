@@ -17,7 +17,6 @@ class Api::V1::OrdersController < ActionController::API
       customer_address: order_params[:customer_address],
       payment_method: order_params[:payment_method],
       cash_change_for_cents: cash_change_for_cents,
-      table_number: order_params[:table_number],
       notes: order_params[:notes],
       cart_items: order_params[:items]
     ).call
@@ -35,7 +34,7 @@ class Api::V1::OrdersController < ActionController::API
     params.require(:order).permit(
       :restaurant_slug, :customer_name, :customer_phone,
       :customer_email, :customer_address, :payment_method,
-      :cash_change_for, :table_number, :notes,
+      :cash_change_for, :notes,
       items: [ :product_id, :quantity, :notes ]
     )
   end

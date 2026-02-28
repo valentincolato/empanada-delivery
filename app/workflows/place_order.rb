@@ -1,7 +1,7 @@
 class PlaceOrder
   def initialize(restaurant:, customer_name:, customer_phone: nil,
                  customer_email: nil, customer_address:, payment_method:,
-                 cash_change_for_cents: nil, table_number: nil, notes: nil,
+                 cash_change_for_cents: nil, notes: nil,
                  cart_items:, user: nil)
     @restaurant = restaurant
     @customer_name = customer_name
@@ -10,7 +10,6 @@ class PlaceOrder
     @customer_address = customer_address
     @payment_method = payment_method
     @cash_change_for_cents = cash_change_for_cents
-    @table_number = table_number
     @notes = notes
     @cart_items = cart_items
     @user = user
@@ -32,6 +31,7 @@ class PlaceOrder
   end
 
   def build_items
+    raise "Order must contain at least one item" if @cart_items.blank?
     result = Orders::BuildItemsAction.call(
       restaurant: @restaurant,
       cart_items: @cart_items
@@ -48,7 +48,6 @@ class PlaceOrder
       customer_address: @customer_address,
       payment_method: @payment_method,
       cash_change_for_cents: @cash_change_for_cents,
-      table_number: @table_number,
       notes: @notes,
       items: items,
       user: @user

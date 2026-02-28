@@ -34,28 +34,45 @@ especiales = restaurant.categories.find_or_create_by!(name: "Empanadas Especiale
 bebidas = restaurant.categories.find_or_create_by!(name: "Bebidas") { |c| c.position = 3 }
 postres = restaurant.categories.find_or_create_by!(name: "Postres") { |c| c.position = 4 }
 
-# Products
+# Attach seed images helper
+def attach_seed_image(product, filename)
+  path = Rails.root.join("db", "seed_images", filename)
+  return unless File.exist?(path)
+  if product.image.attached?
+    return if product.image.filename.to_s == filename
+    product.image.purge
+  end
+
+  product.image.attach(
+    io: File.open(path),
+    filename: filename,
+    content_type: "image/jpeg"
+  )
+end
+
+# Products                                                                                      image file
 [
-  [ clasicas, "Carne Picante",    "Relleno de carne vacuna con especias picantes",   850.00, 1 ],
-  [ clasicas, "Carne Suave",      "Relleno de carne vacuna con especias suaves",     850.00, 2 ],
-  [ clasicas, "Jamón y Queso",    "Jamón cocido y queso cremoso",                    800.00, 3 ],
-  [ clasicas, "Choclo",           "Choclo cremoso con queso",                        750.00, 4 ],
-  [ clasicas, "Humita",           "Humita tradicional con leche",                    750.00, 5 ],
-  [ especiales, "Pollo al Curry", "Pollo desmenuzado con curry y vegetales",         950.00, 1 ],
-  [ especiales, "Caprese",        "Tomate, mozzarella y albahaca fresca",            900.00, 2 ],
-  [ especiales, "Roquefort y Nuez", "Queso roquefort con nueces tostadas",            1000.00, 3 ],
-  [ bebidas, "Agua Mineral",      "500ml",                                           350.00, 1 ],
-  [ bebidas, "Gaseosa",           "Coca-Cola, Sprite o Fanta 500ml",                 450.00, 2 ],
-  [ bebidas, "Limonada Natural",  "Preparada al momento",                            600.00, 3 ],
-  [ postres, "Alfajor de Maicena", "Relleno de dulce de leche, cubierto con azúcar", 500.00, 1 ],
-  [ postres, "Brownie",           "Con helado de crema americana",                   750.00, 2 ]
-].each do |category, name, description, price, position|
-  category.products.find_or_create_by!(name: name) do |p|
+  [ clasicas,   "Carne Picante",      "Relleno de carne vacuna con especias picantes",    850.00, 1, "empanada_carne.jpg"    ],
+  [ clasicas,   "Carne Suave",        "Relleno de carne vacuna con especias suaves",      850.00, 2, "empanada_carne.jpg"    ],
+  [ clasicas,   "Jamón y Queso",      "Jamón cocido y queso cremoso",                     800.00, 3, "empanada_horno.jpg"    ],
+  [ clasicas,   "Choclo",             "Choclo cremoso con queso",                         750.00, 4, "empanada_horno.jpg"    ],
+  [ clasicas,   "Humita",             "Humita tradicional con leche",                     750.00, 5, "empanada_horno.jpg"    ],
+  [ especiales, "Pollo al Curry",     "Pollo desmenuzado con curry y vegetales",          950.00, 1, "pollo_curry.jpg"       ],
+  [ especiales, "Caprese",            "Tomate, mozzarella y albahaca fresca",             900.00, 2, "caprese.jpg"           ],
+  [ especiales, "Roquefort y Nuez",   "Queso roquefort con nueces tostadas",             1000.00, 3, "empanada_horno.jpg"   ],
+  [ bebidas,    "Agua Mineral",       "500ml",                                            350.00, 1, "agua_mineral.jpg"      ],
+  [ bebidas,    "Gaseosa",            "Coca-Cola, Sprite o Fanta 500ml",                  450.00, 2, "gaseosa.jpg"           ],
+  [ bebidas,    "Limonada Natural",   "Preparada al momento",                             600.00, 3, "limonada.jpg"          ],
+  [ postres,    "Alfajor de Maicena", "Relleno de dulce de leche, cubierto con azúcar",   500.00, 1, "alfajor.jpg"           ],
+  [ postres,    "Brownie",            "Con helado de crema americana",                    750.00, 2, "brownie.jpg"           ],
+].each do |category, name, description, price, position, image_file|
+  product = category.products.find_or_create_by!(name: name) do |p|
     p.description = description
     p.price = price
     p.position = position
     p.available = true
   end
+  attach_seed_image(product, image_file)
 end
 
 puts "Seeded #{Product.count} products across #{Category.count} categories"

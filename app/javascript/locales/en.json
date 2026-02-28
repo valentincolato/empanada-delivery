@@ -91,16 +91,22 @@
       "transfer": "Transfer",
       "changeFor": "(change for ${{amount}})",
       "legacyReady": "Legacy ready orders",
+      "accepting": "Accepting orders",
+      "notAccepting": "Closed",
+      "toggleOpen": "Open",
+      "toggleClose": "Close",
       "nav": {
         "products": "Products",
         "categories": "Categories",
-        "qr": "QR Code"
+        "qr": "QR Code",
+        "backToRestaurants": "← Restaurants"
       },
       "columns": {
         "pending": "Pending",
         "confirmed": "Confirmed",
         "out_for_delivery": "Out for delivery",
-        "delivered": "Delivered"
+        "delivered": "Delivered",
+        "cancelled": "Cancelled"
       },
       "actions": {
         "confirmed": "Confirm",
@@ -130,7 +136,9 @@
         "price": "Price *",
         "category": "Category *",
         "position": "Position",
-        "available": "Available"
+        "available": "Available",
+        "image": "Image",
+        "chooseImage": "Choose image…"
       },
       "deleteConfirm": "Delete this product?"
     },

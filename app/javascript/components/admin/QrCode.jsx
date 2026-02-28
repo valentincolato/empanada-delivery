@@ -24,24 +24,24 @@ export default function QrCode() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-100 font-sans">
-      <div className="border-b border-slate-200 bg-white px-6 py-4">
-        <a href="/admin/orders" className="mb-1 block text-sm text-slate-500">{t('admin.qr.backToOrders')}</a>
-        <h1 className="text-xl font-bold text-slate-900">{t('admin.qr.title')}</h1>
+    <div className="min-h-screen">
+      <div className="border-b border-[var(--line-soft)] bg-[var(--panel)] px-6 py-4">
+        <a href="/admin/orders" className="mb-1 block text-sm text-[var(--ink-500)]">{t('admin.qr.backToOrders')}</a>
+        <h1 className="font-display text-4xl font-semibold text-[var(--ink-900)]">{t('admin.qr.title')}</h1>
       </div>
       <div className="flex justify-center px-4 py-12">
-        {error && <div className="text-red-600">{error}</div>}
+        {error && <div className="text-red-700">{error}</div>}
         {data && (
-          <div className="w-full max-w-md rounded-2xl bg-white p-10 text-center shadow">
-            <p className="mb-6 break-all text-sm text-blue-600">{data.url}</p>
+          <div className="w-full max-w-md rounded-3xl border border-[var(--line-soft)] bg-[var(--panel)] p-10 text-center shadow-[0_12px_30px_rgba(22,18,10,0.08)]">
+            <p className="mb-6 break-all text-sm text-[var(--gold-700)]">{data.url}</p>
             <div className="mx-auto mb-6 inline-block" dangerouslySetInnerHTML={{ __html: data.svg }} />
             <button
               onClick={downloadSvg}
-              className="rounded-lg bg-blue-600 px-6 py-3 text-sm font-semibold text-white transition hover:bg-blue-700"
+              className="elegant-button-primary !rounded-lg !px-6 !py-3 !text-sm"
             >
               {t('admin.qr.download')}
             </button>
-            <p className="mt-4 text-sm text-slate-400">{t('admin.qr.instructions')}</p>
+            <p className="mt-4 text-sm text-[var(--ink-500)]">{t('admin.qr.instructions')}</p>
           </div>
         )}
       </div>

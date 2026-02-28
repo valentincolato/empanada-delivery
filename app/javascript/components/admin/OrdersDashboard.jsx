@@ -3,17 +3,19 @@ import { useTranslation } from 'react-i18next'
 import { api } from '@utils/api'
 import LanguageSwitcher from '../LanguageSwitcher'
 
-export default function OrdersDashboard() {
+export default function OrdersDashboard({ isSuperAdmin }) {
   const { t } = useTranslation()
   const [orders, setOrders] = useState([])
+  const [restaurant, setRestaurant] = useState(null)
   const [loading, setLoading] = useState(true)
   const [updating, setUpdating] = useState(null)
 
   const COLUMNS = [
-    { status: 'pending', labelKey: 'admin.orders.columns.pending', header: 'border-amber-500 bg-amber-100 text-amber-700', badge: 'bg-amber-500' },
-    { status: 'confirmed', labelKey: 'admin.orders.columns.confirmed', header: 'border-blue-500 bg-blue-100 text-blue-700', badge: 'bg-blue-500' },
-    { status: 'out_for_delivery', labelKey: 'admin.orders.columns.out_for_delivery', header: 'border-indigo-500 bg-indigo-100 text-indigo-700', badge: 'bg-indigo-500' },
-    { status: 'delivered', labelKey: 'admin.orders.columns.delivered', header: 'border-emerald-500 bg-emerald-100 text-emerald-700', badge: 'bg-emerald-500' },
+    { status: 'pending', labelKey: 'admin.orders.columns.pending', header: 'border-[#c39a5f] bg-[#f9efe0] text-[var(--gold-700)]', badge: 'bg-[var(--gold-600)]' },
+    { status: 'confirmed', labelKey: 'admin.orders.columns.confirmed', header: 'border-[#80b1a5] bg-[#e8f4ef] text-[#2f6959]', badge: 'bg-[#3e8b75]' },
+    { status: 'out_for_delivery', labelKey: 'admin.orders.columns.out_for_delivery', header: 'border-[#9f88b6] bg-[#f0ebf7] text-[#5f4a76]', badge: 'bg-[#7d6597]' },
+    { status: 'delivered', labelKey: 'admin.orders.columns.delivered', header: 'border-[#98ae7f] bg-[#eff5e8] text-[#4b6537]', badge: 'bg-[#6f8a52]' },
+    { status: 'cancelled', labelKey: 'admin.orders.columns.cancelled', header: 'border-red-400 bg-red-100 text-red-700', badge: 'bg-red-400' },
   ]
 
   const TRANSITIONS = {
@@ -34,11 +36,21 @@ export default function OrdersDashboard() {
     }
   }, [])
 
+  const fetchRestaurant = useCallback(async () => {
+    try {
+      const data = await api.get('/api/v1/admin/restaurant')
+      setRestaurant(data)
+    } catch (err) {
+      console.error(err)
+    }
+  }, [])
+
   useEffect(() => {
     fetchOrders()
+    fetchRestaurant()
     const interval = setInterval(fetchOrders, 20000)
     return () => clearInterval(interval)
-  }, [fetchOrders])
+  }, [fetchOrders, fetchRestaurant])
 
   async function updateStatus(orderId, newStatus) {
     setUpdating(orderId)
@@ -52,33 +64,70 @@ export default function OrdersDashboard() {
     }
   }
 
-  if (loading) return <div className="flex justify-center p-16 text-slate-500">{t('admin.orders.loading')}</div>
+  async function toggleAccepting() {
+    try {
+      const data = await api.post('/api/v1/admin/restaurant/toggle_accepting_orders', {})
+      setRestaurant((prev) => prev ? { ...prev, settings: { ...prev.settings, accepting_orders: data.accepting_orders } } : prev)
+    } catch (err) {
+      alert(err.message)
+    }
+  }
 
+  async function clearContext() {
+    try {
+      await api.delete('/api/v1/super_admin/restaurants/clear_context')
+      window.location.href = '/super_admin/restaurants'
+    } catch (err) {
+      alert(err.message)
+    }
+  }
+
+  if (loading) return <div className="flex justify-center p-16 text-[var(--ink-500)]">{t('admin.orders.loading')}</div>
+
+  const accepting = restaurant?.settings?.accepting_orders !== false
   const legacyReady = orders.filter((order) => order.status === 'ready')
 
   return (
-    <div className="min-h-screen bg-slate-100">
-      <div className="flex items-center justify-between border-b border-slate-200 bg-white px-6 py-4">
-        <h1 className="text-xl font-bold text-slate-900">{t('admin.orders.title')}</h1>
+    <div className="min-h-screen">
+      <div className="flex items-center justify-between border-b border-[var(--line-soft)] bg-[var(--panel)] px-6 py-4">
+        <h1 className="font-display text-4xl font-semibold text-[var(--ink-900)]">{t('admin.orders.title')}</h1>
         <div className="flex items-center gap-3">
-          <a href="/admin/products" className="text-sm font-medium text-blue-600">{t('admin.orders.nav.products')}</a>
-          <a href="/admin/categories" className="text-sm font-medium text-blue-600">{t('admin.orders.nav.categories')}</a>
-          <a href="/admin/qr" className="text-sm font-medium text-blue-600">{t('admin.orders.nav.qr')}</a>
+          {isSuperAdmin && (
+            <button
+              onClick={clearContext}
+              className="text-sm font-medium text-[var(--gold-700)]"
+            >
+              {t('admin.orders.nav.backToRestaurants')}
+            </button>
+          )}
+          <a href="/admin/products" className="text-sm font-medium text-[var(--gold-700)]">{t('admin.orders.nav.products')}</a>
+          <a href="/admin/categories" className="text-sm font-medium text-[var(--gold-700)]">{t('admin.orders.nav.categories')}</a>
+          <a href="/admin/qr" className="text-sm font-medium text-[var(--gold-700)]">{t('admin.orders.nav.qr')}</a>
+          {restaurant && (
+            <button
+              onClick={toggleAccepting}
+              className={`rounded-full px-3 py-1 text-xs font-semibold ${accepting ? 'bg-emerald-100 text-emerald-700 border border-emerald-300' : 'bg-red-100 text-red-700 border border-red-300'}`}
+            >
+              {accepting ? t('admin.orders.accepting') : t('admin.orders.notAccepting')}
+              {' · '}
+              {accepting ? t('admin.orders.toggleClose') : t('admin.orders.toggleOpen')}
+            </button>
+          )}
           <LanguageSwitcher />
         </div>
       </div>
 
-      <div className="grid gap-4 p-6 md:grid-cols-2 xl:grid-cols-4">
+      <div className="grid gap-4 p-6 md:grid-cols-2 xl:grid-cols-5">
         {COLUMNS.map(({ status, labelKey, header, badge }) => {
           const columnOrders = orders.filter((order) => order.status === status)
           return (
-            <div key={status} className="overflow-hidden rounded-xl bg-white shadow" data-testid={`column-${status}`}>
+            <div key={status} className="elegant-card overflow-hidden bg-white/75" data-testid={`column-${status}`}>
               <div className={`flex items-center justify-between border-t-4 px-4 py-3 ${header}`}>
-                <span className="font-bold">{t(labelKey)}</span>
+                <span className="text-sm font-semibold uppercase tracking-[0.12em]">{t(labelKey)}</span>
                 <span className={`rounded-full px-2 py-0.5 text-xs font-bold text-white ${badge}`}>{columnOrders.length}</span>
               </div>
               <div className="flex flex-col gap-3 p-3">
-                {columnOrders.length === 0 && <div className="py-6 text-center text-sm text-slate-400">{t('admin.orders.noOrders')}</div>}
+                {columnOrders.length === 0 && <div className="py-6 text-center text-sm text-[var(--ink-500)]">{t('admin.orders.noOrders')}</div>}
                 {columnOrders.map((order) => (
                   <OrderCard
                     key={order.id}
@@ -96,13 +145,13 @@ export default function OrdersDashboard() {
 
       {legacyReady.length > 0 && (
         <div className="px-6 pb-8">
-          <div className="mb-3 text-sm font-semibold text-slate-700">{t('admin.orders.legacyReady')}</div>
+          <div className="mb-3 text-sm font-semibold text-[var(--ink-700)]">{t('admin.orders.legacyReady')}</div>
           <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
             {legacyReady.map((order) => (
               <OrderCard
                 key={order.id}
                 order={order}
-                transitions={{ pending: ['confirmed', 'cancelled'], confirmed: ['out_for_delivery', 'cancelled'], out_for_delivery: ['delivered', 'cancelled'], ready: ['delivered', 'cancelled'] }[order.status] || []}
+                transitions={TRANSITIONS[order.status] || []}
                 onUpdate={updateStatus}
                 isUpdating={updating === order.id}
               />
@@ -119,29 +168,28 @@ function OrderCard({ order, transitions, onUpdate, isUpdating }) {
   const minutesAgo = Math.round((Date.now() - new Date(order.created_at)) / 60000)
 
   return (
-    <div className="rounded-lg border border-slate-200 bg-slate-50 p-4" data-testid="order-card">
+    <div className="rounded-xl border border-[var(--line-soft)] bg-white/80 p-4" data-testid="order-card">
       <div className="mb-1 flex justify-between">
-        <span className="text-sm font-bold text-slate-900">#{order.id}</span>
-        <span className="text-xs text-slate-400">{t('admin.orders.minutesAgo', { count: minutesAgo })}</span>
+        <span className="text-sm font-bold text-[var(--ink-900)]">#{order.id}</span>
+        <span className="text-xs text-[var(--ink-500)]">{t('admin.orders.minutesAgo', { count: minutesAgo })}</span>
       </div>
-      <div className="text-sm font-semibold text-slate-700">{order.customer_name}</div>
-      {order.customer_phone && <div className="text-xs text-slate-500">{t('admin.orders.tel', { phone: order.customer_phone })}</div>}
-      {order.customer_email && <div className="text-xs text-slate-500">{t('admin.orders.email', { email: order.customer_email })}</div>}
-      {order.customer_address && <div className="mb-2 text-xs text-slate-500">{t('admin.orders.address', { address: order.customer_address })}</div>}
-      {order.table_number && <div className="mb-2 text-xs text-slate-500">{t('admin.orders.table', { number: order.table_number })}</div>}
-      <div className="mb-2 text-xs font-medium text-slate-600">
+      <div className="text-sm font-semibold text-[var(--ink-700)]">{order.customer_name}</div>
+      {order.customer_phone && <div className="text-xs text-[var(--ink-500)]">{t('admin.orders.tel', { phone: order.customer_phone })}</div>}
+      {order.customer_email && <div className="text-xs text-[var(--ink-500)]">{t('admin.orders.email', { email: order.customer_email })}</div>}
+      {order.customer_address && <div className="mb-2 text-xs text-[var(--ink-500)]">{t('admin.orders.address', { address: order.customer_address })}</div>}
+      <div className="mb-2 text-xs font-medium text-[var(--ink-700)]">
         {t('admin.orders.payment', { method: order.payment_method === 'cash' ? t('admin.orders.cash') : t('admin.orders.transfer') })}
         {order.cash_change_for && ` ${t('admin.orders.changeFor', { amount: order.cash_change_for.toFixed(2) })}`}
       </div>
       <div className="mb-2">
         {order.order_items.map((item) => (
-          <div key={item.id} className="py-0.5 text-xs text-slate-500">
+          <div key={item.id} className="py-0.5 text-xs text-[var(--ink-500)]">
             {item.quantity}x {item.product_name}
           </div>
         ))}
       </div>
-      <div className="mb-1 text-sm font-bold text-slate-900">${order.total?.toFixed(2)}</div>
-      {order.notes && <div className="mb-2 text-xs italic text-slate-400">{order.notes}</div>}
+      <div className="mb-1 text-sm font-bold text-[var(--ink-900)]">${order.total?.toFixed(2)}</div>
+      {order.notes && <div className="mb-2 text-xs italic text-[var(--ink-500)]">{order.notes}</div>}
       <div className="mt-2 flex flex-wrap gap-2">
         {transitions.map((next) => (
           <button
@@ -150,7 +198,7 @@ function OrderCard({ order, transitions, onUpdate, isUpdating }) {
             onClick={() => onUpdate(order.id, next)}
             className={next === 'cancelled'
               ? 'rounded-md border border-red-200 bg-white px-2.5 py-1 text-xs font-medium text-red-600'
-              : 'rounded-md bg-blue-600 px-2.5 py-1 text-xs font-semibold text-white'}
+              : 'rounded-md bg-[var(--gold-600)] px-2.5 py-1 text-xs font-semibold text-white'}
           >
             {t(`admin.orders.actions.${next}`) || next}
           </button>

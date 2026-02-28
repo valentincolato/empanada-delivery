@@ -1,5 +1,5 @@
 Rails.application.routes.draw do
-  devise_for :users
+  devise_for :users, skip: [ :registrations ]
   devise_scope :user do
     get "/panel/login", to: "devise/sessions#new", as: :panel_login
   end
@@ -49,6 +49,7 @@ Rails.application.routes.draw do
       namespace :super_admin do
         resources :restaurants do
           post :switch_context, on: :member
+          delete :clear_context, on: :collection
         end
       end
     end

@@ -1,7 +1,7 @@
 class OrderBlueprint < Blueprinter::Base
   identifier :id
   fields :customer_name, :customer_phone, :customer_email,
-         :customer_address, :payment_method, :table_number,
+         :customer_address, :payment_method,
          :status, :total_cents, :notes, :token, :created_at
 
   field(:total) { |o| o.total_cents / 100.0 }

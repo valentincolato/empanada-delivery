@@ -10,16 +10,16 @@ export default function LanguageSwitcher({ className = '' }) {
   }
 
   return (
-    <div className={`flex items-center gap-1 rounded-full border border-slate-600 bg-slate-800 p-0.5 text-xs font-bold ${className}`}>
+    <div className={`flex items-center gap-1 rounded-full border border-[var(--line-soft)] bg-white/70 p-0.5 text-xs font-bold ${className}`}>
       <button
         onClick={() => toggle('es')}
-        className={`rounded-full px-2.5 py-1 transition ${current === 'es' ? 'bg-orange-500 text-white' : 'text-slate-400 hover:text-slate-200'}`}
+        className={`rounded-full px-2.5 py-1 transition ${current === 'es' ? 'bg-[var(--gold-600)] text-white' : 'text-[var(--ink-500)] hover:text-[var(--ink-700)]'}`}
       >
         ES
       </button>
       <button
         onClick={() => toggle('en')}
-        className={`rounded-full px-2.5 py-1 transition ${current === 'en' ? 'bg-orange-500 text-white' : 'text-slate-400 hover:text-slate-200'}`}
+        className={`rounded-full px-2.5 py-1 transition ${current === 'en' ? 'bg-[var(--gold-600)] text-white' : 'text-[var(--ink-500)] hover:text-[var(--ink-700)]'}`}
       >
         EN
       </button>

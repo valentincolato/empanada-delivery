@@ -25,9 +25,28 @@ async function request(method, url, body = null) {
   return res.json()
 }
 
+async function multipartRequest(method, url, formData) {
+  const res = await fetch(url, {
+    method,
+    headers: { 'X-CSRF-Token': getCsrfToken() },
+    credentials: 'same-origin',
+    body: formData,
+  })
+
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({ error: res.statusText }))
+    throw Object.assign(new Error(err.error || 'Request failed'), { status: res.status, data: err })
+  }
+
+  if (res.status === 204) return null
+  return res.json()
+}
+
 export const api = {
   get: (url) => request('GET', url),
   post: (url, body) => request('POST', url, body),
   patch: (url, body) => request('PATCH', url, body),
   delete: (url) => request('DELETE', url),
+  postForm: (url, formData) => multipartRequest('POST', url, formData),
+  patchForm: (url, formData) => multipartRequest('PATCH', url, formData),
 }

@@ -13,9 +13,6 @@
   <% if @order.customer_address.present? %>
     <strong>Address:</strong> <%= @order.customer_address %><br>
   <% end %>
-  <% if @order.table_number.present? %>
-    <strong>Table:</strong> <%= @order.table_number %><br>
-  <% end %>
   <strong>Payment:</strong> <%= @order.payment_method == "cash" ? "Cash" : "Bank transfer" %><br>
   <% if @order.cash_change_for_cents.present? %>
     <strong>Cash change for:</strong> $<%= (@order.cash_change_for_cents / 100.0).to_s %><br>
